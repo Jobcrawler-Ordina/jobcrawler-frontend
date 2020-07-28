@@ -43,7 +43,7 @@ describe('VacancyTableComponent', () => {
 
     component.vacancies = [
       {
-          url: '1',
+          id: '1',
           title: 'vacancy one',
           broker: 'broker',
           postingDate: 'date',
@@ -51,7 +51,7 @@ describe('VacancyTableComponent', () => {
           vacancyUrl: 'url'
       },
       {
-          url: '2',
+          id: '2',
           title: 'vacancy two',
           broker: 'broker',
           postingDate: 'date',
@@ -59,7 +59,7 @@ describe('VacancyTableComponent', () => {
           vacancyUrl: 'url'
       },
       {
-          url: '3',
+          id: '3',
           title: 'vacancy three',
           broker: 'broker',
           postingDate: 'date',
