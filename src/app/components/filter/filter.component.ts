@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, OnDestroy, Input } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { FilterQuery } from 'src/app/models/filterQuery.model';
 import { IVacancies } from 'src/app/models/ivacancies';
@@ -6,7 +6,6 @@ import { HttpService } from 'src/app/services/http.service';
 import { Observable, Subject, ReplaySubject } from 'rxjs';
 import { map, startWith, takeUntil } from 'rxjs/operators';
 import { LoaderService } from 'src/app/services/loader.service';
-import { Skill } from 'src/app/models/skill';
 import { MatSelect } from '@angular/material/select';
 import { PageEvent } from '@angular/material/paginator';
 import { PageResult } from 'src/app/models/pageresult.model';
@@ -117,18 +116,23 @@ export class FilterComponent implements OnInit, OnDestroy {
     this.httpService.getByQuery(filterQuery, pageNum, this.pageSize)
     .pipe(takeUntil(this._onDestroy))
     .subscribe((page: PageResult) => {
-      page.vacancies.forEach((vacancy: Vacancy) => {
-        this.vacancies.push({
-            title: vacancy.title,
-            broker: vacancy.broker,
-            postingDate: vacancy.postingDate,
-            location: vacancy.location,
-            id: vacancy.id,
-            vacancyUrl: vacancy.vacancyURL
+      if (page !== null) {
+        page.vacancies.forEach((vacancy: Vacancy) => {
+          this.vacancies.push({
+              title: vacancy.title,
+              broker: vacancy.broker,
+              postingDate: vacancy.postingDate,
+              location: vacancy.location,
+              id: vacancy.id,
+              vacancyUrl: vacancy.vacancyURL
+          });
         });
-      });
-      this.totalVacancies = page.totalItems;
-      this.currentPage = pageNum;
+        this.totalVacancies = page.totalItems;
+        this.currentPage = pageNum;
+      } else {
+        this.totalVacancies = 0;
+        this.currentPage = 0;
+      }
     });
 
   }
