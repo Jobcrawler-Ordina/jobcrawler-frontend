@@ -1,0 +1,53 @@
+<div *ngIf="vacancy" id="vacancy">
+    <h2 mat-dialog-title>{{vacancy.title}}</h2>
+    <mat-dialog-content class="mat-typography">
+        <div>
+            <label><b>ID</b></label> {{vacancy.id}}
+        </div>
+        <div>
+            <label><b>URL</b></label> {{vacancy.vacancyURL}}
+        </div>
+        <div>
+            <label><b>Title</b></label> {{vacancy.title}}
+        </div>
+        <div>
+            <label><b>Broker</b></label> {{vacancy.broker}}
+        </div>
+        <div>
+            <label><b>Aanvraagnummer</b></label> {{vacancy.vacancyNumber}}
+        </div>
+        <div>
+            <label><b>Hours</b></label> {{vacancy.hours}}
+        </div>
+        <div>
+            <label><b>About</b></label> {{vacancy.about}}
+        </div>
+        <div>
+            <label><b>Location</b></label> {{vacancy.location}}
+        </div>
+        <div>
+            <label><b>Posting Date</b></label> {{vacancy.postingDate}}
+        </div>
+        <div>
+            <label><b>SkillSet</b></label>
+            <mat-list>
+                <mat-list-item *ngFor="let skill of vacancy.skills">
+                    {{skill}}
+                </mat-list-item>
+            </mat-list>
+        </div>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Close</button>
+    </mat-dialog-actions>
+</div>
+
+<div *ngIf="errorMSG">
+    <h2 mat-dialog-title>{{vacancyID}}</h2>
+    <mat-dialog-content class="mat-typography">
+        <p *ngIf="errorMSG">{{errorMSG}}</p>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Close</button>
+    </mat-dialog-actions>
+</div>

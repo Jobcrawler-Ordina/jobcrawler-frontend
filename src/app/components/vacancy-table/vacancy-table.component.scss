@@ -1,0 +1,37 @@
+@import "../../../variables.scss";
+
+@media screen and (max-width: $device-desktop) {
+    .desktopView {
+        visibility: hidden;
+        display: none;
+    }
+}
+
+.divider {
+    margin-top: -10px;
+}
+
+.table-container-no-filter,
+.table-container {
+    height: calc(100vh - 280px);
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+@media screen and (max-width: $device-phone) {
+    .table-container {
+        height: calc(100vh - 330px);
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+    .table-container-no-filter {
+        height: calc(100vh - 680px);
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+}
+
+.pointer {
+    cursor: pointer;
+    text-decoration: underline;
+}

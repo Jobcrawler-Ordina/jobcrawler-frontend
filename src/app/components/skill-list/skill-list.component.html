@@ -1,0 +1,53 @@
+<div class="container main-div">
+  <mat-card class="card fullHeight">
+    <div class="card my-5">
+      <div>
+        <div>
+          <table style="border: gray;margin-left:100px;margin-right:auto;">
+
+          <tr>
+            <button mat-raised-button type="button" (click)="navigateVacancies()"> back to Vacancies&nbsp; </button>
+          </tr>
+          <tr>&nbsp;</tr>
+          <tr>
+            <button mat-raised-button type="button" (click)="relinkSkills()">relink</button>
+
+            <button mat-raised-button type="button" (click)="addSkill()">add skill</button>
+
+        </tr>
+        <tr>&nbsp;</tr>
+        <tr>&nbsp;</tr>
+              <div *ngIf="!backEndProcessed">  {{errorMessage}} </div>
+          </table>
+
+          <mat-divider class="divider"></mat-divider>
+        </div>
+        <p></p>
+
+          <table class="table table-bordered table-striped" style="border:none black;margin-left:120px ;margin-right:auto;" >
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">Skill name</th>
+                <th scope="col">&nbsp;</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>&nbsp;</tr>
+              <tr *ngFor="let skill of skills">
+                <td>{{skill.name}}</td>
+                <td><button mat-raised-button type="button"(click)="deleteRow(skill)">delete</button></td>
+              </tr>
+            </tbody>
+          </table>
+
+
+
+      </div>
+    </div>
+  </mat-card>
+</div>
+
+
+
+
+

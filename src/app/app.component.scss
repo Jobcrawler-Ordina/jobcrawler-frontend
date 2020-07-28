@@ -1,0 +1,44 @@
+mat-sidenav-container, mat-sidenav-content, mat-sidenav {
+    height: 100%;
+}
+
+mat-sidenav {
+    width: 250px;
+}
+
+mat-toolbar {
+    margin-bottom: 20px;
+}
+
+mat-sidenav-container a {
+    text-decoration: none;
+}
+
+mat-sidenav-container a:hover,
+mat-sidenav-container a:active {
+    color: lightgray;
+}
+
+.navigation-items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+}
+
+.icon {
+    display: inline-block;
+    height: 30px;
+    padding-right: 5px;
+    text-align: center;
+    vertical-align: middle;
+    width: 15%;
+    margin: 0 10px 0 auto;
+}
+
+.label {
+    display: inline-block;
+    line-height: 30px;
+    margin: 0;
+    width: 85%;
+}

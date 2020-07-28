@@ -1,0 +1,64 @@
+/* You can add global styles to this file, and also import other style files */
+// @import "./app/materialcustom.scss";
+
+@import "./jobcrawler.scss";
+@import "./variables.scss";
+
+// Imports functions, variables, and mixins that are needed by other Bootstrap files
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/mixins";
+// Import Bootstrap Reboot
+@import "~bootstrap/scss/reboot";
+// Import Bootstrap Grid
+@import "~bootstrap/scss/grid";
+@import "~bootstrap/scss/utilities";
+
+
+
+body { 
+    margin: 0; 
+    font-family: Roboto, "Helvetica Neue", sans-serif; 
+    background-color:#edece8 
+}
+
+a { 
+    color: black; 
+}
+
+.card { 
+    min-width: 80%; 
+}
+
+.table-container { 
+    display: flex; 
+    flex-direction: column; 
+    min-width: 100%; 
+}
+
+.mat-table { 
+    overflow: auto; 
+    max-height: 500px; 
+}
+
+.mt-1 {
+    margin-top: 5px;
+    @media screen and (max-width : $device-phone) {
+      margin-top: 2px;
+    }
+}
+
+.mt-3 {
+    margin-top: 20px;
+    @media screen and (max-width : $device-phone) {
+      margin-top: 5px;
+    }
+}
+
+.ml-1 {
+    margin-left: 5px;
+}
+
+.ml-2 {
+    margin-left: 10px;
+}

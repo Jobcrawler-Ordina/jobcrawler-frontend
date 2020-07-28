@@ -1,38 +1,49 @@
 import {BrowserModule} from '@angular/platform-browser';
-import {NgModule, NO_ERRORS_SCHEMA} from '@angular/core';
+import {FormsModule}   from '@angular/forms';
+import {NgModule} from '@angular/core';
 
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {ReactiveFormsModule} from "@angular/forms";
+import {ReactiveFormsModule} from '@angular/forms';
 
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatInputModule} from "@angular/material/input";
-import {MatButtonModule} from "@angular/material/button";
-import {MatDialogModule} from "@angular/material/dialog";
+import { AppComponent } from './app.component';
+import { AppRoutingModule } from './app-routing.module';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { ConvertStringToDotsPipe } from './utils/convert-string-to-dots.pipe';
+import { MaterialModule } from './material/material.module';
+import { VacancyTableComponent } from './components/vacancy-table/vacancy-table.component';
+import { FilterComponent } from './components/filter/filter.component';
+import { VacancyDialogComponent } from './components/vacancy-dialog/vacancy-dialog.component';
+import { LoaderService } from './services/loader.service';
+import { LoaderInterceptor } from './interceptors/loader.interceptor';
+import { SkillListComponent } from 'src/app/components/skill-list/skill-list.component';
+import { SkillFormComponent } from './components/skill-form/skill-form.component';
 
-import {AppComponent} from './app.component';
-import {FormComponent} from './components/form/form.component';
-import {AppRoutingModule} from './app-routing.module';
-import {HttpClientModule} from "@angular/common/http";
 
 @NgModule({
     declarations: [
         AppComponent,
-        FormComponent
+        ConvertStringToDotsPipe,
+        VacancyTableComponent,
+        FilterComponent,
+        VacancyDialogComponent,
+        SkillListComponent,
+        SkillFormComponent
     ],
     imports: [
         BrowserModule,
         BrowserAnimationsModule,
         HttpClientModule,
         ReactiveFormsModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatButtonModule,
-        MatDialogModule,
-        AppRoutingModule
+        AppRoutingModule,
+        MaterialModule,
+        FormsModule
     ],
-    providers: [],
+    providers: [
+        LoaderService,
+        { provide: HTTP_INTERCEPTORS, useClass: LoaderInterceptor, multi: true }
+    ],
     bootstrap: [AppComponent],
-    schemas: [NO_ERRORS_SCHEMA]
+    entryComponents: [VacancyDialogComponent]
 })
 export class AppModule {
 }

@@ -1,0 +1,8 @@
+.centernoborder {
+    text-align: center;
+  }
+
+.centerborder {
+  text-align: center;
+  border: 3px solid grey;
+  }
