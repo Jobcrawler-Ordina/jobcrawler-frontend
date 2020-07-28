@@ -8,6 +8,7 @@
 </div>
 <mat-divider class="divider"></mat-divider>
 <div class="{{showClass}}">
+    <div *ngIf="vacancies.length == 0">No vacancies that match your filter criteria.</div>
     <table *ngIf="vacancies.length > 0" mat-table [dataSource]="vacancies"
            [style.width.%]="100">
 

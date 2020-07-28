@@ -28,4 +28,8 @@ jobs:
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         BASE_BRANCH: master
         BRANCH: gh-pages
+<<<<<<< HEAD
         FOLDER: dist/angular-app
+=======
+        FOLDER: dist/jobcrawler-frontend
+>>>>>>> 7007f686a897b8cd10b68e929896271e0fbda727
