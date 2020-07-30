@@ -102,7 +102,7 @@ describe('FilterComponent', () => {
         component.isShow = false;
     });
 
-    it('should show skills in the filter column', () => {
+    it('should show skills in the filter column', async() => {
         // Arange
         component.skills = [];
         mockSkills._embedded.skills.forEach(d => {
@@ -111,14 +111,16 @@ describe('FilterComponent', () => {
         component.filteredSkillsMulti.next(component.skills.slice());
 
         // Act, load page with above settings
-        fixture.detectChanges();
-        const debugElement = fixture.debugElement;
-        const skillSelectElementAngular = debugElement.query(By.css('#mat-option-1')).query(By.css('.mat-option-text')).context.value;
-        const skillSelectElementJava = debugElement.query(By.css('#mat-option-2')).query(By.css('.mat-option-text')).context.value;
-        
-        // Assert
-        expect(skillSelectElementAngular).toBe(mockSkills._embedded.skills[0].name);
-        expect(skillSelectElementJava).toBe(mockSkills._embedded.skills[1].name);
+        fixture.whenStable().then(() => {
+          fixture.detectChanges();
+          const debugElement = fixture.debugElement;
+          const skillSelectElementAngular = debugElement.query(By.css('#mat-option-1')).query(By.css('.mat-option-text')).context.value;
+          const skillSelectElementJava = debugElement.query(By.css('#mat-option-2')).query(By.css('.mat-option-text')).context.value;
+          
+          // Assert
+          expect(skillSelectElementAngular).toBe(mockSkills._embedded.skills[0].name);
+          expect(skillSelectElementJava).toBe(mockSkills._embedded.skills[1].name);
+        });
     });
 
     it('should show default cities in city input', () => {
