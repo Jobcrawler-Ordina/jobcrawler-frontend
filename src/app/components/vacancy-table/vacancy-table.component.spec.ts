@@ -6,6 +6,7 @@ import { MatTableModule } from '@angular/material/table';
 import { ConvertStringToDotsPipe } from 'src/app/utils/convert-string-to-dots.pipe';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { mockVacancies } from 'src/app/tests/constants';
 
 describe('VacancyTableComponent', () => {
   let component: VacancyTableComponent;
@@ -40,33 +41,17 @@ describe('VacancyTableComponent', () => {
   });
 
   it('should show all vacancies on initialization', async(() => {
-
-    component.vacancies = [
-      {
-          id: '1',
-          title: 'vacancy one',
-          broker: 'broker',
-          postingDate: 'date',
-          location: 'location',
-          vacancyUrl: 'url'
-      },
-      {
-          id: '2',
-          title: 'vacancy two',
-          broker: 'broker',
-          postingDate: 'date',
-          location: 'location',
-          vacancyUrl: 'url'
-      },
-      {
-          id: '3',
-          title: 'vacancy three',
-          broker: 'broker',
-          postingDate: 'date',
-          location: 'location',
-          vacancyUrl: 'url'
-      }
-    ];
+    component.vacancies = [];
+    mockVacancies.vacancies.forEach((vacancy: any) => {
+      component.vacancies.push({
+          title: vacancy.title,
+          broker: vacancy.broker,
+          postingDate: vacancy.postingDate,
+          location: vacancy.location,
+          id: vacancy.id,
+          vacancyUrl: vacancy.vacancyURL
+      });
+    });
 
     fixture.detectChanges();
       
