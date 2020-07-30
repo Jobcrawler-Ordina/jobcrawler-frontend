@@ -95,11 +95,7 @@ describe('FilterComponent', () => {
     .compileComponents();
   }));
 
-  let httpServiceMock: jasmine.SpyObj<HttpService>;
-
   beforeEach(() => {
-    httpServiceMock = TestBed.get(HttpService);
-
     fixture = TestBed.createComponent(FilterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -158,4 +154,28 @@ describe('FilterComponent', () => {
       expect(filterComp.vacancies[i].title).toBe("title " + (i+1));
     }
   }));
+
+  it('should show skills in the filter column', () => {
+    // Arrange, setting up page with variables ourselves
+    component.pageSize = 10;
+    component.totalVacancies = 3;
+    component.showForm = true;
+    component.isShow = false;
+    component.skills = [];
+    mockSkills._embedded.skills.forEach(d => {
+      component.skills.push(d.name);
+    });
+    component.filteredSkillsMulti.next(component.skills.slice());
+
+    // Act, load page with above settings
+    fixture.detectChanges();
+
+    // Assert
+    const debugElement = fixture.debugElement;
+    const skillSelectElementAngular = debugElement.query(By.css('#mat-option-1')).query(By.css('.mat-option-text')).context.value;
+    const skillSelectElementJava = debugElement.query(By.css('#mat-option-2')).query(By.css('.mat-option-text')).context.value;
+    expect(skillSelectElementAngular).toBe(mockSkills._embedded.skills[0].name);
+    expect(skillSelectElementJava).toBe(mockSkills._embedded.skills[1].name);
+  });
+
 });
