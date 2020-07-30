@@ -113,9 +113,11 @@ describe('FilterComponent', () => {
     // Arrange
     let mockService = jasmine.createSpyObj('HttpService', ['findAllSkills', 'getByQuery']);
     let filterComp = new FilterComponent(new FormBuilder, mockService, new LoaderService);
-
     mockService.findAllSkills.and.returnValue(of(mockSkills));
     mockService.getByQuery.and.returnValue(of(null));
+
+    // Expect nothing at this stage, as we still need to fill the variables
+    expect(filterComp.skills).toBeUndefined;
 
     // Act
     filterComp.ngOnInit();
@@ -140,6 +142,9 @@ describe('FilterComponent', () => {
 
     mockService.findAllSkills.and.returnValue(of(noSkills));
     mockService.getByQuery.and.returnValue(of(mockVacancies));
+
+    // Expect nothing at this stage, as we still need to fill the variables
+    expect(filterComp.vacancies).toBeUndefined;
 
     // Act
     filterComp.ngOnInit();
