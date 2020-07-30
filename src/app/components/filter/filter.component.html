@@ -37,9 +37,10 @@
                                placeholder="City"
                                formControlName="city"
                                matInput
-                               [matAutocomplete]="auto">
+                               [matAutocomplete]="auto"
+                               id="citySearch">
                         <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-                          <mat-option *ngFor="let city of filteredCities | async" [value]="city">
+                          <mat-option id="city" *ngFor="let city of filteredCities | async" [value]="city">
                             {{city}}
                           </mat-option>
                         </mat-autocomplete>
