@@ -144,4 +144,8 @@ describe('FilterComponent', () => {
 
   });
 
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 });

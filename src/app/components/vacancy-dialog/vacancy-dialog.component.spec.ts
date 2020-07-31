@@ -15,7 +15,7 @@ describe('VacancyDialogComponent', () => {
   let component: VacancyDialogComponent;
   let fixture: ComponentFixture<VacancyDialogComponent>;
   let nativeComponent: HTMLElement;
-  let service;
+  let service: HttpService;
   let overlayContainerElement: HTMLElement;
 
   beforeEach(async(() => {
@@ -100,6 +100,10 @@ describe('VacancyDialogComponent', () => {
     fixture.detectChanges();
     const errorText = nativeComponent.querySelector('p').textContent;
     expect(errorText).toEqual(vacancyErrorMock);
+  });
+
+  afterEach(() => {
+    fixture.destroy();
   });
 
 });

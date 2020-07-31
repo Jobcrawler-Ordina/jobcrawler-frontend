@@ -67,4 +67,8 @@ describe('VacancyTableComponent', () => {
     expect(vacancyTitles.length).toEqual(fixture.componentInstance.vacancies.length);
     expect(vacancyTitles[0].firstChild.textContent.trim()).toEqual(fixture.componentInstance.vacancies[0].title);
   }));
+
+  afterEach(() => {
+    fixture.destroy();
+  });
 });
