@@ -30,11 +30,11 @@
         </div>
         <div>
             <label><b>SkillSet</b></label>
-            <mat-list>
-                <mat-list-item *ngFor="let skill of vacancy.skills">
+            <ul>
+                <li *ngFor="let skill of vacancy.skills">
                     {{skill}}
-                </mat-list-item>
-            </mat-list>
+                </li>
+            </ul>
         </div>
     </mat-dialog-content>
     <mat-dialog-actions align="end">

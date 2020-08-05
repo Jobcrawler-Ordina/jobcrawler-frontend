@@ -7,6 +7,9 @@ import { ConvertStringToDotsPipe } from 'src/app/utils/convert-string-to-dots.pi
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { mockVacancies } from 'src/app/tests/constants';
+import { MaterialModule } from 'src/app/material/material.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 describe('VacancyTableComponent', () => {
   let component: VacancyTableComponent;
@@ -16,9 +19,9 @@ describe('VacancyTableComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [ 
+        BrowserAnimationsModule,
         HttpClientTestingModule,
-        MatTableModule,
-        MatCardModule
+        MaterialModule
       ],
       declarations: [ 
         VacancyTableComponent,
@@ -27,7 +30,8 @@ describe('VacancyTableComponent', () => {
       providers: [
         { provide: MatDialog, useValue: {}},
         { provide: MAT_DIALOG_DATA, useValue: []}
-      ]
+      ],
+      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     })
     .compileComponents();
 

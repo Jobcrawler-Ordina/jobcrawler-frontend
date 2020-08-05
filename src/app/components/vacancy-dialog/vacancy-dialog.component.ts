@@ -6,7 +6,7 @@ import { Vacancy } from 'src/app/models/vacancy';
 @Component({
   selector: 'app-vacancy-dialog',
   templateUrl: './vacancy-dialog.component.html',
-  styleUrls: ['./vacancy-dialog.component.css'],
+  styleUrls: ['./vacancy-dialog.component.scss'],
   providers: [HttpService]
 })
 export class VacancyDialogComponent implements AfterContentInit {

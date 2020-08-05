@@ -7,6 +7,8 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { of } from 'rxjs';
 import { mockSkills } from 'src/app/tests/constants';
 import { environment } from 'src/environments/environment';
+import { MatCardModule } from '@angular/material/card';
+import { MatDividerModule } from '@angular/material/divider';
 
 describe('SkillListComponentTest', () => {
   let component: SkillListComponent;
@@ -19,7 +21,9 @@ describe('SkillListComponentTest', () => {
     TestBed.configureTestingModule({
       imports: [ 
         RouterTestingModule,
-        HttpClientTestingModule 
+        HttpClientTestingModule,
+        MatCardModule,
+        MatDividerModule
       ],
       declarations: [ SkillListComponent ],
       providers: [ HttpService ]

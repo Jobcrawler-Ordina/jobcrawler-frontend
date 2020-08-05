@@ -10,7 +10,7 @@ export const mockSkills = {
                     "href": environment.api + "/skills/9afa709e-fcef-4303-97d5-a537467cad42"
                 },
                 "skills": {
-                    "href": environment.api + "skills"
+                    "href": environment.api + "/skills"
                 }
             }
         },
@@ -21,7 +21,7 @@ export const mockSkills = {
                     "href": environment.api + "/skills/fbdc0624-6c46-4be9-9797-d4bfbbdd1f04"
                 },
                 "skills": {
-                    "href": environment.api + "skills"
+                    "href": environment.api + "/skills"
                 }
             }
         }

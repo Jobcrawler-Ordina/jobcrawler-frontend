@@ -5,10 +5,10 @@ import { MatDialog, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/d
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { Vacancy } from 'src/app/models/vacancy';
 import { HttpService } from 'src/app/services/http.service';
-import { Component, NgModule } from '@angular/core';
+import { Component, NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { By } from '@angular/platform-browser';
+import { MatListModule } from '@angular/material/list';
 
 describe('VacancyDialogComponent', () => {
   let dialog: MatDialog;
@@ -20,8 +20,12 @@ describe('VacancyDialogComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ HttpClientTestingModule,
-        DialogTestModule],
+      imports: [ 
+        BrowserAnimationsModule,
+        HttpClientTestingModule,
+        DialogTestModule,
+        MatListModule
+      ],
       providers: [
         { provide: MAT_DIALOG_DATA, useValue: ['1']},
         HttpService,
@@ -29,7 +33,8 @@ describe('VacancyDialogComponent', () => {
           overlayContainerElement = document.createElement('div');
           return { getContainerElement: () => overlayContainerElement };
         }}
-      ]
+      ],
+      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     })
     .compileComponents();
   }));
