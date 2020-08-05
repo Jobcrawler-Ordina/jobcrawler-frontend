@@ -197,9 +197,9 @@ describe('FilterComponent', () => {
               // check focus
               expect(searchField).toBe(document.activeElement);
 
-              const optionElements = document.querySelectorAll('mat-option');
-              expect(component.multiSelect.options.length).toBe(3);
-              expect(optionElements.length).toBe(3);
+              const optionElements = document.querySelectorAll('mat-option#skills');
+              expect(component.multiSelect.options.length).toBe(3); // Includes mat-option as searchbar. Skills + 1
+              expect(optionElements.length).toBe(2);
 
               done();
             });

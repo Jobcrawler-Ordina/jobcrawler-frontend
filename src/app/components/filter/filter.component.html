@@ -56,7 +56,7 @@
                           <mat-option>
                             <ngx-mat-select-search class="test" [formControl]="skillMultiFilterCtrl" placeholderLabel="Search skill" noEntriesFoundLabel="No match found"></ngx-mat-select-search>
                           </mat-option>
-                          <mat-option *ngFor="let skill of filteredSkillsMulti | async" [value]="skill">
+                          <mat-option id="skills" *ngFor="let skill of filteredSkillsMulti | async" [value]="skill">
                             {{skill.name}}
                           </mat-option>
                         </mat-select>
