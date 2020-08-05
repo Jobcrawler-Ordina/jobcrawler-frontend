@@ -4,12 +4,13 @@ import { FilterQuery } from 'src/app/models/filterQuery.model';
 import { IVacancies } from 'src/app/models/ivacancies';
 import { HttpService } from 'src/app/services/http.service';
 import { Observable, Subject, ReplaySubject } from 'rxjs';
-import { map, startWith, takeUntil } from 'rxjs/operators';
+import { map, startWith, takeUntil, take } from 'rxjs/operators';
 import { LoaderService } from 'src/app/services/loader.service';
 import { MatSelect } from '@angular/material/select';
 import { PageEvent } from '@angular/material/paginator';
 import { PageResult } from 'src/app/models/pageresult.model';
 import { Vacancy } from 'src/app/models/vacancy';
+import { Skill } from 'src/app/models/skill';
 
 @Component({
   selector: 'app-filter',
@@ -21,7 +22,7 @@ export class FilterComponent implements OnInit, OnDestroy {
 
   isShow: boolean = false;
   searchForm: FormGroup;
-  skills: string[];
+  skills: Skill[];
   vacancies: IVacancies[] = [];
   cities: string[] = ['Amsterdam', 'Den Haag', 'Rotterdam', 'Utrecht'];
   showForm: boolean = false;
@@ -35,10 +36,9 @@ export class FilterComponent implements OnInit, OnDestroy {
 
   public skillMultiCtrl: FormControl = new FormControl();
   public skillMultiFilterCtrl: FormControl = new FormControl();
-  public filteredSkillsMulti: ReplaySubject<String[]> = new ReplaySubject<String[]>(1);
-  protected _onDestroy = new Subject<void>();
-  @ViewChild('multiSelect', {static: true}) multiSelect: MatSelect;
-
+  public filteredSkillsMulti: ReplaySubject<Skill[]> = new ReplaySubject<Skill[]>(1);
+  public _onDestroy = new Subject<void>();
+  @ViewChild('multiSelect', {static: false}) multiSelect: MatSelect;
 
   /**
    * Creates an instance of filter component.
@@ -50,6 +50,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     private httpService: HttpService,
     private loaderService: LoaderService) {}
 
+    
   /**
    * Function gets executed upon initialization.
    * Constructs searchform.
@@ -71,6 +72,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     this._onDestroy.complete();
   }
 
+
   /**
    * Toggles display / filter column
    */
@@ -90,7 +92,10 @@ export class FilterComponent implements OnInit, OnDestroy {
       filterQuery = this.searchForm.value as FilterQuery;
 
       if (this.skillMultiCtrl.value !== null) {
-        filterQuery.skills = this.skillMultiCtrl.value;
+        filterQuery.skills = [];
+        this.skillMultiCtrl.value.forEach((skill: Skill) => {
+          filterQuery.skills.push(skill.name);
+        });
       } else {
         filterQuery.skills = [];
       }
@@ -137,6 +142,7 @@ export class FilterComponent implements OnInit, OnDestroy {
 
   }
 
+
   /**
    * Resets form back to default values
    */
@@ -147,13 +153,39 @@ export class FilterComponent implements OnInit, OnDestroy {
 
 
   /**
+   * Easily search and select skills
+   * @returns Does not return anything, prevent method to continue 
+   */
+  public filterSkillsMulti(): any {
+    if (!this.skills) {
+      return;
+    }
+    
+    let search = this.skillMultiFilterCtrl.value;
+    if (!search) {
+      this.filteredSkillsMulti.next(this.skills.slice());
+      return;
+    } else {
+      search = search.toLowerCase();
+    }
+
+    this.filteredSkillsMulti.next(
+      this.skills.filter(skill => skill.name.toLowerCase().indexOf(search) === 0)
+    )
+  }  
+
+
+  /**
    * Loads form asynchronous
    */
   private loadForm(): void {
     this.getSkills().then((data: any) => {
-      let skillData = [];
+      let skillData: Skill[] = [];
       data._embedded.skills.forEach((skill: any) => {
-        skillData.push(skill.name);
+        skillData.push({
+          href: skill._links.self.href,
+          name: skill.name
+        });
       });
       this.skills = skillData;
       this.filteredSkillsMulti.next(this.skills.slice());
@@ -177,6 +209,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     return this.httpService.findAllSkills().toPromise();
   }
 
+
   /**
    * Filters city
    * @param search entered string
@@ -185,6 +218,7 @@ export class FilterComponent implements OnInit, OnDestroy {
   private _filterCity(search: string): string[] {
     return this.cities.filter(value => value.toLowerCase().indexOf(search.toLowerCase()) === 0);
   }
+
 
   /**
    * Constructs search form
@@ -215,29 +249,6 @@ export class FilterComponent implements OnInit, OnDestroy {
 
       resolve();
     });
-  }
-
-
-  /**
-   * Easily search and select skills
-   * @returns Does not return anything, prevent method to continue 
-   */
-  private filterSkillsMulti(): any {
-    if (!this.skills) {
-      return;
-    }
-    
-    let search = this.skillMultiFilterCtrl.value;
-    if (!search) {
-      this.filteredSkillsMulti.next(this.skills.slice());
-      return;
-    } else {
-      search = search.toLowerCase();
-    }
-
-    this.filteredSkillsMulti.next(
-      this.skills.filter(skill => skill.toLowerCase().indexOf(search) === 0)
-    )
   }
 
 }

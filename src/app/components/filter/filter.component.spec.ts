@@ -1,9 +1,9 @@
 import { async, ComponentFixture, TestBed, tick, fakeAsync } from '@angular/core/testing';
 
 import { FilterComponent } from './filter.component';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { HttpService } from 'src/app/services/http.service';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { LoaderService } from 'src/app/services/loader.service';
 import { of } from 'rxjs';
 import { VacancyTableComponent } from '../vacancy-table/vacancy-table.component';
@@ -12,23 +12,57 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { By } from '@angular/platform-browser';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { mockSkills, noSkills, mockVacancies } from 'src/app/tests/constants';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatIconModule } from '@angular/material/icon';
+import { MatIconTestingModule } from '@angular/material/icon/testing';
+import { MatCardModule } from '@angular/material/card';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatListModule } from '@angular/material/list';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatMomentDateModule } from '@angular/material-moment-adapter';
+import { RouterTestingModule } from '@angular/router/testing';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldControl } from '@angular/material/form-field';
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
+import { MatSelect, MatSelectModule } from '@angular/material/select';
+import { delay, take, takeUntil } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
+import { FilterQuery } from 'src/app/models/filterQuery.model';
 
 describe('FilterComponent', () => {
   let component: FilterComponent;
   let fixture: ComponentFixture<FilterComponent>;
+  let httpService: HttpService;
+  let httpMock: HttpTestingController;
+  const formBuilder: FormBuilder = new FormBuilder();
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
         imports: [
+          RouterTestingModule,
+          BrowserAnimationsModule,
           HttpClientTestingModule,
-          MatAutocompleteModule
+          ReactiveFormsModule,
+          MatIconModule,
+          MatIconTestingModule,
+          MatCardModule,
+          MatAutocompleteModule,
+          MatDividerModule,
+          MatListModule,
+          MatDatepickerModule,
+          MatMomentDateModule,
+          NgxMatSelectSearchModule,
+          MatSelectModule,
+          MatInputModule,
         ],
         providers: [
-          FormBuilder,
-          { provide: HttpService, useValue: jasmine.createSpyObj('HttpService', ['findAllSkills', 'getByQuery']) },
+          { provide: FormBuilder, useValue: formBuilder },
           LoaderService,
+          HttpService,
           { provide: MatDialog, useValue: {}},
-          { provide: MAT_DIALOG_DATA, useValue: []}
+          { provide: MAT_DIALOG_DATA, useValue: []},
+          MatFormFieldControl,
+          MatSelect
         ],
         declarations: [ 
           FilterComponent,
@@ -42,7 +76,6 @@ describe('FilterComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(FilterComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
@@ -100,26 +133,78 @@ describe('FilterComponent', () => {
         component.totalVacancies = 3;
         component.showForm = true;
         component.isShow = false;
+        component.searchForm = formBuilder.group({
+          keyword: '',
+          city: '',
+          distance: '',
+          skills: '',
+          fromDate: '',
+          toDate: ''
+        });
+
+        httpMock = TestBed.get(HttpTestingController);
+        httpService = TestBed.get(HttpService);
+      
+        httpService.findAllSkills().subscribe((data: any) => {
+        component.skills = [];
+        data._embedded.skills.forEach(d => {
+          component.skills.push({
+            href: d._links.self.href,
+            name: d.name
+            });
+          });
+        expect(component.skills.length).toBe(2);
+
+        // load the initial bank list
+        component.filteredSkillsMulti.next(component.skills.slice());
+    
+        // listen for search field value changes
+        component.skillMultiFilterCtrl.valueChanges
+          .pipe(takeUntil(component._onDestroy))
+          .subscribe(() => {
+            component.filterSkillsMulti();
+        });
+      });
+
+      const req = httpMock.expectOne(environment.api + '/skills');
+      expect(req.request.method).toEqual('GET');
+      req.flush(mockSkills);
     });
 
-    it('should show skills in the filter column', async() => {
-        // Arange
-        component.skills = [];
-        mockSkills._embedded.skills.forEach(d => {
-        component.skills.push(d.name);
-        });
-        component.filteredSkillsMulti.next(component.skills.slice());
+    it('should show skills in the filter column', async(done) => {
+        component.filteredSkillsMulti
+        .pipe(
+          take(1),
+          delay(1)
+        )
+        .subscribe(() => {
+          // when the filtered skills are initialized
+          fixture.detectChanges();
+          component.multiSelect.open();
+          fixture.detectChanges();
 
-        // Act, load page with above settings
-        await fixture.whenStable();
-        fixture.detectChanges();
-        const debugElement = fixture.debugElement;
-        const skillSelectElementAngular = debugElement.query(By.css('#mat-option-1')).query(By.css('.mat-option-text')).context.value;
-        const skillSelectElementJava = debugElement.query(By.css('#mat-option-2')).query(By.css('.mat-option-text')).context.value;
-        
-        // Assert
-        expect(skillSelectElementAngular).toBe(mockSkills._embedded.skills[0].name);
-        expect(skillSelectElementJava).toBe(mockSkills._embedded.skills[1].name);
+          component.multiSelect.openedChange
+            .pipe(
+              take(1),
+              delay(1)
+            )
+            .subscribe((opened) => {
+              expect(opened).toBe(true);
+              const searchField = document.querySelector('.mat-select-search-inner .mat-select-search-input');
+              const searchInner = document.querySelector('.mat-select-search-inner');
+              expect(searchInner).toBeTruthy();
+              expect(searchField).toBeTruthy();
+              // check focus
+              expect(searchField).toBe(document.activeElement);
+
+              const optionElements = document.querySelectorAll('mat-option');
+              expect(component.multiSelect.options.length).toBe(3);
+              expect(optionElements.length).toBe(3);
+
+              done();
+            });
+
+        });
     });
 
     it('should show default cities in city input', () => {
