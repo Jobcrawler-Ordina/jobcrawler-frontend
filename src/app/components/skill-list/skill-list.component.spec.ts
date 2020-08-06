@@ -5,7 +5,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { HttpService } from 'src/app/services/http.service';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { of } from 'rxjs';
-import { mockSkills } from 'src/app/tests/constants';
+import { mockSkills } from 'src/app/tests/httpMockResponses';
 import { environment } from 'src/environments/environment';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';

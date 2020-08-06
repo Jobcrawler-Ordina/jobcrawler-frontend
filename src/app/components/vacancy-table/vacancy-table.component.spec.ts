@@ -6,7 +6,7 @@ import { MatTableModule } from '@angular/material/table';
 import { ConvertStringToDotsPipe } from 'src/app/utils/convert-string-to-dots.pipe';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { mockVacancies } from 'src/app/tests/constants';
+import { mockVacancies } from 'src/app/tests/httpMockResponses';
 import { MaterialModule } from 'src/app/material/material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
