@@ -1,4 +1,4 @@
-import { Component, Output, Input, OnChanges } from '@angular/core';
+import { Component, Output, Input, OnChanges, ViewChild, ElementRef } from '@angular/core';
 import { EventEmitter } from '@angular/core';
 import { IVacancies } from 'src/app/models/ivacancies';
 import { MatDialog } from '@angular/material/dialog';
