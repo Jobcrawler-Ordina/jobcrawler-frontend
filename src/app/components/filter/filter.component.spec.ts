@@ -27,7 +27,6 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { MatSelect, MatSelectModule } from '@angular/material/select';
 import { delay, take, takeUntil } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { FilterQuery } from 'src/app/models/filterQuery.model';
 
 describe('FilterComponent', () => {
   let component: FilterComponent;
@@ -125,6 +124,17 @@ describe('FilterComponent', () => {
       expect(filterComp.vacancies[i].title).toBe("title " + (i+1));
     }
   }));
+
+  it('should toggle isShow upon calling the function', () => {
+    let currentStatus: boolean = component.isShow;
+    if(currentStatus) {
+        component.toggleDisplay();
+        expect(component.isShow).toBe(false);
+    } else {
+        component.toggleDisplay();
+        expect(component.isShow).toBe(true);
+    }
+  });
 
   describe('DOM tests', () => {
     beforeEach(() => {
@@ -225,6 +235,37 @@ describe('FilterComponent', () => {
         for(let i = 0; i < matOptions.length; i++) {
             expect(matOptions[i].textContent.trim()).toBe(component.cities[i]);
         }
+    });
+
+    it('should filter cities based on text input', async() => {
+        // Arrange
+        component.skills = [];
+        component.cities = [];
+        component.cities = ['Amsterdam', 'Den Haag', 'Rotterdam', 'Utrecht'];
+        component.filteredCities = of(component.cities);
+        component.resetForm();
+
+        // Act
+        fixture.detectChanges();
+        const inputElement = fixture.debugElement.query(By.css('#citySearch'));
+        inputElement.nativeElement.dispatchEvent(new Event('focusin'));
+
+        inputElement.nativeElement.value = 'Ams'; 
+        inputElement.nativeElement.dispatchEvent(new Event('input'));
+
+        await fixture.whenStable();
+        fixture.detectChanges();
+
+        const matOptions = document.querySelectorAll('mat-option#city');
+        expect(matOptions.length).toBe(1); // Only one city out of the 4 that matches with 'Ams'.
+
+        const optionToClick = matOptions[0] as HTMLElement;
+        optionToClick.click();
+
+        fixture.detectChanges();
+
+        // Final assert. Input value should be equal to first city in cities array.
+        expect(fixture.debugElement.query(By.css('#citySearch')).properties.value).toBe(component.cities[0]);
     });
 
   });
