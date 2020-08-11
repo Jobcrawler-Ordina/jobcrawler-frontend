@@ -29,8 +29,10 @@ export class HttpService {
         let params = new HttpParams();
         params = params.append('size', String(pageSize));
         params = params.append('page', String(pageNum));
-        params = params.append('skills', filterQuery.skills.join());
-        params = params.append('value', filterQuery.keyword);
+        if(filterQuery.skills.length > 0)
+            params = params.append('skills', filterQuery.skills.join());
+        if(filterQuery.keyword !== '')
+            params = params.append('value', filterQuery.keyword);
 
         return this.httpClient.get<PageResult>(environment.api + '/vacancies', {params: params});
     }
