@@ -52,7 +52,7 @@ export class HttpService {
      * @returns skills for vacancy 
      */
     public getSkillsForVacancy(url: string): Observable<any> {
-        return this.httpClient.get(url);
+        return this.httpClient.get(environment.api + url);
     }
 
 

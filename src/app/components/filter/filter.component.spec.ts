@@ -11,7 +11,7 @@ import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { By } from '@angular/platform-browser';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { mockSkills, noSkills, mockVacancies } from 'src/app/tests/httpMockResponses';
+import { mockSkills, noSkills, mockVacancies, mockCities } from 'src/app/tests/httpMockResponses';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatIconModule } from '@angular/material/icon';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
@@ -126,14 +126,27 @@ describe('FilterComponent', () => {
   }));
 
   it('should toggle isShow upon calling the function', () => {
-    let currentStatus: boolean = component.isShow;
-    if(currentStatus) {
-        component.toggleDisplay();
-        expect(component.isShow).toBe(false);
-    } else {
-        component.toggleDisplay();
-        expect(component.isShow).toBe(true);
-    }
+    // let currentStatus: boolean = component.isShow;
+    // if(currentStatus) {
+    //     component.toggleDisplay();
+    //     expect(component.isShow).toBe(false);
+    // } else {
+    //     component.toggleDisplay();
+    //     expect(component.isShow).toBe(true);
+    // }
+
+    component.isShow = true;
+    fixture.detectChanges();
+    let elementTrue = fixture.debugElement.query(By.css('#childComponent')).nativeElement;
+    console.log(elementTrue);
+    console.log(elementTrue.classList);
+    // expect(elementTrue.classList).toContain('table-container');
+
+    component.isShow = false;
+    fixture.detectChanges();
+    let elementFalse = fixture.debugElement.query(By.css('#childComponent')).nativeElement;
+    console.log(elementFalse);
+    console.log(elementFalse.classList);
   });
 
   describe('DOM tests', () => {
@@ -221,7 +234,7 @@ describe('FilterComponent', () => {
         // Arrange
         component.skills = [];
         component.cities = [];
-        component.cities = ['Amsterdam', 'Den Haag', 'Rotterdam', 'Utrecht'];
+        component.cities = mockCities;
         component.filteredCities = of(component.cities);
 
         // Act, load page with above settings
@@ -241,7 +254,7 @@ describe('FilterComponent', () => {
         // Arrange
         component.skills = [];
         component.cities = [];
-        component.cities = ['Amsterdam', 'Den Haag', 'Rotterdam', 'Utrecht'];
+        component.cities = mockCities;
         component.filteredCities = of(component.cities);
         component.resetForm();
 
@@ -250,7 +263,7 @@ describe('FilterComponent', () => {
         const inputElement = fixture.debugElement.query(By.css('#citySearch'));
         inputElement.nativeElement.dispatchEvent(new Event('focusin'));
 
-        inputElement.nativeElement.value = 'Ams'; 
+        inputElement.nativeElement.value = mockCities[0].substr(0,3); // Enter first 3 chars from first element of mockCities array into our input field.
         inputElement.nativeElement.dispatchEvent(new Event('input'));
 
         await fixture.whenStable();
@@ -265,7 +278,7 @@ describe('FilterComponent', () => {
         fixture.detectChanges();
 
         // Final assert. Input value should be equal to first city in cities array.
-        expect(fixture.debugElement.query(By.css('#citySearch')).properties.value).toBe(component.cities[0]);
+        expect(fixture.debugElement.query(By.css('#citySearch')).properties.value).toBe(mockCities[0]);
     });
 
   });
