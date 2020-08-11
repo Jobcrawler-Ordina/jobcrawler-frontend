@@ -1,4 +1,5 @@
 import { environment } from 'src/environments/environment';
+import { Vacancy } from '../models/vacancy';
 
 export const mockSkills = {
     _embedded: {
@@ -73,8 +74,24 @@ export const mockVacancies = {
     ]
   };
 
+export const mockVacancy: Vacancy = {
+    id: '0',
+    title: 'Vacancy title',
+    vacancyURL: 'google.com',
+    broker: 'mockBroker',
+    vacancyNumber: '123',
+    hours: 40,
+    location: 'Nieuwegein',
+    postingDate: 'today',
+    salaray: '',
+    about: 'random',
+    skills: []
+};
+
 export const noSkills = {
     _embedded: {
         skills: []
     }
   };
+
+export const mockCities = ['Amsterdam', 'Den Haag', 'Rotterdam', 'Utrecht'];
