@@ -41,12 +41,13 @@ export class VacancyDialogComponent implements AfterContentInit {
   getVacancyDetails(vacancyID: string): void {
     this.httpService.getByID(vacancyID).subscribe((vacancy: any) => {
       vacancy.id = this.vacancyID;
-      // this.httpService.getSkillsForVacancy(vacancy._links.skills.href).subscribe((data: any) => {
       this.httpService.getSkillsForVacancy('/vacancies/' + vacancyID + '/skills').subscribe((data: any) => {
-      vacancy.skills = [];
-        data._embedded.skills.forEach(el => {
-          vacancy.skills.push(el.name);
-        });
+        vacancy.skills = [];
+        if(data._embedded) {
+          data._embedded.skills.forEach(el => {
+           vacancy.skills.push(el);
+          });
+        }
         this.vacancy = vacancy;
       });
   }, err => {
