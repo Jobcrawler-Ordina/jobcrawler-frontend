@@ -41,7 +41,7 @@ export class VacancyDialogComponent implements AfterContentInit {
    */
   getVacancyDetails(vacancyID: string): void {
   let vacancyDetails = this.httpService.getByID(vacancyID);
-  let vacancySkills = this.httpService.getSkillsForVacancy('/vacancies/' + vacancyID + '/skills');
+  let vacancySkills = this.httpService.getSkillsForVacancy(vacancyID);
 
   forkJoin([vacancyDetails, vacancySkills]).subscribe((res: any) => {
     this.vacancy = res[0];

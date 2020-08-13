@@ -50,11 +50,11 @@ export class HttpService {
 
     /**
      * Gets skills for vacancy
-     * @param url 
+     * @param id 
      * @returns skills for vacancy 
      */
-    public getSkillsForVacancy(url: string): Observable<any> {
-        return this.httpClient.get(environment.api + url);
+    public getSkillsForVacancy(id: string): Observable<any> {
+        return this.httpClient.get(environment.api + '/vacancies/' + id + '/skills');
     }
 
 
