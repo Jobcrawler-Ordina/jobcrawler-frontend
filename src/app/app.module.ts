@@ -1,9 +1,8 @@
 import {BrowserModule} from '@angular/platform-browser';
-import {FormsModule}   from '@angular/forms';
 import {NgModule} from '@angular/core';
 
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {ReactiveFormsModule} from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -33,10 +32,10 @@ import { SkillFormComponent } from './components/skill-form/skill-form.component
         BrowserModule,
         BrowserAnimationsModule,
         HttpClientModule,
+        FormsModule,
         ReactiveFormsModule,
         AppRoutingModule,
-        MaterialModule,
-        FormsModule
+        MaterialModule
     ],
     providers: [
         LoaderService,

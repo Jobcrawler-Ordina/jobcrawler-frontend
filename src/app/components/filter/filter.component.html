@@ -37,9 +37,10 @@
                                placeholder="City"
                                formControlName="city"
                                matInput
-                               [matAutocomplete]="auto">
+                               [matAutocomplete]="auto"
+                               id="citySearch">
                         <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-                          <mat-option *ngFor="let city of filteredCities | async" [value]="city">
+                          <mat-option id="city" *ngFor="let city of filteredCities | async" [value]="city">
                             {{city}}
                           </mat-option>
                         </mat-autocomplete>
@@ -55,8 +56,8 @@
                           <mat-option>
                             <ngx-mat-select-search class="test" [formControl]="skillMultiFilterCtrl" placeholderLabel="Search skill" noEntriesFoundLabel="No match found"></ngx-mat-select-search>
                           </mat-option>
-                          <mat-option *ngFor="let skill of filteredSkillsMulti | async" [value]="skill">
-                            {{skill}}
+                          <mat-option id="skills" *ngFor="let skill of filteredSkillsMulti | async" [value]="skill">
+                            {{skill.name}}
                           </mat-option>
                         </mat-select>
                       </mat-form-field>
