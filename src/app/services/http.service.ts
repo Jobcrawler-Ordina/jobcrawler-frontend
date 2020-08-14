@@ -29,8 +29,10 @@ export class HttpService {
         let params = new HttpParams();
         params = params.append('size', String(pageSize));
         params = params.append('page', String(pageNum));
-        params = params.append('skills', filterQuery.skills.join());
-        params = params.append('value', filterQuery.keyword);
+        if(filterQuery.skills.length > 0)
+            params = params.append('skills', filterQuery.skills.join());
+        if(filterQuery.keyword !== '')
+            params = params.append('value', filterQuery.keyword);
 
         return this.httpClient.get<PageResult>(environment.api + '/vacancies', {params: params});
     }
@@ -52,7 +54,7 @@ export class HttpService {
      * @returns skills for vacancy 
      */
     public getSkillsForVacancy(url: string): Observable<any> {
-        return this.httpClient.get(url);
+        return this.httpClient.get(environment.api + url);
     }
 
 
@@ -61,7 +63,7 @@ export class HttpService {
      * @returns all skills 
      */
     public findAllSkills(): Observable<any> {
-        return this.httpClient.get<any>(environment.api + '/skills/search/findByOrderByNameAsc');
+        return this.httpClient.get<any>(environment.api + '/skills');
     }
 
 
