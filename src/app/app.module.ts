@@ -16,6 +16,7 @@ import { LoaderService } from './services/loader.service';
 import { LoaderInterceptor } from './interceptors/loader.interceptor';
 import { SkillListComponent } from 'src/app/components/skill-list/skill-list.component';
 import { SkillFormComponent } from './components/skill-form/skill-form.component';
+import { LoginDialogComponent } from './components/login-dialog/login-dialog.component';
 
 
 @NgModule({
@@ -26,7 +27,8 @@ import { SkillFormComponent } from './components/skill-form/skill-form.component
         FilterComponent,
         VacancyDialogComponent,
         SkillListComponent,
-        SkillFormComponent
+        SkillFormComponent,
+        LoginDialogComponent
     ],
     imports: [
         BrowserModule,

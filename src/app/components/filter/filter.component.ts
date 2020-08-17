@@ -11,6 +11,8 @@ import { PageEvent } from '@angular/material/paginator';
 import { PageResult } from 'src/app/models/pageresult.model';
 import { Vacancy } from 'src/app/models/vacancy';
 import { Skill } from 'src/app/models/skill';
+import { MatDialog } from '@angular/material/dialog';
+import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
 
 @Component({
   selector: 'app-filter',
@@ -48,7 +50,8 @@ export class FilterComponent implements OnInit, OnDestroy {
    */
   constructor(private form: FormBuilder,
     private httpService: HttpService,
-    private loaderService: LoaderService) {}
+    private loaderService: LoaderService,
+    private dialog: MatDialog) {}
 
     
   /**
@@ -172,7 +175,15 @@ export class FilterComponent implements OnInit, OnDestroy {
     this.filteredSkillsMulti.next(
       this.skills.filter(skill => skill.name.toLowerCase().indexOf(search) === 0)
     )
-  }  
+  }
+  
+
+  /**
+   * Opens login dialog
+   */
+  public openLoginDialog(): void {
+    this.dialog.open(LoginDialogComponent);
+  }
 
 
   /**
