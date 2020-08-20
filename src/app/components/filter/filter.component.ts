@@ -13,6 +13,7 @@ import { Vacancy } from 'src/app/models/vacancy';
 import { Skill } from 'src/app/models/skill';
 import { MatDialog } from '@angular/material/dialog';
 import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-filter',
@@ -51,7 +52,8 @@ export class FilterComponent implements OnInit, OnDestroy {
   constructor(private form: FormBuilder,
     private httpService: HttpService,
     private loaderService: LoaderService,
-    private dialog: MatDialog) {}
+    private dialog: MatDialog,
+    private router: Router) {}
 
     
   /**
@@ -182,7 +184,11 @@ export class FilterComponent implements OnInit, OnDestroy {
    * Opens login dialog
    */
   public openLoginDialog(): void {
-    this.dialog.open(LoginDialogComponent);
+    const dialogRef = this.dialog.open(LoginDialogComponent);
+    this.router.events
+    .subscribe(() => {
+      dialogRef.close();
+    })
   }
 
 
