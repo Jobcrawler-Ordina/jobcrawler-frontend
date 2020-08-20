@@ -21,6 +21,7 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatSelectModule} from '@angular/material/select';
 import {MatPaginatorModule} from '@angular/material/paginator';
+import {MatTabsModule} from '@angular/material/tabs';
 
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 
@@ -46,6 +47,7 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
         MatTooltipModule,
         MatSelectModule,
         MatPaginatorModule,
+        MatTabsModule,
         NgxMatSelectSearchModule
     ],
     exports: [
@@ -69,6 +71,7 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
         MatTooltipModule,
         MatSelectModule,
         MatPaginatorModule,
+        MatTabsModule,
         NgxMatSelectSearchModule
     ],
     providers: [
