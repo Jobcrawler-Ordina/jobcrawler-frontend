@@ -17,6 +17,8 @@ import { LoaderInterceptor } from './interceptors/loader.interceptor';
 import { SkillListComponent } from 'src/app/components/skill-list/skill-list.component';
 import { SkillFormComponent } from './components/skill-form/skill-form.component';
 import { LoginDialogComponent } from './components/login-dialog/login-dialog.component';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { ErrorInterceptor } from './interceptors/error.interceptor';
 
 
 @NgModule({
@@ -41,7 +43,9 @@ import { LoginDialogComponent } from './components/login-dialog/login-dialog.com
     ],
     providers: [
         LoaderService,
-        { provide: HTTP_INTERCEPTORS, useClass: LoaderInterceptor, multi: true }
+        { provide: HTTP_INTERCEPTORS, useClass: LoaderInterceptor, multi: true },
+        { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+        { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
     ],
     bootstrap: [AppComponent],
     entryComponents: [VacancyDialogComponent]
