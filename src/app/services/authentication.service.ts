@@ -33,6 +33,15 @@ export class AuthenticationService {
         }));
     }
 
+    signup(username: string, password: string) {
+        return this.http.post(environment.api + '/auth/signup', {
+            username: username,
+            password: password
+        }, {
+            responseType: 'text'
+        });
+    }
+
     logout() {
         localStorage.removeItem('currentUser');
         this.currentUserSubject.next(null);
