@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { map } from 'rxjs/operators';
 import { User } from '../models/user.model';
+import * as moment from 'moment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
@@ -25,6 +26,7 @@ export class AuthenticationService {
             password: password
         })
         .pipe(map(user => {
+            user.expiresAt = moment().add(user.expiresIn,'second');
             localStorage.setItem('currentUser', JSON.stringify(user));
             this.currentUserSubject.next(user);
             return user;
@@ -35,8 +37,4 @@ export class AuthenticationService {
         localStorage.removeItem('currentUser');
         this.currentUserSubject.next(null);
     }
-
-    // getRole() {
-    //     return this.currentUserSubject.
-    // }
 }
