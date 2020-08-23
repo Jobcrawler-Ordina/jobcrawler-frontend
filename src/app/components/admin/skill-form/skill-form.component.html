@@ -5,45 +5,21 @@
 -->
 
       <div class="card-body">
-        <button mat-raised-button type="button" (click)="navigateSkillList()"> back to Skill List&nbsp;
-        </button>
-        <p></p>
-
-        <mat-divider class="divider"></mat-divider>
-        <p></p>
-        <p></p>
-        <form (ngSubmit)="onSubmit()" #userForm="ngForm">
-          <div class="form-group" class="center">
-
-            <p></p>
-            <input type="text"
-                   required minlength="3"
-                   [(ngModel)]="skill.name"
-              class="form-control"
-              id="name"
-              name="name"
-              placeholder="Enter skill name"
-               #name="ngModel">
-
-          <!--<div [hidden]="!name.pristine" class="alert alert-danger">Name is required</div> -->
-              <div *ngIf="name.invalid && (name.dirty || name.touched)"
-                   class="alert alert-danger">
-
-                  <div *ngIf="name.errors.required">
-                      Name is required.
+        <form [formGroup]="skillForm" (ngSubmit)="onSubmit()">
+          <div class="center">
+            <mat-form-field>
+              <input type="text" matInput placeholder="Skill" formControlName="skill">
+            </mat-form-field>
+            <div class="error-messages">
+              <ng-container *ngFor="let error of error_messages.skill">
+                  <div class="error-message" *ngIf="skillForm.get('skill').hasError(error.type) && (skillForm.get('skill').dirty || skillForm.get('skill').touched)">
+                      {{ error.message }}
                   </div>
-
-                  <div *ngIf="name.errors.minlength">
-                      Name must be at least 3 characters long.
-                  </div>
-              </div>
+              </ng-container>
+            </div>
           </div>
-          <p></p>
-          <p></p>
           <div class="centernoborder">
-            <button mat-raised-button type="button" type="Add skill"
-            class="btn btn-info">Submit</button>
+            <button mat-raised-button type="button" type="Add skill" [disabled]="!skillForm.valid">Submit</button>
           </div>
         </form>
-        <div *ngIf="!skillAcceptedBackend"> Failed to add skill: {{errorMessage}} </div>
       </div>

@@ -1,8 +1,17 @@
 .center {
-    text-align: center;
-    border: 1px solid gray;
-  }
+  text-align: center;
+  border: 1px solid gray;
+}
 
-  .centernoborder {
-    text-align: center;
-  }
+.centernoborder {
+  text-align: center;
+}
+
+.error-messages {
+  margin-top: -10px;
+  margin-bottom: 20px;
+}
+
+.error-message {
+  color: red;
+}  

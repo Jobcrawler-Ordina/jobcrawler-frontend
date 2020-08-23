@@ -1,9 +1,10 @@
-import {Component} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import {Component, OnInit} from '@angular/core';
+import {Router} from '@angular/router';
 import {Skill} from 'src/app/models/skill';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ErrorCode} from '../../../services/errorCode';
 import { HttpService } from 'src/app/services/http.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 /*
 *   Adding a skill by name
@@ -19,39 +20,55 @@ import { HttpService } from 'src/app/services/http.service';
     styleUrls: ['./skill-form.component.scss'],
     providers: [HttpService]
 })
-export class SkillFormComponent {
-
-    constructor(
-        private router: Router,
-        private httpService: HttpService) {
-        this.skill = new Skill();
-    }
+export class SkillFormComponent implements OnInit {
 
     skill: Skill;
     skillAcceptedBackend = true;
 
     errorMessage: string;
+    skillForm: FormGroup;
+
+    error_messages = {
+        'skill' : [
+            { type: 'required', message: 'Skill is required' },
+            { type: 'minlength', message: 'Minimum length is 3 chars' }
+        ]
+    };
+
+    constructor(
+        private router: Router,
+        private httpService: HttpService,
+        private fb: FormBuilder) {
+        this.skill = new Skill();
+    }
+
+    ngOnInit(): void {
+        this.skillForm = this.fb.group({
+            skill: ['', [Validators.required, Validators.minLength(3)]]
+        });
+    }
 
     public navigateSkillList(): void {
         // this.router.navigate(['getskills']);
     }
 
     public onSubmit(): void {
-        this.skillAcceptedBackend = true;
-        this.httpService.saveSkill(this.skill).subscribe(() => {
-                    console.log('successfully saved new skill:' + this.skill.name);
-                    this.gotoSkillListAfterAddition();
-            },
-            err => {
-                console.log("Some error occured");
-                console.log(err);
-                    if (err instanceof HttpErrorResponse) {
-                        console.log('Error adding skill in backend:' + this.skill.name );
-                        this.errorMessage = 'Error adding skill in backend:' + err.message;
-                        this.skillAcceptedBackend = false;
-                    }
-            }
-        );
+        console.log(this.skillForm.value);
+        // this.skillAcceptedBackend = true;
+        // this.httpService.saveSkill(this.skill).subscribe(() => {
+        //             console.log('successfully saved new skill:' + this.skill.name);
+        //             this.gotoSkillListAfterAddition();
+        //     },
+        //     err => {
+        //         console.log("Some error occured");
+        //         console.log(err);
+        //             if (err instanceof HttpErrorResponse) {
+        //                 console.log('Error adding skill in backend:' + this.skill.name );
+        //                 this.errorMessage = 'Error adding skill in backend:' + err.message;
+        //                 this.skillAcceptedBackend = false;
+        //             }
+        //     }
+        // );
     }
 
 

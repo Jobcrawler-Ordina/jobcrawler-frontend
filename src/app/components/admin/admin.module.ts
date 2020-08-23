@@ -2,25 +2,26 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { AdminRoutingModule } from './admin-routing.module';
-import { AdminPanelComponent } from './admin-panel/admin-panel.component';
+import { AdminComponent } from './admin.component';
 import { SkillListComponent } from './skill-list/skill-list.component';
 import { MaterialModule } from 'src/app/material/material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { BrowserModule } from '@angular/platform-browser';
+import { SkillFormComponent } from './skill-form/skill-form.component';
 
 
 @NgModule({
   declarations: [
-    AdminPanelComponent,
-    SkillListComponent
+    AdminComponent,
+    SkillListComponent,
+    SkillFormComponent
   ],
   imports: [
-    BrowserModule,
     CommonModule,
-    FormsModule,
     ReactiveFormsModule,
+    FormsModule,
     AdminRoutingModule,
     MaterialModule
-  ]
+  ],
+  bootstrap: [AdminComponent]
 })
 export class AdminModule { }
