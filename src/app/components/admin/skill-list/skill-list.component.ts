@@ -19,13 +19,13 @@ import { Component, OnInit } from '@angular/core';
 import { Skill } from 'src/app/models/skill';
 import { Router } from '@angular/router';
 import {HttpErrorResponse} from '@angular/common/http';
-import {ErrorCode} from '../../services/errorCode';
+import {ErrorCode} from '../../../services/errorCode';
 import { HttpService } from 'src/app/services/http.service';
 
 @Component({
   selector: 'app-skill-list',
   templateUrl: './skill-list.component.html',
-  styleUrls: ['./skill-list.component.css'],
+  styleUrls: ['./skill-list.component.scss'],
   providers: [HttpService]
 })
 export class SkillListComponent implements OnInit {
@@ -106,7 +106,7 @@ export class SkillListComponent implements OnInit {
 
   // navigate to the form to add a skill
   public addSkill(): void {
-    this.router.navigate(['addskill']);
+    this.router.navigate(['admin/addskill']);
   }
 
 }

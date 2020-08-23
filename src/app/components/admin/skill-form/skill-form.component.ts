@@ -2,7 +2,7 @@ import {Component} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Skill} from 'src/app/models/skill';
 import {HttpErrorResponse} from '@angular/common/http';
-import {ErrorCode} from '../../services/errorCode';
+import {ErrorCode} from '../../../services/errorCode';
 import { HttpService } from 'src/app/services/http.service';
 
 /*
@@ -16,7 +16,7 @@ import { HttpService } from 'src/app/services/http.service';
 @Component({
     selector: 'app-skill-form',
     templateUrl: './skill-form.component.html',
-    styleUrls: ['./skill-form.component.css'],
+    styleUrls: ['./skill-form.component.scss'],
     providers: [HttpService]
 })
 export class SkillFormComponent {
@@ -33,7 +33,7 @@ export class SkillFormComponent {
     errorMessage: string;
 
     public navigateSkillList(): void {
-        this.router.navigate(['getskills']);
+        // this.router.navigate(['getskills']);
     }
 
     public onSubmit(): void {
@@ -56,6 +56,6 @@ export class SkillFormComponent {
 
 
     private gotoSkillListAfterAddition(): void {
-        this.router.navigate(['getskills']);
+        // this.router.navigate(['getskills']);
     }
 }
