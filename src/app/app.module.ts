@@ -14,8 +14,6 @@ import { FilterComponent } from './components/filter/filter.component';
 import { VacancyDialogComponent } from './components/vacancy-dialog/vacancy-dialog.component';
 import { LoaderService } from './services/loader.service';
 import { LoaderInterceptor } from './interceptors/loader.interceptor';
-import { SkillListComponent } from 'src/app/components/skill-list/skill-list.component';
-import { SkillFormComponent } from './components/skill-form/skill-form.component';
 import { LoginDialogComponent } from './components/login-dialog/login-dialog.component';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { ErrorInterceptor } from './interceptors/error.interceptor';
@@ -28,8 +26,6 @@ import { ErrorInterceptor } from './interceptors/error.interceptor';
         VacancyTableComponent,
         FilterComponent,
         VacancyDialogComponent,
-        SkillListComponent,
-        SkillFormComponent,
         LoginDialogComponent
     ],
     imports: [
