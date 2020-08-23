@@ -19,7 +19,7 @@
             </div>
           </div>
           <div class="centernoborder">
-            <button mat-raised-button type="button" [disabled]="!skillForm.valid">Submit</button>
+            <button mat-raised-button type="button" [disabled]="!skillForm.valid" (click)="onSubmit()">Submit</button>
           </div>
         </form>
       </div>
