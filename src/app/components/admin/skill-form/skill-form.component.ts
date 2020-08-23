@@ -48,31 +48,28 @@ export class SkillFormComponent implements OnInit {
         });
     }
 
-    public navigateSkillList(): void {
-        // this.router.navigate(['getskills']);
-    }
-
     public onSubmit(): void {
-        console.log(this.skillForm.value);
-        // this.skillAcceptedBackend = true;
-        // this.httpService.saveSkill(this.skill).subscribe(() => {
-        //             console.log('successfully saved new skill:' + this.skill.name);
-        //             this.gotoSkillListAfterAddition();
-        //     },
-        //     err => {
-        //         console.log("Some error occured");
-        //         console.log(err);
-        //             if (err instanceof HttpErrorResponse) {
-        //                 console.log('Error adding skill in backend:' + this.skill.name );
-        //                 this.errorMessage = 'Error adding skill in backend:' + err.message;
-        //                 this.skillAcceptedBackend = false;
-        //             }
-        //     }
-        // );
+        console.log(this.skillForm.value.skill);
+        this.skill.name = this.skillForm.value.skill;
+        this.skillAcceptedBackend = true;
+        this.httpService.saveSkill(this.skill).subscribe(() => {
+                    console.log('successfully saved new skill:' + this.skill.name);
+                    this.gotoSkillListAfterAddition();
+            },
+            err => {
+                console.log("Some error occured");
+                console.log(err);
+                    if (err instanceof HttpErrorResponse) {
+                        console.log('Error adding skill in backend:' + this.skill.name );
+                        this.errorMessage = 'Error adding skill in backend:' + err.message;
+                        this.skillAcceptedBackend = false;
+                    }
+            }
+        );
     }
 
 
     private gotoSkillListAfterAddition(): void {
-        // this.router.navigate(['getskills']);
+        this.router.navigate(['admin/getskills']);
     }
 }
