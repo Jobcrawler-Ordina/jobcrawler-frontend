@@ -52,7 +52,7 @@ export class LoginDialogComponent implements OnInit {
               private router: Router,
               private authenticationService: AuthenticationService) {
                 if (this.authenticationService.currentUserValue) {
-                  this.router.navigate(['/getskills']);
+                  this.router.navigate(['/admin']);
                 }
               }
   
@@ -78,7 +78,7 @@ export class LoginDialogComponent implements OnInit {
       .pipe(first())
       .subscribe(
         () => {
-          this.router.navigate(['/getskills']);
+          this.router.navigate(['/admin']);
         },
         err => {
           this.errMSGlogin = err;
