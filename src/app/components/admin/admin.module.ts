@@ -7,13 +7,15 @@ import { SkillListComponent } from './skill-list/skill-list.component';
 import { MaterialModule } from 'src/app/material/material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SkillFormComponent } from './skill-form/skill-form.component';
+import { UsersComponent } from './users/users.component';
 
 
 @NgModule({
   declarations: [
     AdminComponent,
     SkillListComponent,
-    SkillFormComponent
+    SkillFormComponent,
+    UsersComponent
   ],
   imports: [
     CommonModule,
