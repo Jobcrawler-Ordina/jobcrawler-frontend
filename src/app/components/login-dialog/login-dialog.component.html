@@ -18,9 +18,9 @@
             <p>
               <mat-form-field>
                 <input type="{{ hide ? 'password' : 'text' }}" matInput placeholder="Password" formControlName="password">
-                <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+                <div class="icon" mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
                     <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-                </button>
+                </div>
               </mat-form-field>
             </p>
             <div class="error-messages">
@@ -56,9 +56,9 @@
             <p>
               <mat-form-field>
                 <input type="{{ hideP1 ? 'password' : 'text' }}" matInput placeholder="Password" formControlName="passwordSignup">
-                <button mat-icon-button matSuffix (click)="hideP1 = !hideP1" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hideP1">
+                <div class="icon" mat-icon-button matSuffix (click)="hideP1 = !hideP1" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hideP1">
                     <mat-icon>{{hideP1 ? 'visibility_off' : 'visibility'}}</mat-icon>
-                </button>
+                </div>
               </mat-form-field>
             </p>
             <div class="error-messages">
@@ -72,9 +72,9 @@
             <p>
                 <mat-form-field>
                   <input type="{{ hideP2 ? 'password' : 'text' }}" matInput placeholder="Password" formControlName="passwordSignupConfirm">
-                  <button mat-icon-button matSuffix (click)="hideP2 = !hideP2" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hideP2">
+                  <div class="icon" mat-icon-button matSuffix (click)="hideP2 = !hideP2" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hideP2">
                       <mat-icon>{{hideP2 ? 'visibility_off' : 'visibility'}}</mat-icon>
-                  </button>
+                  </div>
                 </mat-form-field>
             </p>
             <div class="error-messages">
