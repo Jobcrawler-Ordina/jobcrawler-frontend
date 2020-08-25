@@ -22,6 +22,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatSelectModule} from '@angular/material/select';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatTabsModule} from '@angular/material/tabs';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 
@@ -48,6 +49,7 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
         MatSelectModule,
         MatPaginatorModule,
         MatTabsModule,
+        MatSlideToggleModule,
         NgxMatSelectSearchModule
     ],
     exports: [
@@ -72,6 +74,7 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
         MatSelectModule,
         MatPaginatorModule,
         MatTabsModule,
+        MatSlideToggleModule,
         NgxMatSelectSearchModule
     ],
     providers: [
