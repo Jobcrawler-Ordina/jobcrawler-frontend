@@ -36,7 +36,7 @@
             </div>
           </form>
     </mat-tab>
-    <mat-tab label="Sign up">
+    <mat-tab *ngIf="allowRegistration" label="Sign up">
         <div class="alert alert-danger" *ngIf="errMSGsignup">{{ errMSGsignup }}</div>
         <div class="alert alert-success" *ngIf="successMSGsignup" [innerHTML]="successMSGsignup"></div>
         <form [formGroup]="signupForm" (ngSubmit)="signup()">

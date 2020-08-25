@@ -21,6 +21,7 @@ export class LoginDialogComponent implements OnInit {
   errMSGsignup: string;
   successMSGsignup: string;
   errMSGlogin: string;
+  allowRegistration: boolean = false;
 
   error_messages = {
     'usernameSignup' : [
@@ -57,18 +58,8 @@ export class LoginDialogComponent implements OnInit {
               }
   
   ngOnInit(): void {
-    this.loginForm = this.fb.group({
-      username: ['',[Validators.required, Validators.minLength(this.minLengthUser)]],
-      password: ['',[Validators.required, Validators.minLength(this.minLengthPass)]]
-    });
-
-    this.signupForm = this.fb.group({
-      usernameSignup: ['',[Validators.required, Validators.minLength(this.minLengthUser)]],
-      passwordSignup: ['',[Validators.required, Validators.minLength(this.minLengthPass)]],
-      passwordSignupConfirm: ['',[Validators.required, Validators.minLength(this.minLengthPass)]]
-    }, {
-      validators: this.password.bind(this)
-    });
+    this.loadAllowSignup();
+    this.constructForms();
   }
 
   login(): void {
@@ -83,14 +74,13 @@ export class LoginDialogComponent implements OnInit {
         err => {
           this.errMSGlogin = err;
         }
-      )
+      );
   }
 
   signup(): void {
     this.errMSGsignup = null;
     this.successMSGsignup = null;
     const val = this.signupForm.value;
-    console.log(val);
     this.authenticationService.signup(val.usernameSignup, val.passwordSignup).subscribe((data: any) => {
       this.successMSGsignup = 'Registration successful.<br> An other admin need to give you permissions<br>before loggin in does something.';
     },
@@ -100,7 +90,28 @@ export class LoginDialogComponent implements OnInit {
     });
   }
 
-  private password(formgroup: FormGroup) {
+  private loadAllowSignup(): void {
+    this.authenticationService.allowRegistration().subscribe((data: any) => {
+      this.allowRegistration = data.allow;
+    });
+  }
+
+  private constructForms(): void {
+    this.loginForm = this.fb.group({
+      username: ['',[Validators.required, Validators.minLength(this.minLengthUser)]],
+      password: ['',[Validators.required, Validators.minLength(this.minLengthPass)]]
+    });
+
+    this.signupForm = this.fb.group({
+      usernameSignup: ['',[Validators.required, Validators.minLength(this.minLengthUser)]],
+      passwordSignup: ['',[Validators.required, Validators.minLength(this.minLengthPass)]],
+      passwordSignupConfirm: ['',[Validators.required, Validators.minLength(this.minLengthPass)]]
+    }, {
+      validators: this.password.bind(this)
+    });
+  }
+
+  private password(formgroup: FormGroup): Object {
     const { value: password } = formgroup.get('passwordSignup');
     const { value: passwordConfirm } = formgroup.get('passwordSignupConfirm');
     if (password.length >= this.minLengthPass && passwordConfirm.length >= this.minLengthPass)

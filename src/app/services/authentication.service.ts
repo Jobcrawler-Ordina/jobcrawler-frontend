@@ -22,12 +22,12 @@ export class AuthenticationService {
         return this.currentUserSubject.value;
     }
 
-    login(username: string, password: string) {
+    login(username: string, password: string): Observable<any> {
         return this.http.post<any>(environment.api + '/auth/signin', {
             username: username,
             password: password
         })
-        .pipe(map(user => {
+        .pipe(map((user: User) => {
             user.expiresAt = moment().add(user.expiresIn,'second');
             localStorage.setItem('currentUser', JSON.stringify(user));
             this.currentUserSubject.next(user);
@@ -35,7 +35,7 @@ export class AuthenticationService {
         }));
     }
 
-    signup(username: string, password: string) {
+    signup(username: string, password: string): Observable<any> {
         return this.http.post(environment.api + '/auth/signup', {
             username: username,
             password: password
@@ -44,7 +44,21 @@ export class AuthenticationService {
         });
     }
 
-    logout() {
+    allowRegistration(): Observable<any> {
+        return this.http.get(environment.api + '/auth/allow');
+    }
+
+    refresh(): Observable<any> {
+        return this.http.get(environment.api + '/auth/refresh')
+            .pipe(map((user: User) => {
+            user.expiresAt = moment().add(user.expiresIn,'second');
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            this.currentUserSubject.next(user);
+            return user;
+        }));
+    }
+
+    logout(): void {
         localStorage.removeItem('currentUser');
         this.currentUserSubject.next(null);
         this.router.navigate(['/']);
