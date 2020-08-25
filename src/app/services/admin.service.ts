@@ -19,17 +19,11 @@ export class AdminService {
     }
 
     public updateUser(user: any): Observable<any> {
-        return this.httpClient.put(environment.api + '/user', user,
-        {
-            responseType: 'text'
-        });
+        return this.httpClient.put(environment.api + '/user', user);
     }
 
     public deleteUser(id: number): Observable<any> {
-        return this.httpClient.delete(environment.api + '/user/' + id,
-        {
-            responseType: 'text'
-        });
+        return this.httpClient.delete(environment.api + '/user/' + id);
     }
     
     public allowRegistration(): Observable<any> {

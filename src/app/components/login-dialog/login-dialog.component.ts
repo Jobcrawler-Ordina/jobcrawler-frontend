@@ -82,7 +82,9 @@ export class LoginDialogComponent implements OnInit {
     this.successMSGsignup = null;
     const val = this.signupForm.value;
     this.authenticationService.signup(val.usernameSignup, val.passwordSignup).subscribe((data: any) => {
-      this.successMSGsignup = 'Registration successful.<br> An other admin need to give you permissions<br>before loggin in does something.';
+      if (data.success) {
+        this.successMSGsignup = 'Registration successful.<br> An other admin need to give you permissions<br>before loggin in does something.';
+      }
     },
     err => {
       console.log(err);

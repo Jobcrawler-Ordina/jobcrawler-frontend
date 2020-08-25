@@ -39,8 +39,6 @@ export class AuthenticationService {
         return this.http.post(environment.api + '/auth/signup', {
             username: username,
             password: password
-        }, {
-            responseType: 'text'
         });
     }
 
