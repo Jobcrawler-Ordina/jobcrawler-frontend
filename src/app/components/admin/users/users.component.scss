@@ -27,3 +27,8 @@ table {
     background-color: #6c757d;
     border-color: #6c757d;
 }
+
+button[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

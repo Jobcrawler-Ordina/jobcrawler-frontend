@@ -18,5 +18,27 @@ export class AdminService {
         return this.httpClient.get<any>(environment.api + '/user');
     }
 
+    public updateUser(user: any): Observable<any> {
+        return this.httpClient.put(environment.api + '/user', user,
+        {
+            responseType: 'text'
+        });
+    }
+
+    public deleteUser(id: number): Observable<any> {
+        return this.httpClient.delete(environment.api + '/user/' + id,
+        {
+            responseType: 'text'
+        });
+    }
+    
+    public allowRegistration(): Observable<any> {
+        return this.httpClient.get(environment.api + '/auth/allow');
+    }
+
+    public updateRegistration(val: boolean): Observable<any> {
+        return this.httpClient.put(environment.api + '/auth/allow?newVal=' + val, {});
+    }
+
     
 }
