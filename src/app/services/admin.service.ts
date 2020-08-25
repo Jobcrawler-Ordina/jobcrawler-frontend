@@ -40,5 +40,9 @@ export class AdminService {
         return this.httpClient.put(environment.api + '/auth/allow?newVal=' + val, {});
     }
 
+    public scrape(): Observable<any> {
+        return this.httpClient.put(environment.api + '/scraper', {});
+    }
+
     
 }
