@@ -8,6 +8,7 @@ import { MaterialModule } from 'src/app/material/material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SkillFormComponent } from './skill-form/skill-form.component';
 import { UsersComponent } from './users/users.component';
+import { DeleteConfirmationDialogComponent } from './delete-confirmation-dialog/delete-confirmation-dialog.component';
 
 
 @NgModule({
@@ -15,7 +16,8 @@ import { UsersComponent } from './users/users.component';
     AdminComponent,
     SkillListComponent,
     SkillFormComponent,
-    UsersComponent
+    UsersComponent,
+    DeleteConfirmationDialogComponent
   ],
   imports: [
     CommonModule,
