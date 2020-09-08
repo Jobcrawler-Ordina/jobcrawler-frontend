@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { Router } from '@angular/router';
@@ -9,7 +9,7 @@ import { first } from 'rxjs/operators';
   templateUrl : './login-dialog.component.html',
   styleUrls : ['./login-dialog.component.scss'],
 })
-export class LoginDialogComponent implements OnInit {
+export class LoginDialogComponent implements OnInit, AfterViewInit {
 
   hide: boolean = true;
   hideP1: boolean = true;
@@ -58,8 +58,11 @@ export class LoginDialogComponent implements OnInit {
               }
   
   ngOnInit(): void {
-    this.loadAllowSignup();
     this.constructForms();
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => this.loadAllowSignup());
   }
 
   login(): void {
