@@ -4,8 +4,7 @@ import { FilterQuery } from 'src/app/models/filterQuery.model';
 import { IVacancies } from 'src/app/models/ivacancies';
 import { HttpService } from 'src/app/services/http.service';
 import { Observable, Subject, ReplaySubject } from 'rxjs';
-import { map, startWith, takeUntil, take } from 'rxjs/operators';
-import { LoaderService } from 'src/app/services/loader.service';
+import { map, startWith, takeUntil } from 'rxjs/operators';
 import { MatSelect } from '@angular/material/select';
 import { PageEvent } from '@angular/material/paginator';
 import { PageResult } from 'src/app/models/pageresult.model';
@@ -30,7 +29,6 @@ export class FilterComponent implements OnInit, OnDestroy {
   cities: string[] = ['Amsterdam', 'Den Haag', 'Rotterdam', 'Utrecht'];
   showForm: boolean = false;
   filteredCities: Observable<String[]>;
-  isLoading: Subject<boolean> = this.loaderService.isLoading;
 
   totalVacancies: number;
   pageSize: number = 15;
@@ -47,11 +45,9 @@ export class FilterComponent implements OnInit, OnDestroy {
    * Creates an instance of filter component.
    * @param form Constructs form
    * @param filterService Used for http requests (post/get)
-   * @param loaderService HttpInterceptor
    */
   constructor(private form: FormBuilder,
     private httpService: HttpService,
-    private loaderService: LoaderService,
     private dialog: MatDialog,
     private router: Router) {}
 

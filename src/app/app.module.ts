@@ -17,6 +17,7 @@ import { LoaderInterceptor } from './interceptors/loader.interceptor';
 import { LoginDialogComponent } from './components/login-dialog/login-dialog.component';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { ErrorInterceptor } from './interceptors/error.interceptor';
+import { LoaderComponent } from './components/loader/loader.component';
 
 
 @NgModule({
@@ -26,7 +27,8 @@ import { ErrorInterceptor } from './interceptors/error.interceptor';
         VacancyTableComponent,
         FilterComponent,
         VacancyDialogComponent,
-        LoginDialogComponent
+        LoginDialogComponent,
+        LoaderComponent
     ],
     imports: [
         BrowserModule,
