@@ -5,7 +5,6 @@ import { environment } from 'src/environments/environment';
 import { Observable } from 'rxjs';
 import { PageResult } from '../models/pageresult.model';
 import { Skill } from '../models/skill';
-import { ErrorCode } from './errorCode';
 
 @Injectable()
 export class HttpService {
@@ -72,8 +71,8 @@ export class HttpService {
      * @param skill Skill to delete
      * @returns result 
      */
-    public deleteSkill(url: string): Observable<ErrorCode> {
-        return this.httpClient.delete<ErrorCode>(url);
+    public deleteSkill(url: string): Observable<any> {
+        return this.httpClient.delete<any>(url);
     }
 
 

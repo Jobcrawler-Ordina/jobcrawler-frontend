@@ -2,7 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {Skill} from 'src/app/models/skill';
 import {HttpErrorResponse} from '@angular/common/http';
-import {ErrorCode} from '../../../services/errorCode';
 import { HttpService } from 'src/app/services/http.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
@@ -53,17 +52,15 @@ export class SkillFormComponent implements OnInit {
         this.skill.name = this.skillForm.value.skill;
         this.skillAcceptedBackend = true;
         this.httpService.saveSkill(this.skill).subscribe(() => {
-                    console.log('successfully saved new skill:' + this.skill.name);
-                    this.gotoSkillListAfterAddition();
+                console.log('successfully saved new skill:' + this.skill.name);
+                this.gotoSkillListAfterAddition();
             },
             err => {
-                console.log("Some error occured");
-                console.log(err);
-                    if (err instanceof HttpErrorResponse) {
-                        console.log('Error adding skill in backend:' + this.skill.name );
-                        this.errorMessage = 'Error adding skill in backend:' + err.message;
-                        this.skillAcceptedBackend = false;
-                    }
+                if (err instanceof HttpErrorResponse) {
+                    console.log('Error adding skill in backend:' + this.skill.name );
+                    this.errorMessage = 'Error adding skill in backend:' + err.message;
+                    this.skillAcceptedBackend = false;
+                }
             }
         );
     }
