@@ -14,7 +14,7 @@ export class AdminComponent {
               private adminService: AdminService) {}
 
   scrape(): void {
-    this.adminService.scrape().subscribe(() => {});
+    this.adminService.scrape().subscribe();
   }
 
   logout(): void {
