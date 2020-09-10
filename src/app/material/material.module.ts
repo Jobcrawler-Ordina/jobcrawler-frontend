@@ -23,6 +23,7 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatPaginatorModule} from '@angular/material/paginator';
 
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
+import { MatSortModule } from '@angular/material/sort';
 
 @NgModule({
     imports: [
@@ -46,6 +47,7 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
         MatTooltipModule,
         MatSelectModule,
         MatPaginatorModule,
+        MatSortModule,
         NgxMatSelectSearchModule
     ],
     exports: [
@@ -69,6 +71,7 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
         MatTooltipModule,
         MatSelectModule,
         MatPaginatorModule,
+        MatSortModule,
         NgxMatSelectSearchModule
     ],
     providers: [

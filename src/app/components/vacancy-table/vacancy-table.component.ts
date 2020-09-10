@@ -1,8 +1,10 @@
-import { Component, Output, Input, OnChanges, ViewChild, ElementRef } from '@angular/core';
+import { Component, Output, Input, OnChanges, ViewChild } from '@angular/core';
 import { EventEmitter } from '@angular/core';
 import { IVacancies } from 'src/app/models/ivacancies';
 import { MatDialog } from '@angular/material/dialog';
 import { VacancyDialogComponent } from '../vacancy-dialog/vacancy-dialog.component';
+import { Sort, MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-vacancy-table',
@@ -13,10 +15,14 @@ export class VacancyTableComponent implements OnChanges {
 
   @Input() isShow: boolean;
   @Input() vacancies: IVacancies[];
+  @Input() sortBy: String;
+  @Input() sortOrder: String;
   @Output() filterButtonClicked = new EventEmitter();
+  @Output() changeSorting: EventEmitter<Sort> = new EventEmitter<Sort>();
 
   displayedColumns: string[] = ['title', 'broker', 'location', 'postingDate', 'openVacancyURL'];
   showClass: string;
+  dataSource: MatTableDataSource<IVacancies>;
 
 
   /**
@@ -47,6 +53,10 @@ export class VacancyTableComponent implements OnChanges {
    */
   public openDialog(vacancyID: string): void {
     this.dialog.open(VacancyDialogComponent, { data: vacancyID });
+  }
+
+  public sortData(sort: Sort) {
+    this.changeSorting.emit(sort);
   }
 
 }

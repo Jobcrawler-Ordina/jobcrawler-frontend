@@ -14,10 +14,7 @@
                         </div>
                         <div class="clearfix"></div>
                     </div>
-                    <mat-divider class="divider"></mat-divider>
-                    <!--<button mat-raised-button type="button" (click)="navigateBeheerSkills()">Beheer Skills&nbsp;
-                        <mat-icon>autorenew</mat-icon>
-                    </button> -->                    
+                    <mat-divider class="divider"></mat-divider>                  
                     <button mat-raised-button type="button" (click)="resetForm()" [style.width.%]="45">Reset&nbsp;
                         <mat-icon>autorenew</mat-icon>
                     </button>
@@ -84,7 +81,10 @@
             <div id="childComponent" class="{{isShow ? 'col-sm-12' : 'hideDiv'}} col-lg-{{isShow ? 12 : 9}}">
                 <app-vacancy-table 
                 (filterButtonClicked)="toggleDisplay()"
+                (changeSorting)="changeSorting($event)"
                 [isShow]="isShow"
+                [sortBy]="sortBy"
+                [sortOrder]="sortOrder"
                 [vacancies]="vacancies">
                </app-vacancy-table>      
                <mat-paginator [length] = totalVacancies
