@@ -183,6 +183,11 @@ export class FilterComponent implements OnInit, OnDestroy {
     )
   }  
 
+
+  /**
+   * Changes sorting with current search criteria
+   * @param sort column/order
+   */
   public changeSorting(sort: Sort) {
     this.sort = sort;
     this.searchVacancies(this.pageEvent);

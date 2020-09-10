@@ -24,6 +24,7 @@ export class HttpService {
      * @param filterQuery Data from form
      * @param pageNum Current pagenumber to show
      * @param pageSize Amount of vacancies requested to show on page
+     * @param [sort] optional, column/order
      * @returns requested vacancies
      */
     public getByQuery(filterQuery: FilterQuery, pageNum: number, pageSize: number, sort?: Sort): Observable<PageResult> {
