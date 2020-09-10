@@ -91,9 +91,12 @@ export class FilterComponent implements OnInit, OnDestroy {
    * Converts form to json format. Currently logged to console and calls the getAllVacancies() function.
    */
   public searchVacancies(pageEvent?: PageEvent): void {
+    if (pageEvent !== undefined)
+      this.pageEvent = pageEvent;
+
     let filterQuery: FilterQuery;
 
-    if(this.searchForm !== undefined) {
+    if (this.searchForm !== undefined) {
       filterQuery = this.searchForm.value as FilterQuery;
 
       if (this.skillMultiCtrl.value !== null) {
@@ -105,9 +108,9 @@ export class FilterComponent implements OnInit, OnDestroy {
         filterQuery.skills = [];
       }
 
-      if(!filterQuery.fromDate) filterQuery.fromDate = '';
+      if (!filterQuery.fromDate) filterQuery.fromDate = '';
 
-      if(!filterQuery.toDate) filterQuery.toDate = '';
+      if (!filterQuery.toDate) filterQuery.toDate = '';
     } else {
       this.isShow = true;
       filterQuery = new FilterQuery();
