@@ -24,9 +24,9 @@ export class FilterComponent implements OnInit, OnDestroy {
   searchForm: FormGroup;
   skills: Skill[];
   vacancies: IVacancies[] = [];
-  cities: string[] = ['Amsterdam', 'Den Haag', 'Rotterdam', 'Utrecht'];
+//  cities: string[] = ['Amsterdam', 'Den Haag', 'Rotterdam', 'Utrecht'];
   showForm: boolean = false;
-  filteredCities: Observable<String[]>;
+  filteredLocations: Observable<String[]>;
   isLoading: Subject<boolean> = this.loaderService.isLoading;
 
   totalVacancies: number;
@@ -50,7 +50,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     private httpService: HttpService,
     private loaderService: LoaderService) {}
 
-    
+
   /**
    * Function gets executed upon initialization.
    * Constructs searchform.
@@ -154,13 +154,13 @@ export class FilterComponent implements OnInit, OnDestroy {
 
   /**
    * Easily search and select skills
-   * @returns Does not return anything, prevent method to continue 
+   * @returns Does not return anything, prevent method to continue
    */
   public filterSkillsMulti(): any {
     if (!this.skills) {
       return;
     }
-    
+
     let search = this.skillMultiFilterCtrl.value;
     if (!search) {
       this.filteredSkillsMulti.next(this.skills.slice());
@@ -172,7 +172,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     this.filteredSkillsMulti.next(
       this.skills.filter(skill => skill.name.toLowerCase().indexOf(search) === 0)
     )
-  }  
+  }
 
 
   /**

@@ -23,7 +23,7 @@
             <label><b>About</b></label> {{vacancy.about}}
         </div>
         <div>
-            <label><b>Location</b></label> {{vacancy.location}}
+            <label><b>Location</b></label> {{vacancy.location==null?"":vacancy.location.locationName + ", " + ((vacancy.location.distance) | number:'1.0-0') + "km away"}}
         </div>
         <div>
             <label><b>Posting Date</b></label> {{vacancy.postingDate}}

@@ -5,7 +5,7 @@ export class Vacancy {
     broker: string;
     vacancyNumber: string;
     hours: number;
-    location: string;
+    location: any;
     salaray: string;
     postingDate: string;
     about: string;

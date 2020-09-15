@@ -17,7 +17,7 @@
                     <mat-divider class="divider"></mat-divider>
                     <!--<button mat-raised-button type="button" (click)="navigateBeheerSkills()">Beheer Skills&nbsp;
                         <mat-icon>autorenew</mat-icon>
-                    </button> -->                    
+                    </button> -->
                     <button mat-raised-button type="button" (click)="resetForm()" [style.width.%]="45">Reset&nbsp;
                         <mat-icon>autorenew</mat-icon>
                     </button>
@@ -34,16 +34,16 @@
                     <h2>By location:</h2>
                     <mat-form-field class="search">
                         <input type="text"
-                               placeholder="City"
-                               formControlName="city"
+                               placeholder="Location"
+                               formControlName="location"
                                matInput
-                               [matAutocomplete]="auto"
-                               id="citySearch">
-                        <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-                          <mat-option id="city" *ngFor="let city of filteredCities | async" [value]="city">
+<!--                               [matAutocomplete]="auto"-->
+                               id="locationSearch">
+<!--                        <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+                          <mat-option id="location" *ngFor="let location of filteredLocations | async" [value]="location">
                             {{city}}
                           </mat-option>
-                        </mat-autocomplete>
+                        </mat-autocomplete>-->
                     </mat-form-field>
                     <mat-form-field class="search">
                         <mat-label>Distance</mat-label>
@@ -80,13 +80,13 @@
             <div *ngIf="isLoading | async" class="overlay">
                 <mat-progress-spinner class="spinner" color="primary" mode="indeterminate" value="50">
                 </mat-progress-spinner>
-            </div>              
+            </div>
             <div id="childComponent" class="{{isShow ? 'col-sm-12' : 'hideDiv'}} col-lg-{{isShow ? 12 : 9}}">
-                <app-vacancy-table 
+                <app-vacancy-table
                 (filterButtonClicked)="toggleDisplay()"
                 [isShow]="isShow"
                 [vacancies]="vacancies">
-               </app-vacancy-table>      
+               </app-vacancy-table>
                <mat-paginator [length] = totalVacancies
                     [pageSize] = pageSize
                     [pageSizeOptions] = "[5, 10, 15, 25, 50]"
