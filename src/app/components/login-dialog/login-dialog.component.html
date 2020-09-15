@@ -1,0 +1,98 @@
+<mat-tab-group mat-stretch-tabs>
+    <mat-tab label="Log in">
+        <div class="alert alert-danger" *ngIf="errMSGlogin">{{ errMSGlogin }}</div>
+        <form [formGroup]="loginForm" (ngSubmit)="login()">
+            <p>
+              <mat-form-field>
+                <input type="text" matInput placeholder="Username" formControlName="username">
+              </mat-form-field>
+            </p>
+            <div class="error-messages">
+                <ng-container *ngFor="let error of error_messages_login.username">
+                    <div class="error-message" *ngIf="loginForm.get('username').hasError(error.type) && (loginForm.get('username').dirty || loginForm.get('username').touched)">
+                        {{ error.message }}
+                    </div>
+                </ng-container>
+            </div>
+  
+            <p>
+              <mat-form-field>
+                <input type="{{ hide ? 'password' : 'text' }}" matInput placeholder="Password" formControlName="password">
+                <div class="icon" mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+                    <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </div>
+              </mat-form-field>
+            </p>
+            <div class="error-messages">
+                <ng-container *ngFor="let error of error_messages_login.password">
+                    <div class="error-message" *ngIf="loginForm.get('password').hasError(error.type) && (loginForm.get('password').dirty || loginForm.get('password').touched)">
+                        {{ error.message }}
+                    </div>
+                </ng-container>
+            </div>
+  
+            <div class="button">
+              <button type="submit" mat-button [disabled]="!loginForm.valid">Login</button>
+            </div>
+          </form>
+    </mat-tab>
+    <mat-tab *ngIf="allowRegistration" label="Sign up">
+        <div class="alert alert-danger" *ngIf="errMSGsignup">{{ errMSGsignup }}</div>
+        <div class="alert alert-success" *ngIf="successMSGsignup" [innerHTML]="successMSGsignup"></div>
+        <form [formGroup]="signupForm" (ngSubmit)="signup()">
+            <p>
+              <mat-form-field>
+                <input type="text" matInput placeholder="Username" formControlName="usernameSignup">
+              </mat-form-field>
+            </p>
+            <div class="error-messages">
+                <ng-container *ngFor="let error of error_messages.usernameSignup">
+                    <div class="error-message" *ngIf="signupForm.get('usernameSignup').hasError(error.type) && (signupForm.get('usernameSignup').dirty || signupForm.get('usernameSignup').touched)">
+                        {{ error.message }}
+                    </div>
+                </ng-container>
+            </div>
+  
+            <p>
+              <mat-form-field>
+                <input type="{{ hideP1 ? 'password' : 'text' }}" matInput placeholder="Password" formControlName="passwordSignup">
+                <div class="icon" mat-icon-button matSuffix (click)="hideP1 = !hideP1" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hideP1">
+                    <mat-icon>{{hideP1 ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </div>
+              </mat-form-field>
+            </p>
+            <div class="error-messages">
+                <ng-container *ngFor="let error of error_messages.passwordSignup">
+                    <div class="error-message" *ngIf="signupForm.get('passwordSignup').hasError(error.type) && (signupForm.get('passwordSignup').dirty || signupForm.get('passwordSignup').touched)">
+                        {{ error.message }}
+                    </div>
+                </ng-container>
+            </div>
+
+            <p>
+                <mat-form-field>
+                  <input type="{{ hideP2 ? 'password' : 'text' }}" matInput placeholder="Password" formControlName="passwordSignupConfirm">
+                  <div class="icon" mat-icon-button matSuffix (click)="hideP2 = !hideP2" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hideP2">
+                      <mat-icon>{{hideP2 ? 'visibility_off' : 'visibility'}}</mat-icon>
+                  </div>
+                </mat-form-field>
+            </p>
+            <div class="error-messages">
+                <ng-container *ngFor="let error of error_messages.passwordSignupConfirm">
+                    <div class="error-message" *ngIf="signupForm.get('passwordSignupConfirm').hasError(error.type) && (signupForm.get('passwordSignupConfirm').dirty || signupForm.get('passwordSignupConfirm').touched)">
+                        {{ error.message }}
+                    </div>
+                </ng-container>
+            </div>
+            <div class="error-messages" *ngIf="signupForm.errors">
+                <div class="error-message">
+                    Passwords do not match 
+                </div>
+            </div>
+  
+            <div class="button">
+              <button type="submit" mat-button [disabled]="!signupForm.valid">Sign up</button>
+            </div>
+          </form>
+    </mat-tab>
+</mat-tab-group>

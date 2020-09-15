@@ -84,7 +84,9 @@ describe('FilterComponent', () => {
   it('should fill skills variable upon init', fakeAsync(() => {
     // Arrange
     let mockService = jasmine.createSpyObj('HttpService', ['findAllSkills', 'getByQuery']);
-    let filterComp = new FilterComponent(new FormBuilder, mockService, new LoaderService);
+    let mockRouter = jasmine.createSpyObj('Router', ['navigate']);
+    let mockDialog = jasmine.createSpyObj('MatDialog', ['open']);
+    let filterComp = new FilterComponent(new FormBuilder, mockService, mockDialog, mockRouter);
     mockService.findAllSkills.and.returnValue(of(mockSkills));
     mockService.getByQuery.and.returnValue(of(null));
 
@@ -104,7 +106,9 @@ describe('FilterComponent', () => {
   it('should fill vacancies variable upon init', fakeAsync(() => {
     // Arrange
     let mockService = jasmine.createSpyObj('HttpService', ['findAllSkills', 'getByQuery']);
-    let filterComp = new FilterComponent(new FormBuilder, mockService, new LoaderService);
+    let mockRouter = jasmine.createSpyObj('Router', ['navigate']);
+    let mockDialog = jasmine.createSpyObj('MatDialog', ['open']);
+    let filterComp = new FilterComponent(new FormBuilder, mockService, mockDialog, mockRouter);
 
     mockService.findAllSkills.and.returnValue(of(noSkills));
     mockService.getByQuery.and.returnValue(of(mockVacancies));
@@ -126,27 +130,14 @@ describe('FilterComponent', () => {
   }));
 
   it('should toggle isShow upon calling the function', () => {
-    // let currentStatus: boolean = component.isShow;
-    // if(currentStatus) {
-    //     component.toggleDisplay();
-    //     expect(component.isShow).toBe(false);
-    // } else {
-    //     component.toggleDisplay();
-    //     expect(component.isShow).toBe(true);
-    // }
-
-    component.isShow = true;
-    fixture.detectChanges();
-    let elementTrue = fixture.debugElement.query(By.css('#childComponent')).nativeElement;
-    console.log(elementTrue);
-    console.log(elementTrue.classList);
-    // expect(elementTrue.classList).toContain('table-container');
-
-    component.isShow = false;
-    fixture.detectChanges();
-    let elementFalse = fixture.debugElement.query(By.css('#childComponent')).nativeElement;
-    console.log(elementFalse);
-    console.log(elementFalse.classList);
+    let currentStatus: boolean = component.isShow;
+    if(currentStatus) {
+        component.toggleDisplay();
+        expect(component.isShow).toBe(false);
+    } else {
+        component.toggleDisplay();
+        expect(component.isShow).toBe(true);
+    }
   });
 
   describe('DOM tests', () => {
