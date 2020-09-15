@@ -4,13 +4,16 @@ import { FilterQuery } from 'src/app/models/filterQuery.model';
 import { IVacancies } from 'src/app/models/ivacancies';
 import { HttpService } from 'src/app/services/http.service';
 import { Observable, Subject, ReplaySubject } from 'rxjs';
-import { map, startWith, takeUntil, take } from 'rxjs/operators';
-import { LoaderService } from 'src/app/services/loader.service';
+import { map, startWith, takeUntil } from 'rxjs/operators';
 import { MatSelect } from '@angular/material/select';
 import { PageEvent } from '@angular/material/paginator';
 import { PageResult } from 'src/app/models/pageresult.model';
 import { Vacancy } from 'src/app/models/vacancy';
 import { Skill } from 'src/app/models/skill';
+import { Sort } from '@angular/material/sort';
+import { MatDialog } from '@angular/material/dialog';
+import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-filter',
@@ -24,15 +27,18 @@ export class FilterComponent implements OnInit, OnDestroy {
   searchForm: FormGroup;
   skills: Skill[];
   vacancies: IVacancies[] = [];
-//  cities: string[] = ['Amsterdam', 'Den Haag', 'Rotterdam', 'Utrecht'];
+  cities: string[] = ['Amsterdam', 'Den Haag', 'Rotterdam', 'Utrecht'];
   showForm: boolean = false;
   filteredLocations: Observable<String[]>;
-  isLoading: Subject<boolean> = this.loaderService.isLoading;
 
   totalVacancies: number;
   pageSize: number = 15;
   currentPage: number;
   pageEvent: PageEvent;
+
+  sort: Sort;
+  sortBy: String = "postingDate";
+  sortOrder: String = "desc";
 
   public skillMultiCtrl: FormControl = new FormControl();
   public skillMultiFilterCtrl: FormControl = new FormControl();
@@ -44,11 +50,11 @@ export class FilterComponent implements OnInit, OnDestroy {
    * Creates an instance of filter component.
    * @param form Constructs form
    * @param filterService Used for http requests (post/get)
-   * @param loaderService HttpInterceptor
    */
   constructor(private form: FormBuilder,
     private httpService: HttpService,
-    private loaderService: LoaderService) {}
+    private dialog: MatDialog,
+    private router: Router) {}
 
 
   /**
@@ -86,9 +92,12 @@ export class FilterComponent implements OnInit, OnDestroy {
    * Converts form to json format. Currently logged to console and calls the getAllVacancies() function.
    */
   public searchVacancies(pageEvent?: PageEvent): void {
+    if (pageEvent !== undefined)
+      this.pageEvent = pageEvent;
+
     let filterQuery: FilterQuery;
 
-    if(this.searchForm !== undefined) {
+    if (this.searchForm !== undefined) {
       filterQuery = this.searchForm.value as FilterQuery;
 
       if (this.skillMultiCtrl.value !== null) {
@@ -100,9 +109,9 @@ export class FilterComponent implements OnInit, OnDestroy {
         filterQuery.skills = [];
       }
 
-      if(!filterQuery.fromDate) filterQuery.fromDate = '';
+      if (!filterQuery.fromDate) filterQuery.fromDate = '';
 
-      if(!filterQuery.toDate) filterQuery.toDate = '';
+      if (!filterQuery.toDate) filterQuery.toDate = '';
     } else {
       this.isShow = true;
       filterQuery = new FilterQuery();
@@ -118,7 +127,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     if (pageEvent) this.pageSize = pageEvent.pageSize;
 
     this.vacancies = [];
-    this.httpService.getByQuery(filterQuery, pageNum, this.pageSize)
+    this.httpService.getByQuery(filterQuery, pageNum, this.pageSize, this.sort)
     .pipe(takeUntil(this._onDestroy))
     .subscribe((page: PageResult) => {
       if (page !== null) {
@@ -134,6 +143,10 @@ export class FilterComponent implements OnInit, OnDestroy {
         });
         this.totalVacancies = page.totalItems;
         this.currentPage = pageNum;
+        if (this.sort !== undefined) {
+          this.sortBy = this.sort.active;
+          this.sortOrder = this.sort.direction;
+        }
       } else {
         this.totalVacancies = 0;
         this.currentPage = 0;
@@ -172,6 +185,27 @@ export class FilterComponent implements OnInit, OnDestroy {
     this.filteredSkillsMulti.next(
       this.skills.filter(skill => skill.name.toLowerCase().indexOf(search) === 0)
     )
+  }
+
+  /**
+   * Opens login dialog
+   */
+  public openLoginDialog(): void {
+    const dialogRef = this.dialog.open(LoginDialogComponent);
+    this.router.events
+    .subscribe(() => {
+      dialogRef.close();
+    })
+  }
+
+
+  /**
+   * Changes sorting with current search criteria
+   * @param sort column/order
+   */
+  public changeSorting(sort: Sort) {
+    this.sort = sort;
+    this.searchVacancies(this.pageEvent);
   }
 
 

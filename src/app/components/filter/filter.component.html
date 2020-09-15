@@ -1,7 +1,7 @@
 <div class="container main-div">
     <mat-card class="card fullHeight">
         <div class="row">
-            <div class="col-sm-12 col-lg-3" *ngIf="!isShow">
+            <div class="col-sm-12 col-lg-3 fullHeight" *ngIf="!isShow">
                 <form *ngIf="showForm" [formGroup]="searchForm">
                     <div class="page-header">
                         <div class="float-left">
@@ -15,9 +15,6 @@
                         <div class="clearfix"></div>
                     </div>
                     <mat-divider class="divider"></mat-divider>
-                    <!--<button mat-raised-button type="button" (click)="navigateBeheerSkills()">Beheer Skills&nbsp;
-                        <mat-icon>autorenew</mat-icon>
-                    </button> -->
                     <button mat-raised-button type="button" (click)="resetForm()" [style.width.%]="45">Reset&nbsp;
                         <mat-icon>autorenew</mat-icon>
                     </button>
@@ -37,13 +34,13 @@
                                placeholder="Location"
                                formControlName="location"
                                matInput
-<!--                               [matAutocomplete]="auto"-->
-                               id="locationSearch">
-<!--                        <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-                          <mat-option id="location" *ngFor="let location of filteredLocations | async" [value]="location">
+                               [matAutocomplete]="auto"
+                               id="citySearch">
+                        <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+                          <mat-option id="city" *ngFor="let city of filteredCities | async" [value]="city">
                             {{city}}
                           </mat-option>
-                        </mat-autocomplete>-->
+                        </mat-autocomplete>
                     </mat-form-field>
                     <mat-form-field class="search">
                         <mat-label>Distance</mat-label>
@@ -76,15 +73,17 @@
                         <mat-datepicker #pickerTo></mat-datepicker>
                     </mat-form-field>
                 </form>
-            </div>
-            <div *ngIf="isLoading | async" class="overlay">
-                <mat-progress-spinner class="spinner" color="primary" mode="indeterminate" value="50">
-                </mat-progress-spinner>
+                <div class="loginIcon">
+                    <span class="material-icons smallIcon" (click)="openLoginDialog()">login</span>
+                </div>
             </div>
             <div id="childComponent" class="{{isShow ? 'col-sm-12' : 'hideDiv'}} col-lg-{{isShow ? 12 : 9}}">
                 <app-vacancy-table
                 (filterButtonClicked)="toggleDisplay()"
+                (changeSorting)="changeSorting($event)"
                 [isShow]="isShow"
+                [sortBy]="sortBy"
+                [sortOrder]="sortOrder"
                 [vacancies]="vacancies">
                </app-vacancy-table>
                <mat-paginator [length] = totalVacancies

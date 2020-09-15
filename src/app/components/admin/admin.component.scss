@@ -1,0 +1,13 @@
+@import "../../../variables.scss";
+
+.fullHeight {
+   height: calc(100vh - 150px);
+   width: 80vw;
+}
+
+.main-div {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
