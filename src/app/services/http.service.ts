@@ -5,6 +5,7 @@ import { environment } from 'src/environments/environment';
 import { Observable } from 'rxjs';
 import { PageResult } from '../models/pageresult.model';
 import { Skill } from '../models/skill';
+import { Sort } from '@angular/material/sort';
 
 @Injectable()
 export class HttpService {
@@ -22,16 +23,21 @@ export class HttpService {
      * @param filterQuery Data from form
      * @param pageNum Current pagenumber to show
      * @param pageSize Amount of vacancies requested to show on page
+     * @param [sort] optional, column/order
      * @returns requested vacancies
      */
-    public getByQuery(filterQuery: FilterQuery, pageNum: number, pageSize: number): Observable<PageResult> {
+    public getByQuery(filterQuery: FilterQuery, pageNum: number, pageSize: number, sort?: Sort): Observable<PageResult> {
         let params = new HttpParams();
         params = params.append('size', String(pageSize));
         params = params.append('page', String(pageNum));
-        if(filterQuery.skills.length > 0)
+        if (filterQuery.skills.length > 0)
             params = params.append('skills', filterQuery.skills.join());
-        if(filterQuery.keyword !== '')
+        if (filterQuery.keyword !== '')
             params = params.append('value', filterQuery.keyword);
+        if (sort !== undefined && sort.active !== '')
+            params = params.append('sort', sort.active);
+        if (sort !== undefined && sort.direction !== '')
+            params = params.append('dir', sort.direction);
 
         return this.httpClient.get<PageResult>(environment.api + '/vacancies', {params: params});
     }

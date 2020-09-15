@@ -10,6 +10,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { PageResult } from 'src/app/models/pageresult.model';
 import { Vacancy } from 'src/app/models/vacancy';
 import { Skill } from 'src/app/models/skill';
+import { Sort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
 import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
 import { Router } from '@angular/router';
@@ -34,6 +35,10 @@ export class FilterComponent implements OnInit, OnDestroy {
   pageSize: number = 15;
   currentPage: number;
   pageEvent: PageEvent;
+
+  sort: Sort;
+  sortBy: String = "postingDate";
+  sortOrder: String = "desc";
 
   public skillMultiCtrl: FormControl = new FormControl();
   public skillMultiFilterCtrl: FormControl = new FormControl();
@@ -87,9 +92,12 @@ export class FilterComponent implements OnInit, OnDestroy {
    * Converts form to json format. Currently logged to console and calls the getAllVacancies() function.
    */
   public searchVacancies(pageEvent?: PageEvent): void {
+    if (pageEvent !== undefined)
+      this.pageEvent = pageEvent;
+
     let filterQuery: FilterQuery;
 
-    if(this.searchForm !== undefined) {
+    if (this.searchForm !== undefined) {
       filterQuery = this.searchForm.value as FilterQuery;
 
       if (this.skillMultiCtrl.value !== null) {
@@ -101,9 +109,9 @@ export class FilterComponent implements OnInit, OnDestroy {
         filterQuery.skills = [];
       }
 
-      if(!filterQuery.fromDate) filterQuery.fromDate = '';
+      if (!filterQuery.fromDate) filterQuery.fromDate = '';
 
-      if(!filterQuery.toDate) filterQuery.toDate = '';
+      if (!filterQuery.toDate) filterQuery.toDate = '';
     } else {
       this.isShow = true;
       filterQuery = new FilterQuery();
@@ -119,7 +127,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     if (pageEvent) this.pageSize = pageEvent.pageSize;
 
     this.vacancies = [];
-    this.httpService.getByQuery(filterQuery, pageNum, this.pageSize)
+    this.httpService.getByQuery(filterQuery, pageNum, this.pageSize, this.sort)
     .pipe(takeUntil(this._onDestroy))
     .subscribe((page: PageResult) => {
       if (page !== null) {
@@ -135,6 +143,10 @@ export class FilterComponent implements OnInit, OnDestroy {
         });
         this.totalVacancies = page.totalItems;
         this.currentPage = pageNum;
+        if (this.sort !== undefined) {
+          this.sortBy = this.sort.active;
+          this.sortOrder = this.sort.direction;
+        }
       } else {
         this.totalVacancies = 0;
         this.currentPage = 0;
@@ -185,6 +197,16 @@ export class FilterComponent implements OnInit, OnDestroy {
     .subscribe(() => {
       dialogRef.close();
     })
+  }
+
+
+  /**
+   * Changes sorting with current search criteria
+   * @param sort column/order
+   */
+  public changeSorting(sort: Sort) {
+    this.sort = sort;
+    this.searchVacancies(this.pageEvent);
   }
 
 
