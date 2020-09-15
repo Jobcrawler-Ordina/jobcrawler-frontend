@@ -4,7 +4,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { SkillFormComponent } from './skill-form.component';
 import { HttpService } from 'src/app/services/http.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 
@@ -17,12 +17,16 @@ describe('SkillFormComponent', () => {
       imports: [ 
         RouterTestingModule,
         HttpClientTestingModule,
+        ReactiveFormsModule,
         FormsModule,
         MatCardModule,
         MatDividerModule
       ],
       declarations: [ SkillFormComponent ],
-      providers: [ HttpService ]
+      providers: [ 
+        HttpService,
+        FormBuilder
+      ]
     })
     .compileComponents();
   }));
