@@ -50,7 +50,10 @@ export class VacancyTableComponent implements OnChanges {
    * @param vacancyID id that is passed to vacancy-dialog.component
    */
   public openDialog(vacancyID: string): void {
-    this.dialog.open(VacancyDialogComponent, { data: vacancyID });
+    this.dialog.open(VacancyDialogComponent, {
+      data: vacancyID,
+      autoFocus: false
+   });
   }
 
 
