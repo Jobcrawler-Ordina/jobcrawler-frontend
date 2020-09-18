@@ -39,7 +39,7 @@ export class UsersComponent implements OnInit {
     delete userData.role; // Remove role from object
     if (userData.roles.includes(Role.ADMIN)) {
       userData.roles = [Role.USER];
-      user.roles = [Role.ADMIN];
+      user.roles = [Role.USER];
       update = 0;
     } else {
       userData.roles = [Role.ADMIN];
