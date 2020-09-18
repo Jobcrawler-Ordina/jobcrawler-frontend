@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DeleteConfirmationDialogComponent } from '../delete-confirmation-dialog/delete-confirmation-dialog.component';
 import { MatTable } from '@angular/material/table';
 import { FormControl } from '@angular/forms';
+import { Role } from 'src/app/models/role.enum';
 
 @Component({
   selector: 'app-users',
@@ -33,24 +34,24 @@ export class UsersComponent implements OnInit {
   }
 
   public updateUser(user: any): void {
-    let userData = { ...user }; // Clone object so it can be adjusted
+    const userData = { ...user }; // Clone object so it can be adjusted
     let update: number;
     delete userData.role; // Remove role from object
-    if(userData.roles.includes("ROLE_ADMIN")) {
-      userData.roles = ["ROLE_USER"];
-      user.roles = ["ROLE_USER"];
+    if (userData.roles.includes(Role.ADMIN)) {
+      userData.roles = [Role.USER];
+      user.roles = [Role.ADMIN];
       update = 0;
     } else {
-      userData.roles = ["ROLE_ADMIN"];
-      user.roles = ["ROLE_ADMIN"];
+      userData.roles = [Role.ADMIN];
+      user.roles = [Role.ADMIN];
       update = 1;
     }
 
     this.adminService.updateUser(userData).subscribe(() => {
-      if (update == 0) {
-        user.role = "ROLE_USER";
+      if (update === 0) {
+        user.role = Role.USER;
       } else {
-        user.role = "ROLE_ADMIN";
+        user.role = Role.ADMIN;
       }
     });
   }
@@ -69,7 +70,7 @@ export class UsersComponent implements OnInit {
           this.table.renderRows();
         });
       }
-    })
+    });
 
   }
 
@@ -80,14 +81,14 @@ export class UsersComponent implements OnInit {
   private getUsers(): void {
     this.adminService.getUsers().subscribe((data: any) => {
       data.forEach((u: any) => {
-        if (u.roles.includes("ROLE_ADMIN")) {
-          u.role = "ROLE_ADMIN";
+        if (u.roles.includes(Role.ADMIN)) {
+          u.role = Role.ADMIN;
         } else {
-          u.role = "ROLE_USER";
+          u.role = Role.USER;
         }
       });
       this.dataSource = data;
-    })
+    });
   }
 
   private getAllowSignups(): void {

@@ -40,13 +40,13 @@ export class VacancyDialogComponent implements AfterContentInit {
    * @param vacancyID id from which details are requested
    */
   getVacancyDetails(vacancyID: string): void {
-  let vacancyDetails = this.httpService.getByID(vacancyID);
-  let vacancySkills = this.httpService.getSkillsForVacancy(vacancyID);
+  const vacancyDetails = this.httpService.getByID(vacancyID);
+  const vacancySkills = this.httpService.getSkillsForVacancy(vacancyID);
 
   forkJoin([vacancyDetails, vacancySkills]).subscribe((res: any) => {
     this.vacancy = res[0];
     this.vacancy.skills = [];
-    if(res[1]._embedded) {
+    if (res[1]._embedded) {
       res[1]._embedded.skills.forEach(el => {
         this.vacancy.skills.push(el);
       });
@@ -54,7 +54,7 @@ export class VacancyDialogComponent implements AfterContentInit {
   },
   err => {
     this.errorMSG = err.error.message;
-  })
+  });
   }
 
 }

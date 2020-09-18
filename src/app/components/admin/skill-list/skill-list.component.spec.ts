@@ -19,7 +19,7 @@ describe('SkillListComponentTest', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ 
+      imports: [
         RouterTestingModule,
         HttpClientTestingModule,
         MatCardModule,
@@ -34,8 +34,8 @@ describe('SkillListComponentTest', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(SkillListComponent);
     component = fixture.componentInstance;
-    httpMock = TestBed.get(HttpTestingController);
-    httpService = TestBed.get(HttpService);
+    httpMock = TestBed.inject(HttpTestingController);
+    httpService = TestBed.inject(HttpService);
     nativeComponent = fixture.debugElement.nativeElement;
     fixture.detectChanges();
   });
@@ -79,20 +79,20 @@ describe('SkillListComponentTest', () => {
 
       // Act
       fixture.detectChanges();
-  
+
       httpService.deleteSkill(component.skills[0].href).subscribe(() => {
         const index: number = component.skills.indexOf(component.skills[0]);
         component.skills.splice(index, 1);
         expect(component.skills.length).toBe(1);
       });
-  
+
       // Expect
       const request = httpMock.expectOne(component.skills[0].href);
-      expect(request.request.method).toBe("DELETE");
+      expect(request.request.method).toBe('DELETE');
       request.flush(of({}));
-      httpMock.expectOne(environment.api + "/skills");
+      httpMock.expectOne(environment.api + '/skills');
     });
-  
+
     afterEach(() => {
       fixture.destroy();
       httpMock.verify();

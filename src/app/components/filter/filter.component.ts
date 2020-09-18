@@ -23,27 +23,27 @@ import { Router } from '@angular/router';
 })
 export class FilterComponent implements OnInit, OnDestroy {
 
-  isShow: boolean = false;
+  isShow = false;
   searchForm: FormGroup;
   skills: Skill[];
   vacancies: IVacancies[] = [];
   cities: string[] = ['Amsterdam', 'Den Haag', 'Rotterdam', 'Utrecht'];
-  showForm: boolean = false;
-  filteredCities: Observable<String[]>;
+  showForm = false;
+  filteredCities: Observable<string[]>;
 
   totalVacancies: number;
-  pageSize: number = 15;
+  pageSize = 15;
   currentPage: number;
   pageEvent: PageEvent;
 
   sort: Sort;
-  sortBy: String = "postingDate";
-  sortOrder: String = "desc";
+  sortBy = 'postingDate';
+  sortOrder = 'desc';
 
   public skillMultiCtrl: FormControl = new FormControl();
   public skillMultiFilterCtrl: FormControl = new FormControl();
   public filteredSkillsMulti: ReplaySubject<Skill[]> = new ReplaySubject<Skill[]>(1);
-  public _onDestroy = new Subject<void>();
+  public onDestroy = new Subject<void>();
   @ViewChild('multiSelect', {static: false}) multiSelect: MatSelect;
 
   /**
@@ -52,11 +52,10 @@ export class FilterComponent implements OnInit, OnDestroy {
    * @param filterService Used for http requests (post/get)
    */
   constructor(private form: FormBuilder,
-    private httpService: HttpService,
-    private dialog: MatDialog,
-    private router: Router) {}
+              private httpService: HttpService,
+              private dialog: MatDialog,
+              private router: Router) {}
 
-    
   /**
    * Function gets executed upon initialization.
    * Constructs searchform.
@@ -74,8 +73,8 @@ export class FilterComponent implements OnInit, OnDestroy {
    * Destroys ngx-mat-select-search upon leaving page
    */
   ngOnDestroy(): void {
-    this._onDestroy.next();
-    this._onDestroy.complete();
+    this.onDestroy.next();
+    this.onDestroy.complete();
   }
 
 
@@ -92,8 +91,9 @@ export class FilterComponent implements OnInit, OnDestroy {
    * Converts form to json format. Currently logged to console and calls the getAllVacancies() function.
    */
   public searchVacancies(pageEvent?: PageEvent): void {
-    if (pageEvent !== undefined)
+    if (pageEvent !== undefined) {
       this.pageEvent = pageEvent;
+    }
 
     let filterQuery: FilterQuery;
 
@@ -109,9 +109,13 @@ export class FilterComponent implements OnInit, OnDestroy {
         filterQuery.skills = [];
       }
 
-      if (!filterQuery.fromDate) filterQuery.fromDate = '';
+      if (!filterQuery.fromDate) {
+        filterQuery.fromDate = '';
+      }
 
-      if (!filterQuery.toDate) filterQuery.toDate = '';
+      if (!filterQuery.toDate) {
+        filterQuery.toDate = '';
+      }
     } else {
       this.isShow = true;
       filterQuery = new FilterQuery();
@@ -124,11 +128,13 @@ export class FilterComponent implements OnInit, OnDestroy {
     }
 
     const pageNum = pageEvent ? pageEvent.pageIndex : 0;
-    if (pageEvent) this.pageSize = pageEvent.pageSize;
+    if (pageEvent) {
+      this.pageSize = pageEvent.pageSize;
+    }
 
     this.vacancies = [];
     this.httpService.getByQuery(filterQuery, pageNum, this.pageSize, this.sort)
-    .pipe(takeUntil(this._onDestroy))
+    .pipe(takeUntil(this.onDestroy))
     .subscribe((page: PageResult) => {
       if (page !== null) {
         page.vacancies.forEach((vacancy: Vacancy) => {
@@ -167,13 +173,13 @@ export class FilterComponent implements OnInit, OnDestroy {
 
   /**
    * Easily search and select skills
-   * @returns Does not return anything, prevent method to continue 
+   * @returns Does not return anything, prevent method to continue
    */
   public filterSkillsMulti(): any {
     if (!this.skills) {
       return;
     }
-    
+
     let search = this.skillMultiFilterCtrl.value;
     if (!search) {
       this.filteredSkillsMulti.next(this.skills.slice());
@@ -184,9 +190,9 @@ export class FilterComponent implements OnInit, OnDestroy {
 
     this.filteredSkillsMulti.next(
       this.skills.filter(skill => skill.name.toLowerCase().indexOf(search) === 0)
-    )
+    );
   }
-  
+
 
   /**
    * Opens login dialog
@@ -196,7 +202,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     this.router.events
     .subscribe(() => {
       dialogRef.close();
-    })
+    });
   }
 
 
@@ -215,7 +221,7 @@ export class FilterComponent implements OnInit, OnDestroy {
    */
   private loadForm(): void {
     this.getSkills().then((data: any) => {
-      let skillData: Skill[] = [];
+      const skillData: Skill[] = [];
       data._embedded.skills.forEach((skill: any) => {
         skillData.push({
           href: skill._links.self.href,
@@ -230,7 +236,7 @@ export class FilterComponent implements OnInit, OnDestroy {
       });
     },
     err => {
-      console.log("Failed loading form");
+      console.log('Failed loading form');
       console.log(err.message);
     });
   }
@@ -270,14 +276,14 @@ export class FilterComponent implements OnInit, OnDestroy {
         toDate: ''
       });
 
-      this.filteredCities = this.searchForm.get('city')!.valueChanges
+      this.filteredCities = this.searchForm.get('city').valueChanges
         .pipe(
           startWith(''),
           map(value => this._filterCity(value || ''))
         );
 
       this.skillMultiFilterCtrl.valueChanges
-      .pipe(takeUntil(this._onDestroy))
+      .pipe(takeUntil(this.onDestroy))
       .subscribe(() => {
         this.filterSkillsMulti();
       });

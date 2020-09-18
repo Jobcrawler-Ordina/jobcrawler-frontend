@@ -23,7 +23,7 @@ describe('VacancyDialogComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ 
+      imports: [
         BrowserAnimationsModule,
         HttpClientTestingModule,
         DialogTestModule,
@@ -43,9 +43,9 @@ describe('VacancyDialogComponent', () => {
   }));
 
   beforeEach(() => {
-    httpService = TestBed.get(HttpService);
-    httpMock = TestBed.get(HttpTestingController);
-    dialog = TestBed.get(MatDialog);
+    httpService = TestBed.inject(HttpService);
+    httpMock = TestBed.inject(HttpTestingController);
+    dialog = TestBed.inject(MatDialog);
     fixture = TestBed.createComponent(VacancyDialogComponent);
     component = fixture.componentInstance;
     nativeComponent = fixture.debugElement.nativeElement;
@@ -98,11 +98,11 @@ describe('VacancyDialogComponent', () => {
 
   it('should display error', () => {
     const vacancyErrorMock = 'Invalid ID';
-  
+
     // Initialize component
     expect(component.errorMSG).toBeUndefined();
     fixture.detectChanges();
-  
+
     // Expect error to be shown only after component has detected changes
     expect(nativeComponent.querySelector('p')).toBeNull();
     component.errorMSG = vacancyErrorMock;
