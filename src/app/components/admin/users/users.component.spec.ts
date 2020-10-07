@@ -4,6 +4,8 @@ import { UsersComponent } from './users.component';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MaterialModule } from 'src/app/material/material.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 describe('UsersComponent', () => {
   let component: UsersComponent;
@@ -13,7 +15,10 @@ describe('UsersComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         HttpClientTestingModule,
-        RouterTestingModule
+        RouterTestingModule,
+        ReactiveFormsModule,
+        FormsModule,
+        MaterialModule
       ],
       providers: [
         { provide: MatDialog, useValue: {}},

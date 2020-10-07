@@ -4,6 +4,8 @@ import { LoginDialogComponent } from './login-dialog.component';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { MaterialModule } from 'src/app/material/material.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('LoginDialogComponent', () => {
   let component: LoginDialogComponent;
@@ -14,7 +16,9 @@ describe('LoginDialogComponent', () => {
       imports: [
         RouterTestingModule,
         HttpClientTestingModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        BrowserAnimationsModule,
+        MaterialModule
       ],
       declarations: [ LoginDialogComponent ],
       providers: [ FormBuilder ]

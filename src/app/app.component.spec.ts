@@ -1,6 +1,8 @@
 import {TestBed, async} from '@angular/core/testing';
 import {AppComponent} from './app.component';
 import { RouterTestingModule } from '@angular/router/testing';
+import { LoaderService } from './services/loader.service';
+import { LoaderComponent } from './components/loader/loader.component';
 
 describe('AppComponent', () => {
     beforeEach(async(() => {
@@ -9,8 +11,12 @@ describe('AppComponent', () => {
                 RouterTestingModule
             ],
             declarations: [
-                AppComponent
+                AppComponent,
+                LoaderComponent
             ],
+            providers: [
+                LoaderService
+            ]
         }).compileComponents();
     }));
 

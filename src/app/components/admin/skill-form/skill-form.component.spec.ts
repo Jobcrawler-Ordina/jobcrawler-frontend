@@ -7,6 +7,9 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { FormsModule, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('SkillFormComponent', () => {
   let component: SkillFormComponent;
@@ -17,10 +20,13 @@ describe('SkillFormComponent', () => {
       imports: [
         RouterTestingModule,
         HttpClientTestingModule,
+        BrowserAnimationsModule,
         ReactiveFormsModule,
         FormsModule,
         MatCardModule,
-        MatDividerModule
+        MatDividerModule,
+        MatFormFieldModule,
+        MatInputModule
       ],
       declarations: [ SkillFormComponent ],
       providers: [
