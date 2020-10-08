@@ -20,6 +20,10 @@ describe('AdminService', () => {
         httpMock = TestBed.inject(HttpTestingController);
     });
 
+    it('should be created', () => {
+        expect(service).toBeTruthy();
+    });
+
     it('should get all users', () => {
         service.getUsers().subscribe((data: any) => {
             expect(data.length).toBe(2);

@@ -95,3 +95,15 @@ export const noSkills = {
   };
 
 export const mockCities = ['Amsterdam', 'Den Haag', 'Rotterdam', 'Utrecht'];
+
+export const newSkillMock = {
+  name: 'skill',
+  _links: {
+    self: {
+      href: environment.api + '/skills/9e6f7186-b466-458f-9e59-feacab86b91d'
+    },
+    skills: {
+      href: environment.api + '/skills'
+    }
+  }
+};
