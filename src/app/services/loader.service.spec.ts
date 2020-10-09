@@ -16,4 +16,17 @@ describe('LoaderService', () => {
         expect(service).toBeTruthy();
     });
 
+    it('should set isLoading to true when the show method is called', () => {
+        service.isLoading.subscribe((data: boolean) => {
+            expect(data).toBe(true);
+        });
+        service.show();
+    });
+
+    it('should set isLoading to false when the hide method is called', () => {
+        service.isLoading.subscribe((data: boolean) => {
+            expect(data).toBe(false);
+        });
+        service.hide();
+    });
 });

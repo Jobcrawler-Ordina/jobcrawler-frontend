@@ -9,4 +9,7 @@ export const loginMockResponse: User = {
     username: 'admin'
 };
 
-export const usernameReturnMock = 'admin';
+export const signupMockResponse = {
+    message: 'User registered successfully!',
+    success: true
+};
