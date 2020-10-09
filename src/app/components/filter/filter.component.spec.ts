@@ -63,7 +63,7 @@ describe('FilterComponent', () => {
           MatFormFieldControl,
           MatSelect
         ],
-        declarations: [ 
+        declarations: [
           FilterComponent,
           VacancyTableComponent
         ],
@@ -83,15 +83,15 @@ describe('FilterComponent', () => {
 
   it('should fill skills variable upon init', fakeAsync(() => {
     // Arrange
-    let mockService = jasmine.createSpyObj('HttpService', ['findAllSkills', 'getByQuery']);
-    let mockRouter = jasmine.createSpyObj('Router', ['navigate']);
-    let mockDialog = jasmine.createSpyObj('MatDialog', ['open']);
-    let filterComp = new FilterComponent(new FormBuilder, mockService, mockDialog, mockRouter);
+    const mockService = jasmine.createSpyObj('HttpService', ['findAllSkills', 'getByQuery']);
+    const mockRouter = jasmine.createSpyObj('Router', ['navigate']);
+    const mockDialog = jasmine.createSpyObj('MatDialog', ['open']);
+    const filterComp = new FilterComponent(new FormBuilder(), mockService, mockDialog, mockRouter);
     mockService.findAllSkills.and.returnValue(of(mockSkills));
     mockService.getByQuery.and.returnValue(of(null));
 
     // Expect nothing at this stage, as we still need to fill the variables
-    expect(filterComp.skills).toBeUndefined;
+    expect(filterComp.skills).toBeUndefined();
 
     // Act
     filterComp.ngOnInit();
@@ -105,16 +105,16 @@ describe('FilterComponent', () => {
 
   it('should fill vacancies variable upon init', fakeAsync(() => {
     // Arrange
-    let mockService = jasmine.createSpyObj('HttpService', ['findAllSkills', 'getByQuery']);
-    let mockRouter = jasmine.createSpyObj('Router', ['navigate']);
-    let mockDialog = jasmine.createSpyObj('MatDialog', ['open']);
-    let filterComp = new FilterComponent(new FormBuilder, mockService, mockDialog, mockRouter);
+    const mockService = jasmine.createSpyObj('HttpService', ['findAllSkills', 'getByQuery']);
+    const mockRouter = jasmine.createSpyObj('Router', ['navigate']);
+    const mockDialog = jasmine.createSpyObj('MatDialog', ['open']);
+    const filterComp = new FilterComponent(new FormBuilder(), mockService, mockDialog, mockRouter);
 
     mockService.findAllSkills.and.returnValue(of(noSkills));
     mockService.getByQuery.and.returnValue(of(mockVacancies));
 
     // Expect nothing at this stage, as we still need to fill the variables
-    expect(filterComp.vacancies).toBeUndefined;
+    expect(filterComp.vacancies).toEqual([]);
 
     // Act
     filterComp.ngOnInit();
@@ -124,14 +124,14 @@ describe('FilterComponent', () => {
     expect(mockService.findAllSkills).toHaveBeenCalledTimes(1);
     expect(mockService.getByQuery).toHaveBeenCalledTimes(1);
     expect(filterComp.vacancies.length).toBe(3);
-    for(let i: number = 0; i < filterComp.vacancies.length; i++) {
-      expect(filterComp.vacancies[i].title).toBe("title " + (i+1));
+    for (let i = 0; i < filterComp.vacancies.length; i++) {
+      expect(filterComp.vacancies[i].title).toBe('title ' + (i + 1));
     }
   }));
 
   it('should toggle isShow upon calling the function', () => {
-    let currentStatus: boolean = component.isShow;
-    if(currentStatus) {
+    const currentStatus: boolean = component.isShow;
+    if (currentStatus) {
         component.toggleDisplay();
         expect(component.isShow).toBe(false);
     } else {
@@ -156,9 +156,9 @@ describe('FilterComponent', () => {
           toDate: ''
         });
 
-        httpMock = TestBed.get(HttpTestingController);
-        httpService = TestBed.get(HttpService);
-      
+        httpMock = TestBed.inject(HttpTestingController);
+        httpService = TestBed.inject(HttpService);
+
         httpService.findAllSkills().subscribe((data: any) => {
         component.skills = [];
         data._embedded.skills.forEach(d => {
@@ -171,21 +171,21 @@ describe('FilterComponent', () => {
 
         // load the initial bank list
         component.filteredSkillsMulti.next(component.skills.slice());
-    
+
         // listen for search field value changes
         component.skillMultiFilterCtrl.valueChanges
-          .pipe(takeUntil(component._onDestroy))
+          .pipe(takeUntil(component.onDestroy))
           .subscribe(() => {
             component.filterSkillsMulti();
+          });
         });
-      });
 
-      const req = httpMock.expectOne(environment.api + '/skills');
-      expect(req.request.method).toEqual('GET');
-      req.flush(mockSkills);
+        const req = httpMock.expectOne(environment.api + '/skills');
+        expect(req.request.method).toEqual('GET');
+        req.flush(mockSkills);
     });
 
-    it('should show skills in the filter column', async(done) => {
+    it('should show skills in the filter column', async (done) => {
         component.filteredSkillsMulti
         .pipe(
           take(1),
@@ -236,12 +236,12 @@ describe('FilterComponent', () => {
 
         // Assert
         expect(matOptions.length).toBe(component.cities.length);
-        for(let i = 0; i < matOptions.length; i++) {
+        for (let i = 0; i < matOptions.length; i++) {
             expect(matOptions[i].textContent.trim()).toBe(component.cities[i]);
         }
     });
 
-    it('should filter cities based on text input', async() => {
+    it('should filter cities based on text input', async () => {
         // Arrange
         component.skills = [];
         component.cities = [];
@@ -254,7 +254,8 @@ describe('FilterComponent', () => {
         const inputElement = fixture.debugElement.query(By.css('#citySearch'));
         inputElement.nativeElement.dispatchEvent(new Event('focusin'));
 
-        inputElement.nativeElement.value = mockCities[0].substr(0,3); // Enter first 3 chars from first element of mockCities array into our input field.
+        // Enter first 3 chars from first element of mockCities array into our input field.
+        inputElement.nativeElement.value = mockCities[0].substr(0, 3);
         inputElement.nativeElement.dispatchEvent(new Event('input'));
 
         await fixture.whenStable();

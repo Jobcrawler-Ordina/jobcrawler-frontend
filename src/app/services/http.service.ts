@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { FilterQuery } from '../models/filterQuery.model';
 import { environment } from 'src/environments/environment';
@@ -27,19 +27,23 @@ export class HttpService {
      * @returns requested vacancies
      */
     public getByQuery(filterQuery: FilterQuery, pageNum: number, pageSize: number, sort?: Sort): Observable<PageResult> {
-        let params = new HttpParams();
-        params = params.append('size', String(pageSize));
-        params = params.append('page', String(pageNum));
-        if (filterQuery.skills.length > 0)
-            params = params.append('skills', filterQuery.skills.join());
-        if (filterQuery.keyword !== '')
-            params = params.append('value', filterQuery.keyword);
-        if (sort !== undefined && sort.active !== '')
-            params = params.append('sort', sort.active);
-        if (sort !== undefined && sort.direction !== '')
-            params = params.append('dir', sort.direction);
+        let httpParams = new HttpParams();
+        httpParams = httpParams.append('size', String(pageSize));
+        httpParams = httpParams.append('page', String(pageNum));
+        if (filterQuery.skills.length > 0) {
+            httpParams = httpParams.append('skills', filterQuery.skills.join());
+        }
+        if (filterQuery.keyword !== '') {
+            httpParams = httpParams.append('value', filterQuery.keyword);
+        }
+        if (sort !== undefined && sort.active !== '') {
+            httpParams = httpParams.append('sort', sort.active);
+        }
+        if (sort !== undefined && sort.direction !== '') {
+            httpParams = httpParams.append('dir', sort.direction);
+        }
 
-        return this.httpClient.get<PageResult>(environment.api + '/vacancies', {params: params});
+        return this.httpClient.get<PageResult>(environment.api + '/vacancies', {params: httpParams});
     }
 
 
@@ -55,8 +59,8 @@ export class HttpService {
 
     /**
      * Gets skills for vacancy
-     * @param id 
-     * @returns skills for vacancy 
+     * @param id vacancy id
+     * @returns skills for vacancy
      */
     public getSkillsForVacancy(id: string): Observable<any> {
         return this.httpClient.get(environment.api + '/vacancies/' + id + '/skills');
@@ -65,7 +69,7 @@ export class HttpService {
 
     /**
      * Finds all skills
-     * @returns all skills 
+     * @returns all skills
      */
     public findAllSkills(): Observable<any> {
         return this.httpClient.get<any>(environment.api + '/skills');
@@ -75,7 +79,7 @@ export class HttpService {
     /**
      * Deletes skill
      * @param skill Skill to delete
-     * @returns result 
+     * @returns result
      */
     public deleteSkill(url: string): Observable<any> {
         return this.httpClient.delete<any>(url);
@@ -94,7 +98,7 @@ export class HttpService {
     /**
      * Saves skill in backend
      * @param skill to be saved
-     * @returns result 
+     * @returns result
      */
     public saveSkill(skill: Skill): Observable<any> {
         return this.httpClient.post<any>(environment.api + '/skills', {name: skill.name});

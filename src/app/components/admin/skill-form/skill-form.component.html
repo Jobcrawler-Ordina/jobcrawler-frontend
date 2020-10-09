@@ -11,7 +11,7 @@
               <input type="text" matInput placeholder="Skill" formControlName="skill">
             </mat-form-field>
             <div class="error-messages">
-              <ng-container *ngFor="let error of error_messages.skill">
+              <ng-container *ngFor="let error of errorMessages.skill">
                   <div class="error-message" *ngIf="skillForm.get('skill').hasError(error.type) && (skillForm.get('skill').dirty || skillForm.get('skill').touched)">
                       {{ error.message }}
                   </div>

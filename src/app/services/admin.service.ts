@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -25,7 +25,7 @@ export class AdminService {
     public deleteUser(id: number): Observable<any> {
         return this.httpClient.delete(environment.api + '/user/' + id);
     }
-    
+
     public allowRegistration(): Observable<any> {
         return this.httpClient.get(environment.api + '/auth/allow');
     }
@@ -38,5 +38,4 @@ export class AdminService {
         return this.httpClient.put(environment.api + '/scraper', {});
     }
 
-    
 }

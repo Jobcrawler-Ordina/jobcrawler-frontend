@@ -45,7 +45,7 @@ export class SkillListComponent implements OnInit {
 
   public getSkills(): void {
     this.httpService.findAllSkills().subscribe((data: any) => {
-      let skillData: Skill[] = [];
+      const skillData: Skill[] = [];
       data._embedded.skills.forEach((skill: any) => {
         skillData.push({
           href: skill._links.self.href,
@@ -65,7 +65,7 @@ export class SkillListComponent implements OnInit {
         this.skills.splice(index, 1);
     },
     err => {
-      console.log("An error occured");
+      console.log('An error occured');
       console.log(err);
       if (err instanceof HttpErrorResponse) {
         console.log( 'Failed to delete skill:' +  err.message );
