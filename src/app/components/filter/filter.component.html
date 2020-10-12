@@ -35,10 +35,10 @@
                                formControlName="location"
                                matInput
                                [matAutocomplete]="auto"
-                               id="citySearch">
+                               id="locationSearch">
                         <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-                          <mat-option id="city" *ngFor="let city of filteredCities | async" [value]="city">
-                            {{city}}
+                          <mat-option id="location" *ngFor="let location of filteredLocations | async" [value]="location">
+                            {{location}}
                           </mat-option>
                         </mat-autocomplete>
                     </mat-form-field>

@@ -6,10 +6,10 @@ import { Observable } from 'rxjs';
 import { PageResult } from '../models/pageresult.model';
 import { Skill } from '../models/skill';
 import { Sort } from '@angular/material/sort';
+import { Location } from '../models/location';
 
 @Injectable()
 export class HttpService {
-
 
     /**
      * Creates an instance of filter service.
@@ -34,14 +34,19 @@ export class HttpService {
             params = params.append('skills', filterQuery.skills.join());
         if (filterQuery.keyword !== '')
             params = params.append('value', filterQuery.keyword);
+        if (filterQuery.location !== '')
+            params = params.append('location', filterQuery.location);
         if (sort !== undefined && sort.active !== '')
             params = params.append('sort', sort.active);
         if (sort !== undefined && sort.direction !== '')
             params = params.append('dir', sort.direction);
+        console.log(params);
+        let temp;
+        temp = this.httpClient.get<PageResult>(environment.api + '/vacancies', {params: params});
+        console.log(temp.get);
+        return temp;
 
-        return this.httpClient.get<PageResult>(environment.api + '/vacancies', {params: params});
     }
-
 
     /**
      * Gets vacancy by id
@@ -52,35 +57,31 @@ export class HttpService {
         return this.httpClient.get(environment.api + '/vacancies/' + id);
     }
 
-
     /**
      * Gets skills for vacancy
-     * @param id 
-     * @returns skills for vacancy 
+     * @param id
+     * @returns skills for vacancy
      */
     public getSkillsForVacancy(id: string): Observable<any> {
         return this.httpClient.get(environment.api + '/vacancies/' + id + '/skills');
     }
 
-
     /**
      * Finds all skills
-     * @returns all skills 
+     * @returns all skills
      */
     public findAllSkills(): Observable<any> {
         return this.httpClient.get<any>(environment.api + '/skills');
     }
 
-
     /**
      * Deletes skill
      * @param skill Skill to delete
-     * @returns result 
+     * @returns result
      */
     public deleteSkill(url: string): Observable<any> {
         return this.httpClient.delete<any>(url);
     }
-
 
     /**
      * Relinks skills to vacancies in backend
@@ -90,13 +91,19 @@ export class HttpService {
         return this.httpClient.put(environment.api + '/skillmatcher', {});
     }
 
-
     /**
      * Saves skill in backend
      * @param skill to be saved
-     * @returns result 
+     * @returns result
      */
     public saveSkill(skill: Skill): Observable<any> {
         return this.httpClient.post<any>(environment.api + '/skills', {name: skill.name});
+    }
+
+    public getLocations(): string[] {
+        let locations: Array<string> = [];
+        this.httpClient.get<Location[]>(environment.api + '/locations').subscribe(data => {
+                data.forEach(loc => {locations.push(loc.name); }); });
+        return locations;
     }
 }

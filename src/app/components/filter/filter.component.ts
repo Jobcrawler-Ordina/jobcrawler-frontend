@@ -14,6 +14,7 @@ import { Sort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
 import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
 import { Router } from '@angular/router';
+import { Location } from 'src/app/models/location';
 
 @Component({
   selector: 'app-filter',
@@ -27,10 +28,11 @@ export class FilterComponent implements OnInit, OnDestroy {
   searchForm: FormGroup;
   skills: Skill[];
   vacancies: IVacancies[] = [];
-  cities: string[] = ['Amsterdam', 'Den Haag', 'Rotterdam', 'Utrecht'];
-  showForm: boolean = false;
-  filteredLocations: Observable<String[]>;
+  //locations: string[] = ['Amsterdam', 'Den Haag', 'Rotterdam', 'Utrecht'];
+  locations: string[];
+  filteredLocations: Observable<string[]>;
 
+  showForm: boolean = false;
   totalVacancies: number;
   pageSize: number = 15;
   currentPage: number;
@@ -54,21 +56,23 @@ export class FilterComponent implements OnInit, OnDestroy {
   constructor(private form: FormBuilder,
     private httpService: HttpService,
     private dialog: MatDialog,
-    private router: Router) {}
+    private router: Router
+  ) {  }
 
 
   /**
    * Function gets executed upon initialization.
    * Constructs searchform.
    * Retrieves all vacancies.
-   * Detect changes to 'city' field.
+   * Detect changes to 'location' field.
    */
   ngOnInit(): void {
+    this.locations = this.httpService.getLocations();
+    this.locations.sort();
     this.loadForm();
-
     this.searchVacancies(this.pageEvent);
-  }
 
+  }
 
   /**
    * Destroys ngx-mat-select-search upon leaving page
@@ -92,6 +96,9 @@ export class FilterComponent implements OnInit, OnDestroy {
    * Converts form to json format. Currently logged to console and calls the getAllVacancies() function.
    */
   public searchVacancies(pageEvent?: PageEvent): void {
+      console.log(this.searchForm?.get('location'));
+      console.log(this.searchForm?.get('location').value);
+      console.log(typeof this.searchForm?.get('location').value);
     if (pageEvent !== undefined)
       this.pageEvent = pageEvent;
 
@@ -115,7 +122,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     } else {
       this.isShow = true;
       filterQuery = new FilterQuery();
-      filterQuery.city = '';
+      filterQuery.location = this.searchForm?.get('location').value.name;
       filterQuery.distance = 0;
       filterQuery.fromDate = '';
       filterQuery.toDate = '';
@@ -123,8 +130,12 @@ export class FilterComponent implements OnInit, OnDestroy {
       filterQuery.skills = [];
     }
 
+    console.log(filterQuery);
+
     const pageNum = pageEvent ? pageEvent.pageIndex : 0;
     if (pageEvent) this.pageSize = pageEvent.pageSize;
+
+    console.log(pageNum);
 
     this.vacancies = [];
     this.httpService.getByQuery(filterQuery, pageNum, this.pageSize, this.sort)
@@ -245,12 +256,12 @@ export class FilterComponent implements OnInit, OnDestroy {
 
 
   /**
-   * Filters city
+   * Filters location
    * @param search entered string
-   * @returns matching cities to entered string
+   * @returns matching locations to entered string
    */
-  private _filterCity(search: string): string[] {
-    return this.cities.filter(value => value.toLowerCase().indexOf(search.toLowerCase()) === 0);
+  private _filterLocation(search: string): string[] {
+    return this.locations.filter(value => value.toLowerCase().indexOf(search.toLowerCase()) === 0);
   }
 
 
@@ -262,17 +273,17 @@ export class FilterComponent implements OnInit, OnDestroy {
     return new Promise((resolve) => {
       this.searchForm = this.form.group({
         keyword: '',
-        city: '',
+        location: '',
         skills: '',
         distance: '',
         fromDate: '',
         toDate: ''
       });
 
-      this.filteredCities = this.searchForm.get('city')!.valueChanges
+      this.filteredLocations = this.searchForm.get('location')!.valueChanges
         .pipe(
           startWith(''),
-          map(value => this._filterCity(value || ''))
+          map(value => this._filterLocation(value || ''))
         );
 
       this.skillMultiFilterCtrl.valueChanges

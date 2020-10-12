@@ -1,6 +1,6 @@
 export class Location {
     id: string;
-    locationName: string;
+    name: string;
     lon: number;
     lat: number;
     distance: number;
