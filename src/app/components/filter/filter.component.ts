@@ -28,14 +28,13 @@ export class FilterComponent implements OnInit, OnDestroy {
   searchForm: FormGroup;
   skills: Skill[];
   vacancies: IVacancies[] = [];
-  //locations: string[] = ['Amsterdam', 'Den Haag', 'Rotterdam', 'Utrecht'];
   locations: string[];
   filteredLocations: Observable<string[]>;
   homeLocation: Location;
 
   showForm: boolean = false;
   totalVacancies: number;
-  pageSize: number = 5;
+  pageSize: number = 15;
   currentPage: number;
   pageEvent: PageEvent;
 
@@ -60,7 +59,6 @@ export class FilterComponent implements OnInit, OnDestroy {
     private router: Router
   ) {  }
 
-
   /**
    * Function gets executed upon initialization.
    * Constructs searchform.
@@ -73,13 +71,8 @@ export class FilterComponent implements OnInit, OnDestroy {
     this.homeLocation = new Location('Diemen');
     let temp;
     temp = await this.httpService.getCoordinates(this.homeLocation.name);
-    console.log(temp);
-    console.log(temp[0]);
-    console.log(temp[1]);
     this.homeLocation.lon = temp[0];
     this.homeLocation.lat = temp[1];
-    console.log(this.homeLocation);
-    console.log(this.homeLocation.getCoord());
     this.searchVacancies(this.pageEvent);
   }
 
@@ -91,14 +84,12 @@ export class FilterComponent implements OnInit, OnDestroy {
     this._onDestroy.complete();
   }
 
-
   /**
    * Toggles display / filter column
    */
   public toggleDisplay(): void {
     this.isShow = !this.isShow;
   }
-
 
   /**
    * TODO: Connect this function to send request to backend.
@@ -142,62 +133,25 @@ export class FilterComponent implements OnInit, OnDestroy {
     if (pageEvent) this.pageSize = pageEvent.pageSize;
 
     this.vacancies = [];
-    let temp2;
     this.httpService.getByQuery(filterQuery, pageNum, this.pageSize, this.sort)
     .pipe(takeUntil(this._onDestroy))
     .subscribe(async (page: PageResult) => {
         console.log(page);
         if (page !== null) {
-
-/*        page.vacancies.forEach(async (vacancy: Vacancy) => {
-          if (vacancy.location) {
-              temp2 = await this.httpService
-                  .getDistance(this.homeLocation.getCoord(), [vacancy.location.lon, vacancy.location.lat]);
-              vacancy.location.distance = temp2;
-              console.log(temp2);
-            }
-          this.vacancies.push({
-              title: vacancy.title,
-              broker: vacancy.broker,
-              postingDate: vacancy.postingDate,
-              location: vacancy.location,
-              id: vacancy.id,
-              vacancyUrl: vacancy.vacancyURL
-          });
-          console.log(this.vacancies);
-        });*/
-
-        const tempVacancies: IVacancies[] = [];
-
-        for (let vacancy of page.vacancies) {
+        let tempVacancies: IVacancies[] = [];
+        for (const vacancy of page.vacancies) {
             if (vacancy.location) {
-                await this.httpService
-                    .getDistance(this.homeLocation.getCoord(), [vacancy.location.lon, vacancy.location.lat]).then((result: number) => {
-                    vacancy.location.distance = result;
-                    console.log(vacancy.id);
-                    tempVacancies.push({
-                        title: vacancy.title,
-                        broker: vacancy.broker,
-                        postingDate: vacancy.postingDate,
-                        location: vacancy.location,
-                        id: vacancy.id,
-                        vacancyUrl: vacancy.vacancyURL
-                    });
-                });
-/*                vacancy.location.distance = temp2;
-                console.log(temp2);*/
-            } else {
-                console.log(vacancy.id);
-                tempVacancies.push({
-                    title: vacancy.title,
-                    broker: vacancy.broker,
-                    postingDate: vacancy.postingDate,
-                    location: vacancy.location,
-                    id: vacancy.id,
-                    vacancyUrl: vacancy.vacancyURL
-                });
+                await this.httpService.getDistance(this.homeLocation.getCoord(), [vacancy.location.lon, vacancy.location.lat])
+                    .then((result: number) => {vacancy.location.distance = result; });
             }
-            console.log(tempVacancies.length);
+            tempVacancies.push({
+                title: vacancy.title,
+                broker: vacancy.broker,
+                postingDate: vacancy.postingDate,
+                location: vacancy.location,
+                id: vacancy.id,
+                vacancyUrl: vacancy.vacancyURL
+            });
         }
         this.vacancies = tempVacancies;
         console.log(this.vacancies);
@@ -212,9 +166,7 @@ export class FilterComponent implements OnInit, OnDestroy {
         this.currentPage = 0;
       }
     });
-
   }
-
 
   /**
    * Resets form back to default values
@@ -224,7 +176,6 @@ export class FilterComponent implements OnInit, OnDestroy {
     this.skillMultiCtrl.reset();
   }
 
-
   /**
    * Easily search and select skills
    * @returns Does not return anything, prevent method to continue
@@ -233,7 +184,6 @@ export class FilterComponent implements OnInit, OnDestroy {
     if (!this.skills) {
       return;
     }
-
     let search = this.skillMultiFilterCtrl.value;
     if (!search) {
       this.filteredSkillsMulti.next(this.skills.slice());
@@ -241,7 +191,6 @@ export class FilterComponent implements OnInit, OnDestroy {
     } else {
       search = search.toLowerCase();
     }
-
     this.filteredSkillsMulti.next(
       this.skills.filter(skill => skill.name.toLowerCase().indexOf(search) === 0)
     )
