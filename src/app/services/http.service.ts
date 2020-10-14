@@ -40,12 +40,7 @@ export class HttpService {
             params = params.append('sort', sort.active);
         if (sort !== undefined && sort.direction !== '')
             params = params.append('dir', sort.direction);
-        console.log(params);
-        let temp;
-        temp = this.httpClient.get<PageResult>(environment.api + '/vacancies', {params: params});
-        console.log(temp.get);
-        return temp;
-
+        return this.httpClient.get<PageResult>(environment.api + '/vacancies', {params: params});
     }
 
     /**
@@ -105,5 +100,16 @@ export class HttpService {
         this.httpClient.get<Location[]>(environment.api + '/locations').subscribe(data => {
                 data.forEach(loc => {locations.push(loc.name); }); });
         return locations;
+    }
+
+    async getDistance(coord1: number[], coord2: number[]) {
+        return await this.httpClient.get(environment.api + '/distance?from=' + coord1[0] +
+            ',' + coord1[1] + '&to=' + coord2[0] + ',' + coord2[1])
+            .toPromise();
+    }
+
+    async getCoordinates(loc: string) {
+        return await this.httpClient.get(environment.api + '/coordinates?location=' + loc)
+            .toPromise();
     }
 }

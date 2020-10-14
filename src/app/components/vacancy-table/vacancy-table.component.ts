@@ -36,6 +36,8 @@ export class VacancyTableComponent implements OnChanges {
    */
   ngOnChanges(): void {
     this.showClass = this.isShow ? 'table-container' : 'table-container-no-filter';
+    console.log(this.vacancies.length);
+    console.log(this.vacancies);
   }
 
   /**

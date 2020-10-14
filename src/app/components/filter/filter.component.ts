@@ -31,10 +31,11 @@ export class FilterComponent implements OnInit, OnDestroy {
   //locations: string[] = ['Amsterdam', 'Den Haag', 'Rotterdam', 'Utrecht'];
   locations: string[];
   filteredLocations: Observable<string[]>;
+  homeLocation: Location;
 
   showForm: boolean = false;
   totalVacancies: number;
-  pageSize: number = 15;
+  pageSize: number = 5;
   currentPage: number;
   pageEvent: PageEvent;
 
@@ -66,12 +67,20 @@ export class FilterComponent implements OnInit, OnDestroy {
    * Retrieves all vacancies.
    * Detect changes to 'location' field.
    */
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.locations = this.httpService.getLocations();
-    this.locations.sort();
     this.loadForm();
+    this.homeLocation = new Location('Diemen');
+    let temp;
+    temp = await this.httpService.getCoordinates(this.homeLocation.name);
+    console.log(temp);
+    console.log(temp[0]);
+    console.log(temp[1]);
+    this.homeLocation.lon = temp[0];
+    this.homeLocation.lat = temp[1];
+    console.log(this.homeLocation);
+    console.log(this.homeLocation.getCoord());
     this.searchVacancies(this.pageEvent);
-
   }
 
   /**
@@ -95,10 +104,9 @@ export class FilterComponent implements OnInit, OnDestroy {
    * TODO: Connect this function to send request to backend.
    * Converts form to json format. Currently logged to console and calls the getAllVacancies() function.
    */
-  public searchVacancies(pageEvent?: PageEvent): void {
-      console.log(this.searchForm?.get('location'));
-      console.log(this.searchForm?.get('location').value);
-      console.log(typeof this.searchForm?.get('location').value);
+  public async searchVacancies(pageEvent?: PageEvent): Promise<void> {
+    console.log("Test start searchVacancies");
+
     if (pageEvent !== undefined)
       this.pageEvent = pageEvent;
 
@@ -122,7 +130,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     } else {
       this.isShow = true;
       filterQuery = new FilterQuery();
-      filterQuery.location = this.searchForm?.get('location').value.name;
+      filterQuery.location = '';
       filterQuery.distance = 0;
       filterQuery.fromDate = '';
       filterQuery.toDate = '';
@@ -130,19 +138,24 @@ export class FilterComponent implements OnInit, OnDestroy {
       filterQuery.skills = [];
     }
 
-    console.log(filterQuery);
-
     const pageNum = pageEvent ? pageEvent.pageIndex : 0;
     if (pageEvent) this.pageSize = pageEvent.pageSize;
 
-    console.log(pageNum);
-
     this.vacancies = [];
+    let temp2;
     this.httpService.getByQuery(filterQuery, pageNum, this.pageSize, this.sort)
     .pipe(takeUntil(this._onDestroy))
-    .subscribe((page: PageResult) => {
-      if (page !== null) {
-        page.vacancies.forEach((vacancy: Vacancy) => {
+    .subscribe(async (page: PageResult) => {
+        console.log(page);
+        if (page !== null) {
+
+/*        page.vacancies.forEach(async (vacancy: Vacancy) => {
+          if (vacancy.location) {
+              temp2 = await this.httpService
+                  .getDistance(this.homeLocation.getCoord(), [vacancy.location.lon, vacancy.location.lat]);
+              vacancy.location.distance = temp2;
+              console.log(temp2);
+            }
           this.vacancies.push({
               title: vacancy.title,
               broker: vacancy.broker,
@@ -151,7 +164,43 @@ export class FilterComponent implements OnInit, OnDestroy {
               id: vacancy.id,
               vacancyUrl: vacancy.vacancyURL
           });
-        });
+          console.log(this.vacancies);
+        });*/
+
+        const tempVacancies: IVacancies[] = [];
+
+        for (let vacancy of page.vacancies) {
+            if (vacancy.location) {
+                await this.httpService
+                    .getDistance(this.homeLocation.getCoord(), [vacancy.location.lon, vacancy.location.lat]).then((result: number) => {
+                    vacancy.location.distance = result;
+                    console.log(vacancy.id);
+                    tempVacancies.push({
+                        title: vacancy.title,
+                        broker: vacancy.broker,
+                        postingDate: vacancy.postingDate,
+                        location: vacancy.location,
+                        id: vacancy.id,
+                        vacancyUrl: vacancy.vacancyURL
+                    });
+                });
+/*                vacancy.location.distance = temp2;
+                console.log(temp2);*/
+            } else {
+                console.log(vacancy.id);
+                tempVacancies.push({
+                    title: vacancy.title,
+                    broker: vacancy.broker,
+                    postingDate: vacancy.postingDate,
+                    location: vacancy.location,
+                    id: vacancy.id,
+                    vacancyUrl: vacancy.vacancyURL
+                });
+            }
+            console.log(tempVacancies.length);
+        }
+        this.vacancies = tempVacancies;
+        console.log(this.vacancies);
         this.totalVacancies = page.totalItems;
         this.currentPage = pageNum;
         if (this.sort !== undefined) {
