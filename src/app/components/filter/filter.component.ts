@@ -69,10 +69,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     this.locations = this.httpService.getLocations();
     this.loadForm();
     this.homeLocation = new Location('Diemen');
-    let temp;
-    temp = await this.httpService.getCoordinates(this.homeLocation.name);
-    this.homeLocation.lon = temp[0];
-    this.homeLocation.lat = temp[1];
+    this.homeLocation.setCoord(await this.httpService.getCoordinates(this.homeLocation.name) as number[]);
     this.searchVacancies(this.pageEvent);
   }
 
@@ -97,6 +94,9 @@ export class FilterComponent implements OnInit, OnDestroy {
    */
   public async searchVacancies(pageEvent?: PageEvent): Promise<void> {
     console.log("Test start searchVacancies");
+
+    this.homeLocation = new Location(this.searchForm.get("location").value);
+    this.homeLocation.setCoord(await this.httpService.getCoordinates(this.homeLocation.name) as number[]);
 
     if (pageEvent !== undefined)
       this.pageEvent = pageEvent;
@@ -136,7 +136,6 @@ export class FilterComponent implements OnInit, OnDestroy {
     this.httpService.getByQuery(filterQuery, pageNum, this.pageSize, this.sort)
     .pipe(takeUntil(this._onDestroy))
     .subscribe(async (page: PageResult) => {
-        console.log(page);
         if (page !== null) {
         let tempVacancies: IVacancies[] = [];
         for (const vacancy of page.vacancies) {
@@ -154,7 +153,6 @@ export class FilterComponent implements OnInit, OnDestroy {
             });
         }
         this.vacancies = tempVacancies;
-        console.log(this.vacancies);
         this.totalVacancies = page.totalItems;
         this.currentPage = pageNum;
         if (this.sort !== undefined) {

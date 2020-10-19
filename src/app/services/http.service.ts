@@ -36,6 +36,8 @@ export class HttpService {
             params = params.append('value', filterQuery.keyword);
         if (filterQuery.location !== '')
             params = params.append('location', filterQuery.location);
+        if (filterQuery.distance !== null)
+            params = params.append('distance', String(filterQuery.distance));
         if (sort !== undefined && sort.active !== '')
             params = params.append('sort', sort.active);
         if (sort !== undefined && sort.direction !== '')
