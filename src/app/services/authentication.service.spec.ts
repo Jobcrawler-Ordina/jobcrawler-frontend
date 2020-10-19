@@ -5,6 +5,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { first } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { User } from '../models/user.model';
+import { allowRegistrationMock } from '../tests/adminServiceMockResponses';
 import { loginMockResponse, signupMockResponse } from '../tests/authenticationServiceMockResponses';
 import { AuthenticationService } from './authentication.service';
 
@@ -85,6 +86,17 @@ describe('AuthenticationService', () => {
         expect(localStorage.removeItem).toHaveBeenCalledTimes(1);
         expect(routerSpy.navigate).toHaveBeenCalledWith(['/']);
         expect(service.currentUserValue).toBeNull();
+    });
+
+    it('should request if registration is allowed', () => {
+        service.allowRegistration().subscribe((data: any) => {
+            expect(data.allow).toBe(true);
+        });
+
+        const req = httpMock.expectOne(environment.api + '/auth/allow');
+        expect(req.request.method).toBe('GET');
+
+        req.flush(allowRegistrationMock);
     });
 
     afterEach(() => {
