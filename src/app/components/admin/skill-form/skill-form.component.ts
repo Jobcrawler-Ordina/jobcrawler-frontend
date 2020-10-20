@@ -27,8 +27,8 @@ export class SkillFormComponent implements OnInit {
     errorMessage: string;
     skillForm: FormGroup;
 
-    error_messages = {
-        'skill' : [
+    errorMessages = {
+        skill : [
             { type: 'required', message: 'Skill is required' },
             { type: 'minlength', message: 'Minimum length is 3 chars' }
         ]

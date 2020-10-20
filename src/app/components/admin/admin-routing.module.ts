@@ -13,7 +13,7 @@ const routes: Routes = [
       { path: 'users', component: UsersComponent },
       { path: 'getskills', component: SkillListComponent },
       { path: 'addskill', component: SkillFormComponent }
-    ] 
+    ]
   }
 ];
 

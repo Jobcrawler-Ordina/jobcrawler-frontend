@@ -15,8 +15,8 @@ export class VacancyTableComponent implements OnChanges {
 
   @Input() isShow: boolean;
   @Input() vacancies: IVacancies[];
-  @Input() sortBy: String;
-  @Input() sortOrder: String;
+  @Input() sortBy: string;
+  @Input() sortOrder: string;
   @Output() filterButtonClicked = new EventEmitter();
   @Output() changeSorting: EventEmitter<Sort> = new EventEmitter<Sort>();
 
@@ -26,7 +26,7 @@ export class VacancyTableComponent implements OnChanges {
 
   /**
    * Creates an instance of vacancy table component.
-   * @param dialog
+   * @param dialog matdialog
    */
   constructor(private dialog: MatDialog) {
   }
@@ -51,7 +51,10 @@ export class VacancyTableComponent implements OnChanges {
    * @param vacancyID id that is passed to vacancy-dialog.component
    */
   public openDialog(vacancyID: string): void {
-    this.dialog.open(VacancyDialogComponent, { data: vacancyID });
+    this.dialog.open(VacancyDialogComponent, {
+      data: vacancyID,
+      autoFocus: false
+   });
   }
 
 

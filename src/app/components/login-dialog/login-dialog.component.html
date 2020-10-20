@@ -8,7 +8,7 @@
               </mat-form-field>
             </p>
             <div class="error-messages">
-                <ng-container *ngFor="let error of error_messages_login.username">
+                <ng-container *ngFor="let error of errorMessagesLogin.username">
                     <div class="error-message" *ngIf="loginForm.get('username').hasError(error.type) && (loginForm.get('username').dirty || loginForm.get('username').touched)">
                         {{ error.message }}
                     </div>
@@ -24,7 +24,7 @@
               </mat-form-field>
             </p>
             <div class="error-messages">
-                <ng-container *ngFor="let error of error_messages_login.password">
+                <ng-container *ngFor="let error of errorMessagesLogin.password">
                     <div class="error-message" *ngIf="loginForm.get('password').hasError(error.type) && (loginForm.get('password').dirty || loginForm.get('password').touched)">
                         {{ error.message }}
                     </div>
@@ -46,7 +46,7 @@
               </mat-form-field>
             </p>
             <div class="error-messages">
-                <ng-container *ngFor="let error of error_messages.usernameSignup">
+                <ng-container *ngFor="let error of errorMessages.usernameSignup">
                     <div class="error-message" *ngIf="signupForm.get('usernameSignup').hasError(error.type) && (signupForm.get('usernameSignup').dirty || signupForm.get('usernameSignup').touched)">
                         {{ error.message }}
                     </div>
@@ -62,7 +62,7 @@
               </mat-form-field>
             </p>
             <div class="error-messages">
-                <ng-container *ngFor="let error of error_messages.passwordSignup">
+                <ng-container *ngFor="let error of errorMessages.passwordSignup">
                     <div class="error-message" *ngIf="signupForm.get('passwordSignup').hasError(error.type) && (signupForm.get('passwordSignup').dirty || signupForm.get('passwordSignup').touched)">
                         {{ error.message }}
                     </div>
@@ -78,7 +78,7 @@
                 </mat-form-field>
             </p>
             <div class="error-messages">
-                <ng-container *ngFor="let error of error_messages.passwordSignupConfirm">
+                <ng-container *ngFor="let error of errorMessages.passwordSignupConfirm">
                     <div class="error-message" *ngIf="signupForm.get('passwordSignupConfirm').hasError(error.type) && (signupForm.get('passwordSignupConfirm').dirty || signupForm.get('passwordSignupConfirm').touched)">
                         {{ error.message }}
                     </div>

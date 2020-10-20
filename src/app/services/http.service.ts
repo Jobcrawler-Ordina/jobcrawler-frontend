@@ -64,7 +64,7 @@ export class HttpService {
 
     /**
      * Gets skills for vacancy
-     * @param id
+     * @param id vacancy id
      * @returns skills for vacancy
      */
     public getSkillsForVacancy(id: string): Observable<any> {
@@ -122,14 +122,4 @@ export class HttpService {
         return await this.httpClient.get(environment.api + '/coordinates?location=' + loc)
             .toPromise();
     }
-
-    getCityFromIP(): string {
-        let ip: string;
-        let city: string;
-        this.httpClient.get<any>('http://api.ipify.org/?format=json').subscribe(data => {ip = data.ip; });
-        this.httpClient.get<any>('http://ip-api.com/json/' + ip).subscribe(data => {city = data.city; });
-        return city;
-    }
-
-
 }

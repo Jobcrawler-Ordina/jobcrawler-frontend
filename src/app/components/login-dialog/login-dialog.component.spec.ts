@@ -11,10 +11,10 @@ describe('LoginDialogComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ 
+      imports: [
         RouterTestingModule,
         HttpClientTestingModule,
-        ReactiveFormsModule 
+        ReactiveFormsModule
       ],
       declarations: [ LoginDialogComponent ],
       providers: [ FormBuilder ]

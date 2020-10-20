@@ -14,7 +14,7 @@ describe('SkillFormComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ 
+      imports: [
         RouterTestingModule,
         HttpClientTestingModule,
         ReactiveFormsModule,
@@ -23,7 +23,7 @@ describe('SkillFormComponent', () => {
         MatDividerModule
       ],
       declarations: [ SkillFormComponent ],
-      providers: [ 
+      providers: [
         HttpService,
         FormBuilder
       ]
