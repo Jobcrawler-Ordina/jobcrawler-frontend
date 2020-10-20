@@ -139,7 +139,7 @@ export class FilterComponent implements OnInit, OnDestroy {
 
     this.vacancies = [];
     this.httpService.getByQuery(filterQuery, pageNum, this.pageSize, this.sort)
-    .pipe(takeUntil(this._onDestroy))
+    .pipe(takeUntil(this.onDestroy))
     .subscribe(async (page: PageResult) => {
         if (page !== null) {
         let tempVacancies: IVacancies[] = [];
