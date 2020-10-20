@@ -31,8 +31,9 @@ export class FilterComponent implements OnInit, OnDestroy {
   locations: string[];
   filteredLocations: Observable<string[]>;
   homeLocation: Location;
+  currentLocation: string;
 
-  showForm: boolean = false;
+  showForm = false;
   totalVacancies: number;
   pageSize = 15;
   currentPage: number;
@@ -54,9 +55,9 @@ export class FilterComponent implements OnInit, OnDestroy {
    * @param filterService Used for http requests (post/get)
    */
   constructor(private form: FormBuilder,
-    private httpService: HttpService,
-    private dialog: MatDialog,
-    private router: Router
+              private httpService: HttpService,
+              private dialog: MatDialog,
+              private router: Router
   ) {  }
 
   /**
@@ -71,6 +72,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     this.homeLocation = new Location('Diemen');
     this.homeLocation.setCoord(await this.httpService.getCoordinates(this.homeLocation.name) as number[]);
     this.searchVacancies(this.pageEvent);
+    this.searchForm.controls.location.setValue(await this.getGeoLocation()); // set location in form, after initial vacancies are loaded
   }
 
   /**
@@ -97,13 +99,11 @@ export class FilterComponent implements OnInit, OnDestroy {
    * Converts form to json format. Currently logged to console and calls the getAllVacancies() function.
    */
   public async searchVacancies(pageEvent?: PageEvent): Promise<void> {
-    console.log("Test start searchVacancies");
 
-    this.homeLocation = new Location(this.searchForm.get("location").value);
+    this.homeLocation = new Location(this.searchForm.get('location').value);
     this.homeLocation.setCoord(await this.httpService.getCoordinates(this.homeLocation.name) as number[]);
 
-    if (pageEvent !== undefined)
-    {  this.pageEvent = pageEvent; }
+    if (pageEvent !== undefined) {  this.pageEvent = pageEvent; }
 
     let filterQuery: FilterQuery;
 
@@ -148,7 +148,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     .pipe(takeUntil(this.onDestroy))
     .subscribe(async (page: PageResult) => {
         if (page !== null) {
-        let tempVacancies: IVacancies[] = [];
+        const tempVacancies: IVacancies[] = [];
         for (const vacancy of page.vacancies) {
             if (vacancy.location) {
                 await this.httpService.getDistance(this.homeLocation.getCoord(), [vacancy.location.lon, vacancy.location.lat])
@@ -303,6 +303,18 @@ export class FilterComponent implements OnInit, OnDestroy {
       });
 
       resolve();
+    });
+  }
+
+  private getGeoLocation(): Promise<any> {
+    return new Promise((resolve) => {
+      navigator.geolocation.getCurrentPosition((position) => {
+        this.httpService.getLocationByCoordinates(position.coords.latitude, position.coords.longitude)
+          .subscribe((data: any) => resolve(data.location));
+      },
+      () => {
+        resolve('');
+      });
     });
   }
 

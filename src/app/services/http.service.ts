@@ -122,4 +122,8 @@ export class HttpService {
         return await this.httpClient.get(environment.api + '/coordinates?location=' + loc)
             .toPromise();
     }
+
+    public getLocationByCoordinates(lat: number, lon: number): Observable<any> {
+        return this.httpClient.get<any>(environment.api + '/locations/coordinates?lat=' + lat + '&lon=' + lon);
+    }
 }
