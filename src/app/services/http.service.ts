@@ -64,7 +64,7 @@ export class HttpService {
 
     /**
      * Gets skills for vacancy
-     * @param id vacancy id
+     * @param id
      * @returns skills for vacancy
      */
     public getSkillsForVacancy(id: string): Observable<any> {
@@ -107,8 +107,8 @@ export class HttpService {
 
     public getLocations(): string[] {
         const locations: Array<string> = [];
-        this.httpClient.get<Location[]>(environment.api + '/locations').subscribe(data => {
-                data.forEach(loc => {locations.push(loc.name); }); });
+        this.httpClient.get<Location[]>(environment.api + '/locations').subscribe(data =>
+                data.forEach(loc => locations.push(loc.name)));
         return locations;
     }
 
@@ -122,4 +122,16 @@ export class HttpService {
         return await this.httpClient.get(environment.api + '/coordinates?location=' + loc)
             .toPromise();
     }
+
+    public async getCityFromIP(): Promise<string> {
+        let ip: string;
+        let city: string;
+        await this.httpClient.get<any>('http://api.ipify.org/?format=json').toPromise().then(data => {ip = data.ip; });
+        console.log(ip);
+        await this.httpClient.get<any>('http://ip-api.com/json/' + ip).toPromise().then(data => {city = data.city; });
+        console.log(city);
+        return city;
+    }
+
+
 }

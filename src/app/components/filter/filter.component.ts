@@ -15,6 +15,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
 import { Router } from '@angular/router';
 import { Location } from 'src/app/models/location';
+import {LocationDialogComponent} from '../../location-dialog/location-dialog.component';
 
 @Component({
   selector: 'app-filter',
@@ -71,6 +72,8 @@ export class FilterComponent implements OnInit, OnDestroy {
     this.homeLocation = new Location('Diemen');
     this.homeLocation.setCoord(await this.httpService.getCoordinates(this.homeLocation.name) as number[]);
     this.searchVacancies(this.pageEvent);
+
+      this.dialog.open(LocationDialogComponent);
   }
 
   /**
@@ -97,13 +100,13 @@ export class FilterComponent implements OnInit, OnDestroy {
    * Converts form to json format. Currently logged to console and calls the getAllVacancies() function.
    */
   public async searchVacancies(pageEvent?: PageEvent): Promise<void> {
-    console.log("Test start searchVacancies");
 
     this.homeLocation = new Location(this.searchForm.get("location").value);
     this.homeLocation.setCoord(await this.httpService.getCoordinates(this.homeLocation.name) as number[]);
 
-    if (pageEvent !== undefined)
-    {  this.pageEvent = pageEvent; }
+    if (pageEvent !== undefined) {
+        this.pageEvent = pageEvent;
+    }
 
     let filterQuery: FilterQuery;
 
