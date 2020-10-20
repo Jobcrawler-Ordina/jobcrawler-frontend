@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
@@ -22,23 +22,23 @@ export class AuthenticationService {
         return this.currentUserSubject.value;
     }
 
-    login(username: string, password: string): Observable<any> {
+    login(user: string, pass: string): Observable<any> {
         return this.http.post<any>(environment.api + '/auth/signin', {
-            username: username,
-            password: password
+            username: user,
+            password: pass
         })
-        .pipe(map((user: User) => {
-            user.expiresAt = moment().add(user.expiresIn,'second');
+        .pipe(map((userLogin: User) => {
+            userLogin.expiresAt = moment().add(userLogin.expiresIn, 'second');
             localStorage.setItem('currentUser', JSON.stringify(user));
-            this.currentUserSubject.next(user);
+            this.currentUserSubject.next(userLogin);
             return user;
         }));
     }
 
-    signup(username: string, password: string): Observable<any> {
+    signup(user: string, pass: string): Observable<any> {
         return this.http.post(environment.api + '/auth/signup', {
-            username: username,
-            password: password
+            username: user,
+            password: pass
         });
     }
 
@@ -48,11 +48,11 @@ export class AuthenticationService {
 
     refresh(): Observable<any> {
         return this.http.get(environment.api + '/auth/refresh')
-            .pipe(map((user: User) => {
-            user.expiresAt = moment().add(user.expiresIn,'second');
-            localStorage.setItem('currentUser', JSON.stringify(user));
-            this.currentUserSubject.next(user);
-            return user;
+            .pipe(map((userLogin: User) => {
+            userLogin.expiresAt = moment().add(userLogin.expiresIn, 'second');
+            localStorage.setItem('currentUser', JSON.stringify(userLogin));
+            this.currentUserSubject.next(userLogin);
+            return userLogin;
         }));
     }
 

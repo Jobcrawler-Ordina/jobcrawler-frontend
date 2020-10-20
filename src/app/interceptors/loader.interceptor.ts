@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
@@ -7,12 +7,12 @@ import { LoaderService } from '../services/loader.service';
 
 @Injectable()
 export class LoaderInterceptor implements HttpInterceptor {
-    
+
     /**
      * Creates an instance of loader interceptor.
      * @param loaderService loaderService is either true or false.
      */
-    constructor(public loaderService: LoaderService){}
+    constructor(public loaderService: LoaderService) {}
 
 
     /**
@@ -25,7 +25,7 @@ export class LoaderInterceptor implements HttpInterceptor {
         this.loaderService.show();
         return next.handle(req).pipe(
             finalize(() => this.loaderService.hide())
-        )
+        );
     }
-    
+
 }
