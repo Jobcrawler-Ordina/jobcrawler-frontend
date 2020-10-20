@@ -88,7 +88,11 @@ export class FilterComponent implements OnInit, OnDestroy {
     this.isShow = !this.isShow;
   }
 
-  /**
+/*    public toggleDisplayEmptyLocs(): void {
+        this.showEmptyLocs = !this.showEmptyLocs;
+    }*/
+
+    /**
    * TODO: Connect this function to send request to backend.
    * Converts form to json format. Currently logged to console and calls the getAllVacancies() function.
    */
@@ -123,6 +127,7 @@ export class FilterComponent implements OnInit, OnDestroy {
       filterQuery = new FilterQuery();
       filterQuery.location = '';
       filterQuery.distance = 0;
+      filterQuery.includeEmptyLocs = true;
       filterQuery.fromDate = '';
       filterQuery.toDate = '';
       filterQuery.keyword = '';
@@ -272,6 +277,7 @@ export class FilterComponent implements OnInit, OnDestroy {
         location: '',
         skills: '',
         distance: '',
+        includeEmptyLocs: true,
         fromDate: '',
         toDate: ''
       });

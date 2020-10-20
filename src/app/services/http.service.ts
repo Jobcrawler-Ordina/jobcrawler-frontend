@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { FilterQuery } from '../models/filterQuery.model';
 import { environment } from 'src/environments/environment';
@@ -10,8 +10,7 @@ import { Location } from '../models/location';
 
 @Injectable()
 export class HttpService {
-
-    /**
+        /**
      * Creates an instance of filter service.
      * @param httpClient needed for http requests
      */
@@ -30,19 +29,28 @@ export class HttpService {
         let params = new HttpParams();
         params = params.append('size', String(pageSize));
         params = params.append('page', String(pageNum));
-        if (filterQuery.skills.length > 0)
+        if (filterQuery.skills.length > 0) {
             params = params.append('skills', filterQuery.skills.join());
-        if (filterQuery.keyword !== '')
+        }
+        if (filterQuery.keyword !== '') {
             params = params.append('value', filterQuery.keyword);
-        if (filterQuery.location !== '')
+        }
+        if (filterQuery.location !== '') {
             params = params.append('location', filterQuery.location);
-        if (filterQuery.distance !== null)
+        }
+        if (filterQuery.distance !== null) {
             params = params.append('distance', String(filterQuery.distance));
-        if (sort !== undefined && sort.active !== '')
+        }
+        if (filterQuery.includeEmptyLocs !== null) {
+            params = params.append('emptylocs', String(filterQuery.includeEmptyLocs));
+        }
+        if (sort !== undefined && sort.active !== '') {
             params = params.append('sort', sort.active);
-        if (sort !== undefined && sort.direction !== '')
+        }
+        if (sort !== undefined && sort.direction !== '') {
             params = params.append('dir', sort.direction);
-        return this.httpClient.get<PageResult>(environment.api + '/vacancies', {params: params});
+        }
+        return this.httpClient.get<PageResult>(environment.api + '/vacancies', {params});
     }
 
     /**
@@ -98,7 +106,7 @@ export class HttpService {
     }
 
     public getLocations(): string[] {
-        let locations: Array<string> = [];
+        const locations: Array<string> = [];
         this.httpClient.get<Location[]>(environment.api + '/locations').subscribe(data => {
                 data.forEach(loc => {locations.push(loc.name); }); });
         return locations;
@@ -114,4 +122,14 @@ export class HttpService {
         return await this.httpClient.get(environment.api + '/coordinates?location=' + loc)
             .toPromise();
     }
+
+    getCityFromIP(): string {
+        let ip: string;
+        let city: string;
+        this.httpClient.get<any>('http://api.ipify.org/?format=json').subscribe(data => {ip = data.ip; });
+        this.httpClient.get<any>('http://ip-api.com/json/' + ip).subscribe(data => {city = data.city; });
+        return city;
+    }
+
+
 }
