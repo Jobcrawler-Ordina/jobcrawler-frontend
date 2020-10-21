@@ -1,9 +1,6 @@
 name: GitHub pages deployment
 
-on:
-  push:	
-    branches:	
-      - feature/nex-214
+on: push
 
 jobs:
   build:
