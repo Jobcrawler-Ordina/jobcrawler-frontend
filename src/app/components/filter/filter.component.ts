@@ -133,7 +133,6 @@ export class FilterComponent implements OnInit, OnDestroy {
       filterQuery = new FilterQuery();
       filterQuery.location = '';
       filterQuery.distance = 0;
-      filterQuery.includeEmptyLocs = true;
       filterQuery.fromDate = '';
       filterQuery.toDate = '';
       filterQuery.keyword = '';
