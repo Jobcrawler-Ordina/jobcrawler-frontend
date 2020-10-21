@@ -1,5 +1,5 @@
 name: NPM Test
-  on:
+on:
   push:	
     branches:	
       - feature/nex214
