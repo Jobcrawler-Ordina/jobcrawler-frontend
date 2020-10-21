@@ -8,7 +8,6 @@ import { map, startWith, takeUntil } from 'rxjs/operators';
 import { MatSelect } from '@angular/material/select';
 import { PageEvent } from '@angular/material/paginator';
 import { PageResult } from 'src/app/models/pageresult.model';
-import { Vacancy } from 'src/app/models/vacancy';
 import { Skill } from 'src/app/models/skill';
 import { Sort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
@@ -68,7 +67,7 @@ export class FilterComponent implements OnInit, OnDestroy {
    */
   async ngOnInit(): Promise<void> {
     this.locations = this.httpService.getLocations();
-    this.loadForm();
+    await this.loadForm(); // Need to load form fully before continuing with anything else that might causes errors
     this.homeLocation = new Location('Diemen');
     this.homeLocation.setCoord(await this.httpService.getCoordinates(this.homeLocation.name) as number[]);
     this.searchVacancies(this.pageEvent);
@@ -232,25 +231,29 @@ export class FilterComponent implements OnInit, OnDestroy {
   /**
    * Loads form asynchronous
    */
-  private loadForm(): void {
-    this.getSkills().then((data: any) => {
-      const skillData: Skill[] = [];
-      data._embedded.skills.forEach((skill: any) => {
-        skillData.push({
-          href: skill._links.self.href,
-          name: skill.name
+  private loadForm(): Promise<any> {
+    return new Promise((resolve) => {
+      this.getSkills().then((data: any) => {
+        const skillData: Skill[] = [];
+        data._embedded.skills.forEach((skill: any) => {
+          skillData.push({
+            href: skill._links.self.href,
+            name: skill.name
+          });
         });
+        this.skills = skillData;
+        this.filteredSkillsMulti.next(this.skills.slice());
+        this.constructSearchForm().then(() => {
+          this.showForm = true;
+          this.isShow = false;
+          resolve();
+        });
+      },
+      err => {
+        console.log('Failed loading form');
+        console.log(err.message);
+        resolve();
       });
-      this.skills = skillData;
-      this.filteredSkillsMulti.next(this.skills.slice());
-      this.constructSearchForm().then(() => {
-        this.showForm = true;
-        this.isShow = false;
-      });
-    },
-    err => {
-      console.log('Failed loading form');
-      console.log(err.message);
     });
   }
 
