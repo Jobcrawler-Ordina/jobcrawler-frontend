@@ -313,7 +313,8 @@ export class FilterComponent implements OnInit, OnDestroy {
     return new Promise((resolve) => {
       navigator.geolocation.getCurrentPosition((position) => {
         this.httpService.getLocationByCoordinates(position.coords.latitude, position.coords.longitude)
-          .subscribe((data: any) => resolve(data.location));
+          .subscribe((data: any) => resolve(data.location),
+                     () => resolve(''));
       },
       () => {
         resolve('');
