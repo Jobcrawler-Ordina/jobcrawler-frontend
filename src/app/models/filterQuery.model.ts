@@ -3,7 +3,6 @@ export class FilterQuery {
     location: string;
     skills: any[];
     distance: number;
-    includeEmptyLocs: boolean;
     fromDate: string;
     toDate: string;
 }
