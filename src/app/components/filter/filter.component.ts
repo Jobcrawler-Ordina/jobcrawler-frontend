@@ -32,6 +32,7 @@ export class FilterComponent implements OnInit, OnDestroy {
   locations: string[];
   filteredLocations: Observable<string[]>;
   homeLocation: Location;
+  currentLocation: string;
 
   showForm: boolean = false;
   totalVacancies: number;
@@ -55,9 +56,9 @@ export class FilterComponent implements OnInit, OnDestroy {
    * @param filterService Used for http requests (post/get)
    */
   constructor(private form: FormBuilder,
-    private httpService: HttpService,
-    private dialog: MatDialog,
-    private router: Router
+              private httpService: HttpService,
+              private dialog: MatDialog,
+              private router: Router
   ) {  }
 
   /**
@@ -68,12 +69,14 @@ export class FilterComponent implements OnInit, OnDestroy {
    */
   async ngOnInit(): Promise<void> {
     this.locations = this.httpService.getLocations();
-    this.loadForm();
-    this.homeLocation = new Location('Diemen');
-    this.homeLocation.setCoord(await this.httpService.getCoordinates(this.homeLocation.name) as number[]);
+    await this.loadForm(); // Need to load form fully before continuing with anything else that might causes errors
+
+    //this.homeLocation = new Location('Diemen');
     this.searchVacancies(this.pageEvent);
 
-      this.dialog.open(LocationDialogComponent);
+    this.dialog.open(LocationDialogComponent);
+
+    //this.searchForm.controls.location.setValue(this.homeLocation.getName()); // set location in form, after initial vacancies are loaded
   }
 
   /**
@@ -100,8 +103,9 @@ export class FilterComponent implements OnInit, OnDestroy {
    * Converts form to json format. Currently logged to console and calls the getAllVacancies() function.
    */
   public async searchVacancies(pageEvent?: PageEvent): Promise<void> {
+    console.log("Test start searchVacancies");
 
-    this.homeLocation = new Location(this.searchForm.get("location").value);
+    this.homeLocation = new Location(this.searchForm.get('location').value);
     this.homeLocation.setCoord(await this.httpService.getCoordinates(this.homeLocation.name) as number[]);
 
     if (pageEvent !== undefined) {
@@ -151,7 +155,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     .pipe(takeUntil(this.onDestroy))
     .subscribe(async (page: PageResult) => {
         if (page !== null) {
-        let tempVacancies: IVacancies[] = [];
+        const tempVacancies: IVacancies[] = [];
         for (const vacancy of page.vacancies) {
             if (vacancy.location) {
                 await this.httpService.getDistance(this.homeLocation.getCoord(), [vacancy.location.lon, vacancy.location.lat])
@@ -235,25 +239,29 @@ export class FilterComponent implements OnInit, OnDestroy {
   /**
    * Loads form asynchronous
    */
-  private loadForm(): void {
-    this.getSkills().then((data: any) => {
-      const skillData: Skill[] = [];
-      data._embedded.skills.forEach((skill: any) => {
-        skillData.push({
-          href: skill._links.self.href,
-          name: skill.name
+  private loadForm(): Promise<any> {
+    return new Promise((resolve) => {
+      this.getSkills().then((data: any) => {
+        const skillData: Skill[] = [];
+        data._embedded.skills.forEach((skill: any) => {
+          skillData.push({
+            href: skill._links.self.href,
+            name: skill.name
+          });
         });
+        this.skills = skillData;
+        this.filteredSkillsMulti.next(this.skills.slice());
+        this.constructSearchForm().then(() => {
+          this.showForm = true;
+          this.isShow = false;
+          resolve();
+        });
+      },
+      err => {
+        console.log('Failed loading form');
+        console.log(err.message);
+        resolve();
       });
-      this.skills = skillData;
-      this.filteredSkillsMulti.next(this.skills.slice());
-      this.constructSearchForm().then(() => {
-        this.showForm = true;
-        this.isShow = false;
-      });
-    },
-    err => {
-      console.log('Failed loading form');
-      console.log(err.message);
     });
   }
 
@@ -308,5 +316,4 @@ export class FilterComponent implements OnInit, OnDestroy {
       resolve();
     });
   }
-
 }

@@ -4,6 +4,7 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { Router } from '@angular/router';
 import { first } from 'rxjs/operators';
 import { HttpService } from 'src/app/services/http.service';
+import {Location} from '../models/location';
 
 @Component({
   selector: 'app-location-dialog',
@@ -12,29 +13,31 @@ import { HttpService } from 'src/app/services/http.service';
   providers: [HttpService]
 })
 export class LocationDialogComponent implements OnInit {
-    homeLocation: string;
+    homeLocation: Location;
     private ip: any;
+
   constructor(private httpService: HttpService ) {   console.log('Test');
     }
 
     async ngOnInit(): Promise<void> {
-        this.getUserLocation();
-//        navigator.geolocation.getCurrentPosition();
-//        this.homeLocation = await this.httpService.getCityFromIP();
+        await this.getGeoLocation().then(result => {this.homeLocation = result; });
         console.log(this.homeLocation);
+        console.log(this.homeLocation.name);
     }
 
-    getUserLocation() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(position => {
-                this.lat = position.coords.latitude;
-                this.lng = position.coords.longitude;
-            });
-        }else {
-            console.log("User not allow")
-
-        }
+    private getGeoLocation(): Promise<any> {
+        return new Promise((resolve) => {
+            navigator.geolocation.getCurrentPosition((position) => {console.log(position);
+                    this.httpService.getLocationByCoordinates(position.coords.latitude, position.coords.longitude)
+                        .subscribe(
+                            (data: any) => { console.log(data);
+                                resolve(new Location(data.location, position.coords.longitude, position.coords.latitude))},
+                            () => resolve(''));
+                },
+                () => {
+                    resolve('');
+                });
+        });
     }
-
 
 }

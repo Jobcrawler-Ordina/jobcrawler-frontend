@@ -5,8 +5,10 @@ export class Location {
     lat: number;
     distance: number;
 
-    constructor(name: string) {
+    constructor(name: string, lon?: number, lat?: number) {
         this.name = name;
+        this.lon = lon;
+        this.lat = lat;
     }
 
     setCoord(coord: number[]) {
@@ -15,5 +17,8 @@ export class Location {
     }
     getCoord() {
         return [this.lon, this.lat];
+    }
+    getName() {
+        return this.name;
     }
 }

@@ -149,7 +149,7 @@ describe('FilterComponent', () => {
         component.isShow = false;
         component.searchForm = formBuilder.group({
           keyword: '',
-          city: '',
+          location: '',
           distance: '',
           skills: '',
           fromDate: '',
