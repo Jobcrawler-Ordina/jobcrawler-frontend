@@ -1,14 +1,24 @@
-name: NPM Test
+name: GitHub pages deployment
+
 on:
   push:	
     branches:	
-      - feature/nex214
+      - feature/nex-214
 
 jobs:
-  webhook:
-    name: NPM Test
+  build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - name: Run NPM Test
-      uses: SenorGrande/test-webhook@v1
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        persist-credentials: false
+    - name: Use Node.js 13.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: '13.x'
+    - name: Build
+      run: |
+         npm install -g @angular/cli@9.0.7
+         npm install
+         npm test
