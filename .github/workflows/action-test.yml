@@ -1,0 +1,11 @@
+name: NPM Test
+on: push
+
+jobs:
+  webhook:
+    name: NPM Test
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Run NPM Test
+      uses: SenorGrande/test-webhook@v1
