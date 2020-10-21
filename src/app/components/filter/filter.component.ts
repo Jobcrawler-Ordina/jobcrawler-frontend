@@ -15,7 +15,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
 import { Router } from '@angular/router';
 import { Location } from 'src/app/models/location';
-import {LocationDialogComponent} from '../../location-dialog/location-dialog.component';
 
 @Component({
   selector: 'app-filter',
@@ -73,7 +72,6 @@ export class FilterComponent implements OnInit, OnDestroy {
     this.homeLocation.setCoord(await this.httpService.getCoordinates(this.homeLocation.name) as number[]);
     this.searchVacancies(this.pageEvent);
 
-      this.dialog.open(LocationDialogComponent);
   }
 
   /**

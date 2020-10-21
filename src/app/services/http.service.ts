@@ -123,15 +123,4 @@ export class HttpService {
             .toPromise();
     }
 
-    public async getCityFromIP(): Promise<string> {
-        let ip: string;
-        let city: string;
-        await this.httpClient.get<any>('http://api.ipify.org/?format=json').toPromise().then(data => {ip = data.ip; });
-        console.log(ip);
-        await this.httpClient.get<any>('http://ip-api.com/json/' + ip).toPromise().then(data => {city = data.city; });
-        console.log(city);
-        return city;
-    }
-
-
 }
