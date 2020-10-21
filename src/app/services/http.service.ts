@@ -6,12 +6,11 @@ import { Observable } from 'rxjs';
 import { PageResult } from '../models/pageresult.model';
 import { Skill } from '../models/skill';
 import { Sort } from '@angular/material/sort';
+import { Location } from '../models/location';
 
 @Injectable()
 export class HttpService {
-
-
-    /**
+        /**
      * Creates an instance of filter service.
      * @param httpClient needed for http requests
      */
@@ -27,25 +26,32 @@ export class HttpService {
      * @returns requested vacancies
      */
     public getByQuery(filterQuery: FilterQuery, pageNum: number, pageSize: number, sort?: Sort): Observable<PageResult> {
-        let httpParams = new HttpParams();
-        httpParams = httpParams.append('size', String(pageSize));
-        httpParams = httpParams.append('page', String(pageNum));
+        let params = new HttpParams();
+        params = params.append('size', String(pageSize));
+        params = params.append('page', String(pageNum));
         if (filterQuery.skills.length > 0) {
-            httpParams = httpParams.append('skills', filterQuery.skills.join());
+            params = params.append('skills', filterQuery.skills.join());
         }
         if (filterQuery.keyword !== '') {
-            httpParams = httpParams.append('value', filterQuery.keyword);
+            params = params.append('value', filterQuery.keyword);
+        }
+        if (filterQuery.location !== '') {
+            params = params.append('location', filterQuery.location);
+        }
+        if (filterQuery.distance !== null) {
+            params = params.append('distance', String(filterQuery.distance));
+        }
+        if (filterQuery.includeEmptyLocs !== null) {
+            params = params.append('emptylocs', String(filterQuery.includeEmptyLocs));
         }
         if (sort !== undefined && sort.active !== '') {
-            httpParams = httpParams.append('sort', sort.active);
+            params = params.append('sort', sort.active);
         }
         if (sort !== undefined && sort.direction !== '') {
-            httpParams = httpParams.append('dir', sort.direction);
+            params = params.append('dir', sort.direction);
         }
-
-        return this.httpClient.get<PageResult>(environment.api + '/vacancies', {params: httpParams});
+        return this.httpClient.get<PageResult>(environment.api + '/vacancies', {params});
     }
-
 
     /**
      * Gets vacancy by id
@@ -56,16 +62,14 @@ export class HttpService {
         return this.httpClient.get(environment.api + '/vacancies/' + id);
     }
 
-
     /**
      * Gets skills for vacancy
-     * @param id vacancy id
+     * @param id
      * @returns skills for vacancy
      */
     public getSkillsForVacancy(id: string): Observable<any> {
         return this.httpClient.get(environment.api + '/vacancies/' + id + '/skills');
     }
-
 
     /**
      * Finds all skills
@@ -74,7 +78,6 @@ export class HttpService {
     public findAllSkills(): Observable<any> {
         return this.httpClient.get<any>(environment.api + '/skills');
     }
-
 
     /**
      * Deletes skill
@@ -85,7 +88,6 @@ export class HttpService {
         return this.httpClient.delete<any>(url);
     }
 
-
     /**
      * Relinks skills to vacancies in backend
      * @returns result
@@ -93,7 +95,6 @@ export class HttpService {
     public relinkSkills(): Observable<any> {
         return this.httpClient.put(environment.api + '/skillmatcher', {});
     }
-
 
     /**
      * Saves skill in backend
@@ -103,4 +104,23 @@ export class HttpService {
     public saveSkill(skill: Skill): Observable<any> {
         return this.httpClient.post<any>(environment.api + '/skills', {name: skill.name});
     }
+
+    public getLocations(): string[] {
+        const locations: Array<string> = [];
+        this.httpClient.get<Location[]>(environment.api + '/locations').subscribe(data =>
+                data.forEach(loc => locations.push(loc.name)));
+        return locations;
+    }
+
+    async getDistance(coord1: number[], coord2: number[]) {
+        return await this.httpClient.get(environment.api + '/distance?from=' + coord1[0] +
+            ',' + coord1[1] + '&to=' + coord2[0] + ',' + coord2[1])
+            .toPromise();
+    }
+
+    async getCoordinates(loc: string) {
+        return await this.httpClient.get(environment.api + '/coordinates?location=' + loc)
+            .toPromise();
+    }
+
 }

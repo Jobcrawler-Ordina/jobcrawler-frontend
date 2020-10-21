@@ -14,7 +14,7 @@
                         </div>
                         <div class="clearfix"></div>
                     </div>
-                    <mat-divider class="divider"></mat-divider>                  
+                    <mat-divider class="divider"></mat-divider>
                     <button mat-raised-button type="button" (click)="resetForm()" [style.width.%]="45">Reset&nbsp;
                         <mat-icon>autorenew</mat-icon>
                     </button>
@@ -31,22 +31,27 @@
                     <h2>By location:</h2>
                     <mat-form-field class="search">
                         <input type="text"
-                               placeholder="City"
-                               formControlName="city"
+                               placeholder="Location"
+                               formControlName="location"
                                matInput
                                [matAutocomplete]="auto"
-                               id="citySearch">
+                               id="locationSearch">
                         <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-                          <mat-option id="city" *ngFor="let city of filteredCities | async" [value]="city">
-                            {{city}}
+                          <mat-option id="location" *ngFor="let location of filteredLocations | async" [value]="location">
+                            {{location}}
                           </mat-option>
                         </mat-autocomplete>
                     </mat-form-field>
                     <mat-form-field class="search">
-                        <mat-label>Distance</mat-label>
+                        <mat-label>Maximum distance</mat-label>
                         <input matInput type="search" formControlName="distance"
-                               placeholder="Distance">
+                               placeholder="Maximum distance (km)">
                     </mat-form-field>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" formControlName="includeEmptyLocs"> Include vacancies without location
+                        </label>
+                    </div>
                     <h2>By skill:</h2>
                     <mat-form-field [style.width.%]="100">
                         <mat-select [formControl]="skillMultiCtrl" placeholder="Skills" [multiple]="true" #multiSelect>
@@ -78,14 +83,14 @@
                 </div>
             </div>
             <div id="childComponent" class="{{isShow ? 'col-sm-12' : 'hideDiv'}} col-lg-{{isShow ? 12 : 9}}">
-                <app-vacancy-table 
+                <app-vacancy-table
                 (filterButtonClicked)="toggleDisplay()"
                 (changeSorting)="changeSorting($event)"
                 [isShow]="isShow"
                 [sortBy]="sortBy"
                 [sortOrder]="sortOrder"
                 [vacancies]="vacancies">
-               </app-vacancy-table>      
+               </app-vacancy-table>
                <mat-paginator [length] = totalVacancies
                     [pageSize] = pageSize
                     [pageSizeOptions] = "[5, 10, 15, 25, 50]"

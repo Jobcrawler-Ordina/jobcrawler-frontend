@@ -14,6 +14,7 @@ import { Sort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
 import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
 import { Router } from '@angular/router';
+import { Location } from 'src/app/models/location';
 
 @Component({
   selector: 'app-filter',
@@ -27,10 +28,11 @@ export class FilterComponent implements OnInit, OnDestroy {
   searchForm: FormGroup;
   skills: Skill[];
   vacancies: IVacancies[] = [];
-  cities: string[] = ['Amsterdam', 'Den Haag', 'Rotterdam', 'Utrecht'];
-  showForm = false;
-  filteredCities: Observable<string[]>;
+  locations: string[];
+  filteredLocations: Observable<string[]>;
+  homeLocation: Location;
 
+  showForm: boolean = false;
   totalVacancies: number;
   pageSize = 15;
   currentPage: number;
@@ -52,22 +54,25 @@ export class FilterComponent implements OnInit, OnDestroy {
    * @param filterService Used for http requests (post/get)
    */
   constructor(private form: FormBuilder,
-              private httpService: HttpService,
-              private dialog: MatDialog,
-              private router: Router) {}
+    private httpService: HttpService,
+    private dialog: MatDialog,
+    private router: Router
+  ) {  }
 
   /**
    * Function gets executed upon initialization.
    * Constructs searchform.
    * Retrieves all vacancies.
-   * Detect changes to 'city' field.
+   * Detect changes to 'location' field.
    */
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
+    this.locations = this.httpService.getLocations();
     this.loadForm();
-
+    this.homeLocation = new Location('Diemen');
+    this.homeLocation.setCoord(await this.httpService.getCoordinates(this.homeLocation.name) as number[]);
     this.searchVacancies(this.pageEvent);
-  }
 
+  }
 
   /**
    * Destroys ngx-mat-select-search upon leaving page
@@ -77,7 +82,6 @@ export class FilterComponent implements OnInit, OnDestroy {
     this.onDestroy.complete();
   }
 
-
   /**
    * Toggles display / filter column
    */
@@ -85,14 +89,21 @@ export class FilterComponent implements OnInit, OnDestroy {
     this.isShow = !this.isShow;
   }
 
+/*    public toggleDisplayEmptyLocs(): void {
+        this.showEmptyLocs = !this.showEmptyLocs;
+    }*/
 
-  /**
+    /**
    * TODO: Connect this function to send request to backend.
    * Converts form to json format. Currently logged to console and calls the getAllVacancies() function.
    */
-  public searchVacancies(pageEvent?: PageEvent): void {
+  public async searchVacancies(pageEvent?: PageEvent): Promise<void> {
+
+    this.homeLocation = new Location(this.searchForm.get("location").value);
+    this.homeLocation.setCoord(await this.httpService.getCoordinates(this.homeLocation.name) as number[]);
+
     if (pageEvent !== undefined) {
-      this.pageEvent = pageEvent;
+        this.pageEvent = pageEvent;
     }
 
     let filterQuery: FilterQuery;
@@ -119,8 +130,9 @@ export class FilterComponent implements OnInit, OnDestroy {
     } else {
       this.isShow = true;
       filterQuery = new FilterQuery();
-      filterQuery.city = '';
+      filterQuery.location = '';
       filterQuery.distance = 0;
+      filterQuery.includeEmptyLocs = true;
       filterQuery.fromDate = '';
       filterQuery.toDate = '';
       filterQuery.keyword = '';
@@ -135,18 +147,24 @@ export class FilterComponent implements OnInit, OnDestroy {
     this.vacancies = [];
     this.httpService.getByQuery(filterQuery, pageNum, this.pageSize, this.sort)
     .pipe(takeUntil(this.onDestroy))
-    .subscribe((page: PageResult) => {
-      if (page !== null) {
-        page.vacancies.forEach((vacancy: Vacancy) => {
-          this.vacancies.push({
-              title: vacancy.title,
-              broker: vacancy.broker,
-              postingDate: vacancy.postingDate,
-              location: vacancy.location,
-              id: vacancy.id,
-              vacancyUrl: vacancy.vacancyURL
-          });
-        });
+    .subscribe(async (page: PageResult) => {
+        if (page !== null) {
+        let tempVacancies: IVacancies[] = [];
+        for (const vacancy of page.vacancies) {
+            if (vacancy.location) {
+                await this.httpService.getDistance(this.homeLocation.getCoord(), [vacancy.location.lon, vacancy.location.lat])
+                    .then((result: number) => {vacancy.location.distance = result; });
+            }
+            tempVacancies.push({
+                title: vacancy.title,
+                broker: vacancy.broker,
+                postingDate: vacancy.postingDate,
+                location: vacancy.location,
+                id: vacancy.id,
+                vacancyUrl: vacancy.vacancyURL
+            });
+        }
+        this.vacancies = tempVacancies;
         this.totalVacancies = page.totalItems;
         this.currentPage = pageNum;
         if (this.sort !== undefined) {
@@ -158,9 +176,7 @@ export class FilterComponent implements OnInit, OnDestroy {
         this.currentPage = 0;
       }
     });
-
   }
-
 
   /**
    * Resets form back to default values
@@ -169,7 +185,6 @@ export class FilterComponent implements OnInit, OnDestroy {
     this.searchForm.reset(this.constructSearchForm());
     this.skillMultiCtrl.reset();
   }
-
 
   /**
    * Easily search and select skills
@@ -187,7 +202,6 @@ export class FilterComponent implements OnInit, OnDestroy {
     } else {
       search = search.toLowerCase();
     }
-
     this.filteredSkillsMulti.next(
       this.skills.filter(skill => skill.name.toLowerCase().indexOf(search) === 0)
     );
@@ -252,12 +266,12 @@ export class FilterComponent implements OnInit, OnDestroy {
 
 
   /**
-   * Filters city
+   * Filters location
    * @param search entered string
-   * @returns matching cities to entered string
+   * @returns matching locations to entered string
    */
-  private _filterCity(search: string): string[] {
-    return this.cities.filter(value => value.toLowerCase().indexOf(search.toLowerCase()) === 0);
+  private _filterLocation(search: string): string[] {
+    return this.locations.filter(value => value.toLowerCase().indexOf(search.toLowerCase()) === 0);
   }
 
 
@@ -269,17 +283,18 @@ export class FilterComponent implements OnInit, OnDestroy {
     return new Promise((resolve) => {
       this.searchForm = this.form.group({
         keyword: '',
-        city: '',
+        location: '',
         skills: '',
         distance: '',
+        includeEmptyLocs: true,
         fromDate: '',
         toDate: ''
       });
 
-      this.filteredCities = this.searchForm.get('city').valueChanges
+      this.filteredLocations = this.searchForm.get('location')!.valueChanges
         .pipe(
           startWith(''),
-          map(value => this._filterCity(value || ''))
+          map(value => this._filterLocation(value || ''))
         );
 
       this.skillMultiFilterCtrl.valueChanges

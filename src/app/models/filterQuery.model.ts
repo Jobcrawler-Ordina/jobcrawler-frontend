@@ -1,8 +1,9 @@
 export class FilterQuery {
     keyword: string;
-    city: string;
+    location: string;
     skills: any[];
     distance: number;
+    includeEmptyLocs: boolean;
     fromDate: string;
     toDate: string;
 }
