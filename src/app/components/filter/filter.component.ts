@@ -15,6 +15,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
 import { Router } from '@angular/router';
 import { Location } from 'src/app/models/location';
+import {log} from "util";
 
 @Component({
   selector: 'app-filter',
@@ -132,7 +133,6 @@ export class FilterComponent implements OnInit, OnDestroy {
       filterQuery = new FilterQuery();
       filterQuery.location = '';
       filterQuery.distance = 0;
-      filterQuery.includeEmptyLocs = true;
       filterQuery.fromDate = '';
       filterQuery.toDate = '';
       filterQuery.keyword = '';
@@ -274,7 +274,6 @@ export class FilterComponent implements OnInit, OnDestroy {
     return this.locations.filter(value => value.toLowerCase().indexOf(search.toLowerCase()) === 0);
   }
 
-
   /**
    * Constructs search form
    * @returns empty search form
@@ -286,10 +285,9 @@ export class FilterComponent implements OnInit, OnDestroy {
         location: '',
         skills: '',
         distance: '',
-        includeEmptyLocs: true,
         fromDate: '',
         toDate: ''
-      });
+      }, { validator: this.dateLessThan('fromDate', 'toDate') });
 
       this.filteredLocations = this.searchForm.get('location')!.valueChanges
         .pipe(
@@ -306,5 +304,14 @@ export class FilterComponent implements OnInit, OnDestroy {
       resolve();
     });
   }
-
+    dateLessThan(from: string, to: string) {
+        return (group: FormGroup): { [key: string]: any } => {
+            const f = group.controls[from];
+            const t = group.controls[to];
+            if (t.value && (f.value > t.value)) {
+                t.setErrors({ fromLess: true });
+            }
+            return {};
+        };
+    }
 }
