@@ -1,5 +1,8 @@
 name: NPM Test
-on: push
+  on:
+  push:	
+    branches:	
+      - feature/nex214
 
 jobs:
   webhook:
