@@ -70,22 +70,14 @@ export class FilterComponent implements OnInit, OnDestroy {
     this.locations = this.httpService.getLocations();
     await this.loadForm(); // Need to load form fully before continuing with anything else that might causes errors
 
-    //this.homeLocation = new Location('Diemen');
-
 
     const locationDialogRef = this.dialog.open(LocationDialogComponent);
 
     locationDialogRef.afterClosed().subscribe(result => {
-        console.log(typeof this.homeLocation);
-        this.homeLocation = new Location(result); // Pizza!
-        console.log(typeof this.homeLocation);
+        this.homeLocation = result;
         this.searchVacancies(this.pageEvent);
-        this.searchForm.controls.location.setValue(this.homeLocation.name);
+        //this.searchForm.controls.location.setValue(this.homeLocation.name);
       });
-/*    console.log(this.homeLocation.name);
-      console.log(this.homeLocation.getName());
-    this.searchForm.controls.location.setValue(this.homeLocation.getName()); // set location in form, after initial vacancies are loaded
-    this.searchForm.controls.location.setValue(this.homeLocation.name);*/
   }
 
   /**
@@ -113,12 +105,6 @@ export class FilterComponent implements OnInit, OnDestroy {
    */
   public async searchVacancies(pageEvent?: PageEvent): Promise<void> {
     console.log("Test start searchVacancies");
-
-    if (this.searchForm.get('location').value !== '' && this.searchForm.get('location').value !== undefined) {
-        this.homeLocation = new Location(this.searchForm.get('location').value);
-        console.log(this.homeLocation);
-        this.homeLocation.setCoord(await this.httpService.getCoordinates(this.homeLocation.name) as number[]);
-    }
 
     if (pageEvent !== undefined) {
         this.pageEvent = pageEvent;

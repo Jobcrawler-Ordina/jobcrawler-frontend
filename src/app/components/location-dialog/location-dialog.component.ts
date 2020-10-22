@@ -42,7 +42,9 @@ export class LocationDialogComponent implements OnInit {
     }
 
     public onClickYes() {
-        this.suggestedHomeLocation = undefined;
         this.dialog.close(this.suggestedHomeLocation);
+    }
+    public onClickNo() {
+        this.dialog.close(new Location('', undefined, undefined));
     }
 }

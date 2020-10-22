@@ -42,7 +42,7 @@
         <!-- Distance column -->
         <ng-container *ngIf="homeLocation" matColumnDef="distance">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Distance (km)</th>
-            <td mat-cell *matCellDef="let element"> {{element.location?(element.location.distance | number:'1.0-0'):""}} </td>
+            <td mat-cell *matCellDef="let element"> {{element.location?(element.location.distance | number:'1.1-1'):""}} </td>
         </ng-container>
 
         <!-- postingDate Column -->

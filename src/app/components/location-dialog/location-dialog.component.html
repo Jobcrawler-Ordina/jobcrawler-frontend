@@ -1,5 +1,5 @@
 <div>
-<button style="float: right;" mat-dialog-close>
+<button style="float: right;" (click)="onClickNo()">
     &times;
 </button>
 </div>
@@ -8,6 +8,6 @@
 <div class="containerloc">
     <div class="center-horizontally">
 <button mat-button (click)="onClickYes()">Yes</button>
-<button mat-button mat-dialog-close>No</button>
+<button mat-button (click)="onClickNo()">No</button>
 </div>
 </div>
