@@ -8,9 +8,9 @@ import { MaterialModule } from 'src/app/material/material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { Router } from '@angular/router';
-import { loginMockResponse } from 'src/app/tests/authenticationServiceMockResponses';
+import { failSignupMockResponse, loginMockResponse, signupMockResponse } from 'src/app/tests/authenticationServiceMockResponses';
 import { allowRegistrationMock } from 'src/app/tests/adminServiceMockResponses';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { By } from '@angular/platform-browser';
 
 describe('LoginDialogComponent', () => {
@@ -98,19 +98,73 @@ describe('LoginDialogComponent', () => {
     expect(routerSpy.navigate).toHaveBeenCalledTimes(0);
   });
 
-  it('should show 3 additional input fields after clicking on register', async(() => {
-    const inputsBeforeClicking = nativeComponent.querySelectorAll('input');
+  describe('Signup functionality', () => {
+    it('should show 3 additional input fields after clicking on register', async(() => {
+      const inputsBeforeClicking = nativeComponent.querySelectorAll('input');
 
-    component.allowRegistration = true;
-    fixture.detectChanges();
-    const signUpTab = fixture.debugElement.queryAll(By.css('.mat-tab-label'))[1];
-    signUpTab.triggerEventHandler('click', {});
+      component.allowRegistration = true;
+      fixture.detectChanges();
+      const signUpTab = fixture.debugElement.queryAll(By.css('.mat-tab-label'))[1];
+      signUpTab.triggerEventHandler('click', {});
 
-    fixture.detectChanges();
-    fixture.whenStable().then(() => {
-        const inputsAfterClicking = nativeComponent.querySelectorAll('input');
-        expect(inputsBeforeClicking.length).toBe(2);
-        expect(inputsAfterClicking.length).toBe(5);
+      fixture.detectChanges();
+      fixture.whenStable().then(() => {
+          const inputsAfterClicking = nativeComponent.querySelectorAll('input');
+          expect(inputsBeforeClicking.length).toBe(2);
+          expect(inputsAfterClicking.length).toBe(5);
+      });
+    }));
+
+    it('should mention that passwords do not match upon signing up', async(() => {
+      component.allowRegistration = true;
+      fixture.detectChanges();
+      const signUpTab = fixture.debugElement.queryAll(By.css('.mat-tab-label'))[1];
+      signUpTab.triggerEventHandler('click', {});
+      fixture.detectChanges();
+      fixture.whenStable().then(() => {
+        expect(component.signupForm.errors).toBeNull();
+        component.signupForm.controls.usernameSignup.setValue('Admin');
+        component.signupForm.controls.passwordSignup.setValue('password');
+        component.signupForm.controls.passwordSignupConfirm.setValue('otherpassword');
+        fixture.detectChanges();
+        expect(component.signupForm.errors.passwordNotMatch).toBeTrue();
+      });
+    }));
+
+    describe('Signup submit', () => {
+
+      beforeEach(() => {
+        component.signupForm.controls.usernameSignup.setValue('Admin');
+        component.signupForm.controls.passwordSignup.setValue('password');
+        component.signupForm.controls.passwordSignupConfirm.setValue('password');
+      });
+
+      it('should succesfully register the user', () => {
+        authSpy.signup.and.returnValue(of(signupMockResponse));
+        component.signup();
+
+        expect(authSpy.signup).toHaveBeenCalledWith('Admin', 'password');
+        expect(component.successMSGsignup).toBeDefined();
+        expect(component.errMSGsignup).toBeNull();
+      });
+
+      it('should not give a response without the success flag set to true', () => {
+        authSpy.signup.and.returnValue(of({}));
+        component.signup();
+
+        expect(authSpy.signup).toHaveBeenCalledWith('Admin', 'password');
+        expect(component.successMSGsignup).toBeNull();
+        expect(component.errMSGsignup).toBeNull();
+      });
+
+      it('should give an error when trying to register', () => {
+        authSpy.signup.and.returnValue(throwError(failSignupMockResponse));
+        component.signup();
+
+        expect(authSpy.signup).toHaveBeenCalledWith('Admin', 'password');
+        expect(component.successMSGsignup).toBeNull();
+        expect(component.errMSGsignup).toBeDefined();
+      });
     });
-  }));
+  });
 });

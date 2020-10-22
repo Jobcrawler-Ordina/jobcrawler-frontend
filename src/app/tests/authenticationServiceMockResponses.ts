@@ -13,3 +13,8 @@ export const signupMockResponse = {
     message: 'User registered successfully!',
     success: true
 };
+
+export const failSignupMockResponse = {
+    message: 'Fail -> Username is already taken!',
+    success: false
+};
