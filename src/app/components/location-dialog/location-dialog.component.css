@@ -1,7 +1,6 @@
 .containerloc {
     height: 40px;
     position: relative;
-    border: 3px solid green;
 }
 .center-horizontally {
     margin: 0;
@@ -10,4 +9,8 @@
     left: 50%;
     -ms-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
+}
+
+.alignright {
+    text-align: right;
 }

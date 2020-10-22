@@ -4,7 +4,8 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { Router } from '@angular/router';
 import { first } from 'rxjs/operators';
 import { HttpService } from 'src/app/services/http.service';
-import {Location} from '../models/location';
+import { Location } from '../../models/location';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-location-dialog',
@@ -16,7 +17,7 @@ export class LocationDialogComponent implements OnInit {
     homeLocation: Location;
     private ip: any;
 
-  constructor(private httpService: HttpService ) {   console.log('Test');
+  constructor(private httpService: HttpService, private dialog: MatDialogRef<LocationDialogComponent>) {
     }
 
     async ngOnInit(): Promise<void> {
@@ -38,6 +39,10 @@ export class LocationDialogComponent implements OnInit {
                     resolve('');
                 });
         });
+    }
+
+    public onClickYes() {
+        this.dialog.close(this.homeLocation);
     }
 
 }

@@ -1,0 +1,13 @@
+<div>
+<button style="float: right;" mat-dialog-close>
+    &times;
+</button>
+</div>
+<br>
+<div>Do you want to use {{homeLocation.name}} as your home location?</div>
+<div class="containerloc">
+    <div class="center-horizontally">
+<button mat-button (click)="onClickYes()">Yes</button>
+<button mat-button mat-dialog-close>No</button>
+</div>
+</div>

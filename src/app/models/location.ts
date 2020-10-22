@@ -5,7 +5,7 @@ export class Location {
     lat: number;
     distance: number;
 
-    constructor(name: string, lon?: number, lat?: number) {
+    constructor(name?: string, lon?: number, lat?: number) {
         this.name = name;
         this.lon = lon;
         this.lat = lat;

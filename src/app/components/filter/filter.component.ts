@@ -15,7 +15,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
 import { Router } from '@angular/router';
 import { Location } from 'src/app/models/location';
-import {LocationDialogComponent} from '../../location-dialog/location-dialog.component';
+import {LocationDialogComponent} from '../location-dialog/location-dialog.component';
 
 @Component({
   selector: 'app-filter',
@@ -48,7 +48,6 @@ export class FilterComponent implements OnInit, OnDestroy {
   public skillMultiFilterCtrl: FormControl = new FormControl();
   public filteredSkillsMulti: ReplaySubject<Skill[]> = new ReplaySubject<Skill[]>(1);
   public onDestroy = new Subject<void>();
-  @ViewChild('multiSelect', {static: false}) multiSelect: MatSelect;
 
   /**
    * Creates an instance of filter component.
@@ -74,9 +73,16 @@ export class FilterComponent implements OnInit, OnDestroy {
     //this.homeLocation = new Location('Diemen');
     this.searchVacancies(this.pageEvent);
 
-    this.dialog.open(LocationDialogComponent);
+    const locationDialogRef = this.dialog.open(LocationDialogComponent);
 
-    //this.searchForm.controls.location.setValue(this.homeLocation.getName()); // set location in form, after initial vacancies are loaded
+    locationDialogRef.afterClosed().subscribe(result => {
+          this.homeLocation = result; // Pizza!
+          this.searchForm.controls.location.setValue(this.homeLocation.name);
+      });
+/*    console.log(this.homeLocation.name);
+      console.log(this.homeLocation.getName());
+    this.searchForm.controls.location.setValue(this.homeLocation.getName()); // set location in form, after initial vacancies are loaded
+    this.searchForm.controls.location.setValue(this.homeLocation.name);*/
   }
 
   /**
