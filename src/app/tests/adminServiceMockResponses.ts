@@ -30,3 +30,15 @@ export const allowRegistrationMock = {
 };
 
 export const scrapeMock = {};
+
+export const addSkillMock = {
+    name: 'test',
+    _links: {
+        self: {
+            href: 'http://localhost:8080/skills/23105cde-4148-4321-b312-3a1b9405a526'
+        },
+        skills: {
+            href: 'http://localhost:8080/skills'
+        }
+    }
+};

@@ -54,7 +54,7 @@ describe('HttpService', () => {
 
     it('should build a query to retrieve vacancies', () => {
         const filterQuery = new FilterQuery();
-        filterQuery.location = '';
+        filterQuery.location = 'Amsterdam';
         filterQuery.distance = 0;
         filterQuery.fromDate = '01-01-1970';
         filterQuery.toDate = '02-01-1970';
@@ -71,7 +71,32 @@ describe('HttpService', () => {
         });
 
         const req = httpMock.expectOne(environment.api +
-            '/vacancies?size=10&page=1&skills=Skill1,Skill2&value=test&distance=0&fromDate=1970-01-01%2000:00:00&toDate=1970-02-01%2000:00:00&sort=postingDate&dir=desc');
+            '/vacancies?size=10&page=1&skills=Skill1,Skill2&value=test&location=Amsterdam&distance=0&fromDate=1970-01-01%2000:00:00&toDate=1970-02-01%2000:00:00&sort=postingDate&dir=desc');
+        expect(req.request.method).toBe('GET');
+
+        req.flush(mockVacancies);
+    });
+
+    it('should build a close to empty query to retrieve as much vacancies as possible', () => {
+        const filterQuery = new FilterQuery();
+        filterQuery.location = '';
+        filterQuery.distance = null;
+        filterQuery.fromDate = '';
+        filterQuery.toDate = '';
+        filterQuery.keyword = '';
+        filterQuery.skills = [];
+
+        const sort: Sort = {
+            active: '',
+            direction: ''
+        };
+
+        service.getByQuery(filterQuery, 1, 10, sort).subscribe((data: any) => {
+            expect(data.vacancies.length).toBe(3);
+        });
+
+        const req = httpMock.expectOne(environment.api +
+            '/vacancies?size=10&page=1');
         expect(req.request.method).toBe('GET');
 
         req.flush(mockVacancies);
