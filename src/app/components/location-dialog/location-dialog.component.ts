@@ -22,16 +22,14 @@ export class LocationDialogComponent implements OnInit {
 
     async ngOnInit(): Promise<void> {
         await this.getGeoLocation().then(result => {this.suggestedHomeLocation = result; });
-        console.log(this.suggestedHomeLocation);
-        console.log(this.suggestedHomeLocation.name);
     }
 
     private getGeoLocation(): Promise<any> {
         return new Promise((resolve) => {
-            navigator.geolocation.getCurrentPosition((position) => {console.log(position);
+            navigator.geolocation.getCurrentPosition((position) => {
                     this.httpService.getLocationByCoordinates(position.coords.latitude, position.coords.longitude)
                         .subscribe(
-                            (data: any) => { console.log(data);
+                            (data: any) => {
                                 resolve(new Location(data.location, position.coords.longitude, position.coords.latitude))},
                             () => resolve(''));
                 },

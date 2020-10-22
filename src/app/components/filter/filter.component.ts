@@ -147,18 +147,14 @@ export class FilterComponent implements OnInit, OnDestroy {
     if (pageEvent) {
       this.pageSize = pageEvent.pageSize;
     }
-    console.log('Test');
     this.vacancies = [];
-    console.log(this.homeLocation);
     this.httpService.getByQuery(filterQuery, pageNum, this.pageSize, this.sort)
     .pipe(takeUntil(this.onDestroy))
     .subscribe(async (page: PageResult) => {
         if (page !== null) {
         const tempVacancies: IVacancies[] = [];
-        console.log(this.homeLocation);
         for (const vacancy of page.vacancies) {
             if (vacancy.location && this.homeLocation.name !== '') {
-                console.log(this.homeLocation);
                 await this.httpService.getDistance(this.homeLocation.getCoord(), [vacancy.location.lon, vacancy.location.lat])
                     .then((result: number) => {
                         vacancy.location.distance = result;

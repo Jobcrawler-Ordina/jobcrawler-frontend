@@ -52,9 +52,7 @@ export class HttpService {
         if (sort !== undefined && sort.direction !== '') {
             params = params.append('dir', sort.direction);
         }
-        console.log(params);
         p = this.httpClient.get<PageResult>(environment.api + '/vacancies', {params});
-        console.log(p);
         return p;
     }
 

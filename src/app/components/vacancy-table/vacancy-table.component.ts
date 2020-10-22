@@ -22,8 +22,10 @@ export class VacancyTableComponent implements OnChanges {
   @Output() filterButtonClicked = new EventEmitter();
   @Output() changeSorting: EventEmitter<Sort> = new EventEmitter<Sort>();
 
-  displayedColumns: string[] = ['title', 'broker', 'location', 'postingDate', 'openVacancyURL'];
-  showClass: string;
+  displayedColumns: string[];
+  displayedColumnsWithoutDistance: string[] = ['title', 'broker', 'location', 'postingDate', 'openVacancyURL'];
+  displayedColumnsWithDistance: string[] = ['title', 'broker', 'location', 'distance', 'postingDate', 'openVacancyURL'];
+    showClass: string;
 
 
   /**
@@ -40,17 +42,14 @@ export class VacancyTableComponent implements OnChanges {
     this.showClass = this.isShow ? 'table-container' : 'table-container-no-filter';
 
     if (this.homeLocation) {
-        console.log(this.homeLocation);
         if ((this.homeLocation.name !== '') && this.homeLocation.name !== undefined) {
-            console.log(this.homeLocation.name);
-            this.displayedColumns = ['title', 'broker', 'location', 'distance', 'postingDate', 'openVacancyURL'];
+            this.displayedColumns = this.displayedColumnsWithDistance;
         } else {
-            this.displayedColumns = ['title', 'broker', 'location', 'postingDate', 'openVacancyURL'];
+            this.displayedColumns = this.displayedColumnsWithoutDistance;
         }
     } else {
-        this.displayedColumns = ['title', 'broker', 'location', 'postingDate', 'openVacancyURL'];
+        this.displayedColumns = this.displayedColumnsWithoutDistance;
     }
-    console.log(this.displayedColumns);
   }
 
   /**
