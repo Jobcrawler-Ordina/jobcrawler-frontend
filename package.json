@@ -8,7 +8,8 @@
         "test": "ng test",
         "test-coverage": "ng test --watch=false --code-coverage",
         "lint": "ng lint",
-        "e2e": "ng e2e"
+        "e2e": "ng e2e",
+        "build:ci": "ng test --watch=false --browsers=ChromeHeadlessCustom && ng build --prod"
     },
     "private": true,
     "dependencies": {
@@ -47,6 +48,7 @@
         "karma-jasmine": "~2.0.x",
         "karma-jasmine-html-reporter": "^1.4.x",
         "protractor": "~5.4.x",
+        "puppeteer": "^4.0.0",
         "ts-node": "~8.3.x",
         "tslint": "~5.18.x",
         "typescript": "~3.7.x"
