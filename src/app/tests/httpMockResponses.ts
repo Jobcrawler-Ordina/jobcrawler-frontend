@@ -81,7 +81,7 @@ export const mockVacancy: Vacancy = {
     broker: 'mockBroker',
     vacancyNumber: '123',
     hours: 40,
-    location: 'Nieuwegein',
+    location: null,
     postingDate: 'today',
     salaray: '',
     about: 'random',
