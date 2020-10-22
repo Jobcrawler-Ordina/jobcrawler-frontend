@@ -10,6 +10,7 @@ import { Location } from '../models/location';
 
 @Injectable()
 export class HttpService {
+    private p: Observable<PageResult>;
         /**
      * Creates an instance of filter service.
      * @param httpClient needed for http requests
@@ -27,6 +28,7 @@ export class HttpService {
      */
     public getByQuery(filterQuery: FilterQuery, pageNum: number, pageSize: number, sort?: Sort): Observable<PageResult> {
         let params = new HttpParams();
+        let p: Observable<PageResult>;
         params = params.append('size', String(pageSize));
         params = params.append('page', String(pageNum));
         if (filterQuery.skills.length > 0) {
@@ -50,7 +52,10 @@ export class HttpService {
         if (sort !== undefined && sort.direction !== '') {
             params = params.append('dir', sort.direction);
         }
-        return this.httpClient.get<PageResult>(environment.api + '/vacancies', {params});
+        console.log(params);
+        p = this.httpClient.get<PageResult>(environment.api + '/vacancies', {params});
+        console.log(p);
+        return p;
     }
 
     /**

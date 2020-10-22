@@ -14,16 +14,16 @@ import { MatDialogRef } from '@angular/material/dialog';
   providers: [HttpService]
 })
 export class LocationDialogComponent implements OnInit {
-    homeLocation: Location;
+    suggestedHomeLocation: Location;
     private ip: any;
 
   constructor(private httpService: HttpService, private dialog: MatDialogRef<LocationDialogComponent>) {
     }
 
     async ngOnInit(): Promise<void> {
-        await this.getGeoLocation().then(result => {this.homeLocation = result; });
-        console.log(this.homeLocation);
-        console.log(this.homeLocation.name);
+        await this.getGeoLocation().then(result => {this.suggestedHomeLocation = result; });
+        console.log(this.suggestedHomeLocation);
+        console.log(this.suggestedHomeLocation.name);
     }
 
     private getGeoLocation(): Promise<any> {
@@ -42,7 +42,7 @@ export class LocationDialogComponent implements OnInit {
     }
 
     public onClickYes() {
-        this.dialog.close(this.homeLocation);
+        this.suggestedHomeLocation = undefined;
+        this.dialog.close(this.suggestedHomeLocation);
     }
-
 }

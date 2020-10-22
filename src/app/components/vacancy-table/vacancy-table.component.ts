@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { VacancyDialogComponent } from '../vacancy-dialog/vacancy-dialog.component';
 import { CommonModule} from '@angular/common';
 import { Sort } from '@angular/material/sort';
+import { Location } from '../../models/location';
 
 @Component({
   selector: 'app-vacancy-table',
@@ -17,6 +18,7 @@ export class VacancyTableComponent implements OnChanges {
   @Input() vacancies: IVacancies[];
   @Input() sortBy: string;
   @Input() sortOrder: string;
+  @Input() homeLocation?: Location;
   @Output() filterButtonClicked = new EventEmitter();
   @Output() changeSorting: EventEmitter<Sort> = new EventEmitter<Sort>();
 
@@ -36,6 +38,19 @@ export class VacancyTableComponent implements OnChanges {
    */
   ngOnChanges(): void {
     this.showClass = this.isShow ? 'table-container' : 'table-container-no-filter';
+
+    if (this.homeLocation) {
+        console.log(this.homeLocation);
+        if ((this.homeLocation.name !== '') && this.homeLocation.name !== undefined) {
+            console.log(this.homeLocation.name);
+            this.displayedColumns = ['title', 'broker', 'location', 'distance', 'postingDate', 'openVacancyURL'];
+        } else {
+            this.displayedColumns = ['title', 'broker', 'location', 'postingDate', 'openVacancyURL'];
+        }
+    } else {
+        this.displayedColumns = ['title', 'broker', 'location', 'postingDate', 'openVacancyURL'];
+    }
+    console.log(this.displayedColumns);
   }
 
   /**

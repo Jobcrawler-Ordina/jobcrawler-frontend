@@ -71,13 +71,16 @@ export class FilterComponent implements OnInit, OnDestroy {
     await this.loadForm(); // Need to load form fully before continuing with anything else that might causes errors
 
     //this.homeLocation = new Location('Diemen');
-    this.searchVacancies(this.pageEvent);
+
 
     const locationDialogRef = this.dialog.open(LocationDialogComponent);
 
     locationDialogRef.afterClosed().subscribe(result => {
-          this.homeLocation = result; // Pizza!
-          this.searchForm.controls.location.setValue(this.homeLocation.name);
+        console.log(typeof this.homeLocation);
+        this.homeLocation = new Location(result); // Pizza!
+        console.log(typeof this.homeLocation);
+        this.searchVacancies(this.pageEvent);
+        this.searchForm.controls.location.setValue(this.homeLocation.name);
       });
 /*    console.log(this.homeLocation.name);
       console.log(this.homeLocation.getName());
@@ -111,8 +114,11 @@ export class FilterComponent implements OnInit, OnDestroy {
   public async searchVacancies(pageEvent?: PageEvent): Promise<void> {
     console.log("Test start searchVacancies");
 
-    this.homeLocation = new Location(this.searchForm.get('location').value);
-    this.homeLocation.setCoord(await this.httpService.getCoordinates(this.homeLocation.name) as number[]);
+    if (this.searchForm.get('location').value !== '' && this.searchForm.get('location').value !== undefined) {
+        this.homeLocation = new Location(this.searchForm.get('location').value);
+        console.log(this.homeLocation);
+        this.homeLocation.setCoord(await this.httpService.getCoordinates(this.homeLocation.name) as number[]);
+    }
 
     if (pageEvent !== undefined) {
         this.pageEvent = pageEvent;
@@ -155,17 +161,22 @@ export class FilterComponent implements OnInit, OnDestroy {
     if (pageEvent) {
       this.pageSize = pageEvent.pageSize;
     }
-
+    console.log('Test');
     this.vacancies = [];
+    console.log(this.homeLocation);
     this.httpService.getByQuery(filterQuery, pageNum, this.pageSize, this.sort)
     .pipe(takeUntil(this.onDestroy))
     .subscribe(async (page: PageResult) => {
         if (page !== null) {
         const tempVacancies: IVacancies[] = [];
+        console.log(this.homeLocation);
         for (const vacancy of page.vacancies) {
-            if (vacancy.location) {
+            if (vacancy.location && this.homeLocation.name !== '') {
+                console.log(this.homeLocation);
                 await this.httpService.getDistance(this.homeLocation.getCoord(), [vacancy.location.lon, vacancy.location.lat])
-                    .then((result: number) => {vacancy.location.distance = result; });
+                    .then((result: number) => {
+                        vacancy.location.distance = result;
+                    });
             }
             tempVacancies.push({
                 title: vacancy.title,
