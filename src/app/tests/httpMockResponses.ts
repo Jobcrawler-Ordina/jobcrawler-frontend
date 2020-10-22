@@ -1,5 +1,8 @@
 import { environment } from 'src/environments/environment';
+import { Location } from '../models/location';
 import { Vacancy } from '../models/vacancy';
+
+const mockLocation: Location = new Location('Amsterdam');
 
 export const mockSkills = {
     _embedded: {
@@ -39,7 +42,7 @@ export const mockVacancies = {
         broker: 'Yacht',
         vacancyNumber: '1',
         hours: '40',
-        location: 'Amsterdam, Nederland',
+        location: mockLocation,
         salary: '1234',
         postingDate: '21 april 2020',
         about: 'vacancy 1',
@@ -52,7 +55,7 @@ export const mockVacancies = {
         broker: 'Huxley',
         vacancyNumber: '2',
         hours: '40',
-        location: 'Amsterdam, Nederland',
+        location: mockLocation,
         salary: '2341',
         postingDate: '21 april 2020',
         about: 'vacancy 2',
@@ -65,7 +68,7 @@ export const mockVacancies = {
         broker: 'Jobbird',
         vacancyNumber: '3',
         hours: '40',
-        location: 'Amsterdam, Nederland',
+        location: mockLocation,
         salary: '2143',
         postingDate: '21 april 2020',
         about: 'vacancy 3',
@@ -94,7 +97,7 @@ export const noSkills = {
     }
   };
 
-export const mockCities = ['Amsterdam', 'Den Haag', 'Rotterdam', 'Utrecht'];
+export const mockLocations = ['Amsterdam', 'Den Haag', 'Rotterdam', 'Utrecht'];
 
 export const newSkillMock = {
   name: 'skill',

@@ -55,9 +55,9 @@ export class FilterComponent implements OnInit, OnDestroy {
    * @param filterService Used for http requests (post/get)
    */
   constructor(private form: FormBuilder,
-    private httpService: HttpService,
-    private dialog: MatDialog,
-    private router: Router
+              private httpService: HttpService,
+              private dialog: MatDialog,
+              private router: Router
   ) {  }
 
   /**
