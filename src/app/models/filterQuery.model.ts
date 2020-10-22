@@ -1,6 +1,6 @@
 export class FilterQuery {
     keyword: string;
-    city: string;
+    location: string;
     skills: any[];
     distance: number;
     fromDate: string;

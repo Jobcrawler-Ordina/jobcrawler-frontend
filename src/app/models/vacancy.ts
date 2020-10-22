@@ -1,3 +1,5 @@
+import { Location } from 'src/app/models/location';
+
 export class Vacancy {
     id: string;
     vacancyURL: string;
@@ -5,7 +7,7 @@ export class Vacancy {
     broker: string;
     vacancyNumber: string;
     hours: number;
-    location: string;
+    location: Location;
     salaray: string;
     postingDate: string;
     about: string;

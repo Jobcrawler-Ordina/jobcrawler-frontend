@@ -14,15 +14,16 @@
                         </div>
                         <div class="clearfix"></div>
                     </div>
-                    <mat-divider class="divider"></mat-divider>                  
+                    <mat-divider class="divider"></mat-divider>
                     <button mat-raised-button type="button" (click)="resetForm()" [style.width.%]="45">Reset&nbsp;
                         <mat-icon>autorenew</mat-icon>
                     </button>
                     <span class="ml-2"></span>
-                    <button mat-raised-button type="submit" (click)="searchVacancies()" [style.width.%]="45" class="float-right">Search&nbsp;
+                    <button mat-raised-button type="submit" [disabled]="searchForm.invalid" (click)="searchVacancies()" [style.width.%]="45" class="float-right">Search&nbsp;
                         <mat-icon>search</mat-icon>
                     </button>
                     <div class="mt-3"></div>
+                    <h2>By keyword:</h2>
                     <mat-form-field [style.width.%]="100">
                         <mat-label>Keyword</mat-label>
                         <input matInput type="search" formControlName="keyword"
@@ -31,23 +32,23 @@
                     <h2>By location:</h2>
                     <mat-form-field class="search">
                         <input type="text"
-                               placeholder="City"
-                               formControlName="city"
+                               placeholder="Location"
+                               formControlName="location"
                                matInput
                                [matAutocomplete]="auto"
-                               id="citySearch">
+                               id="locationSearch">
                         <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-                          <mat-option id="city" *ngFor="let city of filteredCities | async" [value]="city">
-                            {{city}}
+                          <mat-option id="location" *ngFor="let location of filteredLocations | async" [value]="location">
+                            {{location}}
                           </mat-option>
                         </mat-autocomplete>
                     </mat-form-field>
                     <mat-form-field class="search">
-                        <mat-label>Distance</mat-label>
+                        <mat-label>Maximum distance</mat-label>
                         <input matInput type="search" formControlName="distance"
-                               placeholder="Distance">
+                               placeholder="Maximum distance (km)">
                     </mat-form-field>
-                    <h2>By skill:</h2>
+                    <h2>By skills:</h2>
                     <mat-form-field [style.width.%]="100">
                         <mat-select [formControl]="skillMultiCtrl" placeholder="Skills" [multiple]="true" #multiSelect>
                           <mat-option>
@@ -59,7 +60,7 @@
                         </mat-select>
                       </mat-form-field>
                     <div class="vertical-spacer"></div>
-                    <h2>By date:</h2>
+                    <h2>By posting date:</h2>
                     <mat-form-field [style.width.%]="100">
                         <mat-label>From date dd-mm-yyyy</mat-label>
                         <input matInput formControlName="fromDate" [matDatepicker]="pickerFrom">
@@ -71,6 +72,7 @@
                         <input matInput formControlName="toDate" [matDatepicker]="pickerTo">
                         <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
                         <mat-datepicker #pickerTo></mat-datepicker>
+                        <mat-error *ngIf="searchForm.get('toDate').hasError('fromLess')">To date can't be before From date</mat-error>
                     </mat-form-field>
                 </form>
                 <div class="loginIcon">
@@ -78,14 +80,14 @@
                 </div>
             </div>
             <div id="childComponent" class="{{isShow ? 'col-sm-12' : 'hideDiv'}} col-lg-{{isShow ? 12 : 9}}">
-                <app-vacancy-table 
+                <app-vacancy-table
                 (filterButtonClicked)="toggleDisplay()"
                 (changeSorting)="changeSorting($event)"
                 [isShow]="isShow"
                 [sortBy]="sortBy"
                 [sortOrder]="sortOrder"
                 [vacancies]="vacancies">
-               </app-vacancy-table>      
+               </app-vacancy-table>
                <mat-paginator [length] = totalVacancies
                     [pageSize] = pageSize
                     [pageSizeOptions] = "[5, 10, 15, 25, 50]"
