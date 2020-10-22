@@ -110,6 +110,11 @@ export class FilterComponent implements OnInit, OnDestroy {
         this.pageEvent = pageEvent;
     }
 
+    if (this.homeLocation.name === '' && this.searchForm.get('location').value !== '') {
+        this.homeLocation = new Location(this.searchForm.get('location').value);
+        this.homeLocation.setCoord(await this.httpService.getCoordinates(this.homeLocation.name) as number[]);
+    }
+
     let filterQuery: FilterQuery;
 
     if (this.searchForm !== undefined) {
