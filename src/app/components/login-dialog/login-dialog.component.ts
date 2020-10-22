@@ -99,7 +99,6 @@ export class LoginDialogComponent implements OnInit, AfterViewInit {
       }
     },
     err => {
-      console.log(err);
       this.errMSGsignup = err;
     });
   }

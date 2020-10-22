@@ -6,6 +6,9 @@ import { FilterQuery } from '../models/filterQuery.model';
 import { Skill } from '../models/skill';
 import { mockVacancies, newSkillMock } from '../tests/httpMockResponses';
 import { HttpService } from './http.service';
+import localeNl from '@angular/common/locales/nl';
+import { registerLocaleData } from '@angular/common';
+registerLocaleData(localeNl, 'nl');
 
 
 describe('HttpService', () => {
@@ -49,7 +52,7 @@ describe('HttpService', () => {
         req.flush(newSkillMock);
     });
 
-    xit('should build a query to retrieve vacancies', () => {
+    it('should build a query to retrieve vacancies', () => {
         const filterQuery = new FilterQuery();
         filterQuery.location = '';
         filterQuery.distance = 0;
@@ -68,7 +71,7 @@ describe('HttpService', () => {
         });
 
         const req = httpMock.expectOne(environment.api +
-                    '/vacancies?size=10&page=1&skills=Skill1,Skill2&value=test&sort=postingDate&dir=desc');
+            '/vacancies?size=10&page=1&skills=Skill1,Skill2&value=test&distance=0&fromDate=1970-01-01%2000:00:00&toDate=1970-02-01%2000:00:00&sort=postingDate&dir=desc');
         expect(req.request.method).toBe('GET');
 
         req.flush(mockVacancies);
