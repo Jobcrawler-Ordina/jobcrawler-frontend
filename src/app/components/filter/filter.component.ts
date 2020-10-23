@@ -15,7 +15,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
 import { Router } from '@angular/router';
 import { Location } from 'src/app/models/location';
-import {LocationDialogComponent} from '../location-dialog/location-dialog.component';
 
 @Component({
   selector: 'app-filter',
@@ -68,24 +67,10 @@ export class FilterComponent implements OnInit, OnDestroy {
    * Detect changes to 'location' field.
    */
   async ngOnInit(): Promise<void> {
-    this.locations = this.httpService.getLocations();
+      this.locations = this.httpService.getLocations();
       await this.loadForm(); // Need to load form fully before continuing with anything else that might causes errors
-
-
-      const locationDialogRef = this.dialog.open(LocationDialogComponent);
-
-      locationDialogRef.afterClosed().subscribe(result => {
-          if(result !== undefined) {
-              this.homeLocation = result;
-              this.searchForm.controls.location.setValue(this.homeLocation.name);
-              if (this.homeLocation.name !== '') {
-                  this.searchForm.controls.distance.setValue(999);
-              }
-          } else {
-              this.homeLocation = new Location('', undefined, undefined);
-          }
-          this.searchVacancies(this.pageEvent);
-      });
+      await this.getGeoLocation().then(result => {this.homeLocation = result; });
+      this.searchVacancies(this.pageEvent);
   }
 
   /**
@@ -111,23 +96,38 @@ export class FilterComponent implements OnInit, OnDestroy {
    * TODO: Connect this function to send request to backend.
    * Converts form to json format. Currently logged to console and calls the getAllVacancies() function.
    */
+    private getGeoLocation(): Promise<any> {
+        return new Promise((resolve) => {
+            navigator.geolocation.getCurrentPosition((position) => {
+                    this.httpService.getLocationByCoordinates(position.coords.latitude, position.coords.longitude)
+                        .subscribe(
+                            (data: any) => {
+                                resolve(new Location(data.location, position.coords.longitude, position.coords.latitude));
+                                },
+                            () => {resolve(new Location('', undefined, undefined));
+                                },
+                () => {
+                    resolve(new Location('', undefined, undefined));
+                });
+        });
+    });
+    }
+
   public async searchVacancies(pageEvent?: PageEvent): Promise<void> {
 
     if (pageEvent !== undefined) {
         this.pageEvent = pageEvent;
     }
 
-    if (this.searchForm.get('location').value !== '') {
-        this.homeLocation = new Location(this.searchForm.get('location').value);
-        await this.homeLocation.setCoord(await this.httpService.getCoordinates(this.homeLocation.name) as number[]);
-    }
-
-    this.distance = this.searchForm.get('distance').value;
-
     let filterQuery: FilterQuery;
 
     if (this.searchForm !== undefined) {
-      filterQuery = this.searchForm.value as FilterQuery;
+        if (this.searchForm.get('location').value !== '') {
+            this.homeLocation = new Location(this.searchForm.get('location').value);
+            await this.homeLocation.setCoord(await this.httpService.getCoordinates(this.homeLocation.name) as number[]);
+        }
+        this.distance = this.searchForm.get('distance').value;
+        filterQuery = this.searchForm.value as FilterQuery;
 
       if (this.skillMultiCtrl.value !== null) {
         filterQuery.skills = [];
