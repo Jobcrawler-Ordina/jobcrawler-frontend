@@ -15,7 +15,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
 import { Router } from '@angular/router';
 import { Location } from 'src/app/models/location';
-import {log} from 'util';
+
 
 @Component({
   selector: 'app-filter',
@@ -34,6 +34,7 @@ export class FilterComponent implements OnInit, OnDestroy {
   locations: string[];
   filteredLocations: Observable<string[]>;
   homeLocation: Location;
+  distance: number;
 
   showForm = false;
   totalVacancies: number;
@@ -71,12 +72,10 @@ export class FilterComponent implements OnInit, OnDestroy {
    * Detect changes to 'location' field.
    */
   async ngOnInit(): Promise<void> {
-    this.locations = this.httpService.getLocations();
-    this.loadForm();
-    this.homeLocation = new Location('Diemen');
-    this.homeLocation.setCoord(await this.httpService.getCoordinates(this.homeLocation.name) as number[]);
-    this.submitSearchVacancies();
-
+      this.locations = this.httpService.getLocations();
+      await this.loadForm(); // Need to load form fully before continuing with anything else that might causes errors
+      await this.getGeoLocation().then(result => {this.homeLocation = result; });
+      this.submitSearchVacancies();
   }
 
   /**
@@ -97,6 +96,27 @@ export class FilterComponent implements OnInit, OnDestroy {
 /*    public toggleDisplayEmptyLocs(): void {
         this.showEmptyLocs = !this.showEmptyLocs;
     }*/
+
+    /**
+   * TODO: Connect this function to send request to backend.
+   * Converts form to json format. Currently logged to console and calls the getAllVacancies() function.
+   */
+    private getGeoLocation(): Promise<any> {
+        return new Promise((resolve) => {
+            navigator.geolocation.getCurrentPosition((position) => {
+                this.httpService.getLocationByCoordinates(position.coords.latitude, position.coords.longitude)
+                    .subscribe(
+                        (data: any) => {
+                            resolve(new Location(data.location, position.coords.longitude, position.coords.latitude));
+                        },
+                        () => {resolve(new Location('', undefined, undefined));
+                        },
+                        () => {
+                            resolve(new Location('', undefined, undefined));
+                        });
+            });
+        });
+    }
 
     public async submitSearchVacancies(): Promise<void> {
         if (this.searchForm !== undefined) {
@@ -140,34 +160,32 @@ export class FilterComponent implements OnInit, OnDestroy {
         return this.searchVacancies();
     }
 
-    /**
-   * TODO: Connect this function to send request to backend.
-   * Converts form to json format. Currently logged to console and calls the getAllVacancies() function.
-   */
   public async searchVacancies(pageEvent?: PageEvent): Promise<void> {
 
       if (pageEvent !== undefined) {
-        this.pageEvent = pageEvent;
-        this.pageSize = pageEvent.pageSize;
-      } else {
-
+          this.pageEvent = pageEvent;
+          this.pageSize = pageEvent.pageSize;
       }
+
+      let refLocation: Location = new Location('', undefined, undefined);
 
       let pageNum = 0;
       if (this.pageEvent !== undefined) {
           pageNum = this.pageEvent.pageIndex;
-        }
+      }
 
-      this.vacancies = [];
-      this.httpService.getByQuery(this.filterQuery, pageNum, this.pageSize, this.sort)
-      .pipe(takeUntil(this.onDestroy))
-      .subscribe(async (page: PageResult) => {
+    this.vacancies = [];
+    this.httpService.getByQuery(this.filterQuery, pageNum, this.pageSize, this.sort)
+    .pipe(takeUntil(this.onDestroy))
+    .subscribe(async (page: PageResult) => {
         if (page !== null) {
         const tempVacancies: IVacancies[] = [];
         for (const vacancy of page.vacancies) {
-            if (vacancy.location) {
-                await this.httpService.getDistance(this.homeLocation.getCoord(), [vacancy.location.lon, vacancy.location.lat])
-                    .then((result: number) => {vacancy.location.distance = result; });
+            if (vacancy.location  && refLocation.name !== '') {
+                await this.httpService.getDistance(refLocation.getCoord(), [vacancy.location.lon, vacancy.location.lat])
+                    .then((result: number) => {
+                        vacancy.location.distance = result;
+                    });
             }
             tempVacancies.push({
                 title: vacancy.title,
