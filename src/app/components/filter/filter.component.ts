@@ -15,8 +15,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
 import { Router } from '@angular/router';
 import { Location } from 'src/app/models/location';
-import {LocationDialogComponent} from '../../location-dialog/location-dialog.component';
-import {log} from "util";
+import {LocationDialogComponent} from '../location-dialog/location-dialog.component';
 
 @Component({
   selector: 'app-filter',
@@ -33,6 +32,7 @@ export class FilterComponent implements OnInit, OnDestroy {
   locations: string[];
   filteredLocations: Observable<string[]>;
   homeLocation: Location;
+  distance: number;
 
   showForm: boolean = false;
   totalVacancies: number;
@@ -75,8 +75,6 @@ export class FilterComponent implements OnInit, OnDestroy {
       const locationDialogRef = this.dialog.open(LocationDialogComponent);
 
       locationDialogRef.afterClosed().subscribe(result => {
-          console.log('next');
-          console.log(result);
           if(result !== undefined) {
               this.homeLocation = result;
               this.searchForm.controls.location.setValue(this.homeLocation.name);
@@ -87,10 +85,6 @@ export class FilterComponent implements OnInit, OnDestroy {
               this.homeLocation = new Location('', undefined, undefined);
           }
           this.searchVacancies(this.pageEvent);
-      }, () => {
-          console.log('error');
-      }, () => {
-          console.log('complete');
       });
   }
 
@@ -124,11 +118,11 @@ export class FilterComponent implements OnInit, OnDestroy {
     }
 
     if (this.searchForm.get('location').value !== '') {
-        console.log('Test');
         this.homeLocation = new Location(this.searchForm.get('location').value);
         await this.homeLocation.setCoord(await this.httpService.getCoordinates(this.homeLocation.name) as number[]);
-        console.log(this.homeLocation.getCoord());
     }
+
+    this.distance = this.searchForm.get('distance').value;
 
     let filterQuery: FilterQuery;
 

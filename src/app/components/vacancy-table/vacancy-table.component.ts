@@ -18,7 +18,7 @@ export class VacancyTableComponent implements OnChanges {
   @Input() vacancies: IVacancies[];
   @Input() sortBy: string;
   @Input() sortOrder: string;
-  @Input() homeLocation?: Location;
+  @Input() distance?: number;
   @Output() filterButtonClicked = new EventEmitter();
   @Output() changeSorting: EventEmitter<Sort> = new EventEmitter<Sort>();
 
@@ -41,8 +41,8 @@ export class VacancyTableComponent implements OnChanges {
   ngOnChanges(): void {
     this.showClass = this.isShow ? 'table-container' : 'table-container-no-filter';
 
-    if (this.homeLocation) {
-        if ((this.homeLocation.name !== '') && this.homeLocation.name !== undefined) {
+    if (this.distance) {
+        if (this.distance !== 0) {
             this.displayedColumns = this.displayedColumnsWithDistance;
         } else {
             this.displayedColumns = this.displayedColumnsWithoutDistance;
