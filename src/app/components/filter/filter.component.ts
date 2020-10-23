@@ -34,7 +34,7 @@ export class FilterComponent implements OnInit, OnDestroy {
   homeLocation: Location;
   currentLocation: string;
 
-  showForm: boolean = false;
+  showForm = false;
   totalVacancies: number;
   pageSize = 15;
   currentPage: number;
@@ -76,7 +76,11 @@ export class FilterComponent implements OnInit, OnDestroy {
     locationDialogRef.afterClosed().subscribe(result => {
         this.homeLocation = result;
         this.searchVacancies(this.pageEvent);
-        //this.searchForm.controls.location.setValue(this.homeLocation.name);
+        // this.searchForm.controls.location.setValue(this.homeLocation.name);
+      }, () => {
+      }, () => {
+        this.homeLocation = new Location('', undefined, undefined);
+        this.searchVacancies(this.pageEvent);
       });
   }
 
@@ -104,13 +108,15 @@ export class FilterComponent implements OnInit, OnDestroy {
    * Converts form to json format. Currently logged to console and calls the getAllVacancies() function.
    */
   public async searchVacancies(pageEvent?: PageEvent): Promise<void> {
-    console.log("Test start searchVacancies");
+    console.log('Test start searchVacancies');
 
     if (pageEvent !== undefined) {
         this.pageEvent = pageEvent;
     }
 
+    console.log(this.homeLocation);
     if (this.homeLocation.name === '' && this.searchForm.get('location').value !== '') {
+        console.log('Test');
         this.homeLocation = new Location(this.searchForm.get('location').value);
         this.homeLocation.setCoord(await this.httpService.getCoordinates(this.homeLocation.name) as number[]);
     }
@@ -148,6 +154,8 @@ export class FilterComponent implements OnInit, OnDestroy {
       filterQuery.skills = [];
     }
 
+        console.log('Test2');
+
     const pageNum = pageEvent ? pageEvent.pageIndex : 0;
     if (pageEvent) {
       this.pageSize = pageEvent.pageSize;
@@ -158,7 +166,9 @@ export class FilterComponent implements OnInit, OnDestroy {
     .subscribe(async (page: PageResult) => {
         if (page !== null) {
         const tempVacancies: IVacancies[] = [];
+            console.log('Test3');
         for (const vacancy of page.vacancies) {
+            console.log('Test4');
             if (vacancy.location && this.homeLocation.name !== '') {
                 await this.httpService.getDistance(this.homeLocation.getCoord(), [vacancy.location.lon, vacancy.location.lat])
                     .then((result: number) => {
