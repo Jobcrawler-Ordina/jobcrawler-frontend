@@ -22,10 +22,16 @@ export class LoaderInterceptor implements HttpInterceptor {
      * @returns setting loaderService to false to hide the loader
      */
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        this.loaderService.show();
-        return next.handle(req).pipe(
-            finalize(() => this.loaderService.hide())
-        );
+        const isGeoRequest = req.url.includes('/locations/coordinates');
+
+        if (!isGeoRequest) {
+            this.loaderService.show();
+            return next.handle(req).pipe(
+                finalize(() => this.loaderService.hide())
+            );
+        } else {
+            return next.handle(req);
+        }
     }
 
 }
