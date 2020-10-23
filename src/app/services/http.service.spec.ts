@@ -4,10 +4,13 @@ import { Sort } from '@angular/material/sort';
 import { environment } from 'src/environments/environment';
 import { FilterQuery } from '../models/filterQuery.model';
 import { Skill } from '../models/skill';
-import { mockVacancies, newSkillMock } from '../tests/httpMockResponses';
+import { mockLocations, mockVacancies, newSkillMock } from '../tests/httpMockResponses';
 import { HttpService } from './http.service';
 import localeNl from '@angular/common/locales/nl';
 import { registerLocaleData } from '@angular/common';
+import { deleteUserMock } from '../tests/adminServiceMockResponses';
+import { Location } from '../models/location';
+import { of } from 'rxjs';
 registerLocaleData(localeNl, 'nl');
 
 
@@ -35,6 +38,18 @@ describe('HttpService', () => {
 
         const req = httpMock.expectOne(environment.api + '/skillmatcher');
         expect(req.request.method).toBe('PUT');
+
+        req.flush(null);
+    });
+
+    it('should delete a skill when endpoint is called', () => {
+        const url = environment.api + '/skills/1';
+        service.deleteSkill(url).subscribe((data: any) => {
+            expect(data).toBeNull();
+        });
+
+        const req = httpMock.expectOne(url);
+        expect(req.request.method).toBe('DELETE');
 
         req.flush(null);
     });
@@ -75,6 +90,32 @@ describe('HttpService', () => {
         expect(req.request.method).toBe('GET');
 
         req.flush(mockVacancies);
+    });
+
+    it('should await to getDistance', () => {
+        const coord1 = [1.0, 1.1];
+        const coord2 = [1.1, 1.2];
+        service.getDistance(coord1, coord2).then((data: any) => {
+            expect(data).toBe(1.234);
+        });
+
+        const req = httpMock.expectOne(environment.api + '/distance?from=' + coord1[0] +
+                                        ',' + coord1[1] + '&to=' + coord2[0] + ',' + coord2[1]);
+        expect(req.request.method).toBe('GET');
+
+        req.flush(1.234);
+    });
+
+    it('should return a string array of locations when the getLocations() method is called', () => {
+        const httpClientSpy = jasmine.createSpyObj('HttpClient', ['get']);
+        const httpService = new HttpService(httpClientSpy);
+
+        const mockLocation = [new Location('Amsterdam'), new Location('Den Haag'), new Location('Rotterdam'), new Location('Utrecht')];
+        httpClientSpy.get.and.returnValue(of(mockLocation));
+
+        const returnedLocations = httpService.getLocations();
+        expect(returnedLocations.length).toBe(4);
+        expect(returnedLocations).toEqual(mockLocations);
     });
 
     it('should build a close to empty query to retrieve as much vacancies as possible', () => {

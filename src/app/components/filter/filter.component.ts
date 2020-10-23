@@ -68,6 +68,11 @@ export class FilterComponent implements OnInit, OnDestroy {
    */
   async ngOnInit(): Promise<void> {
     this.locations = this.httpService.getLocations();
+    // this.httpService.getLocations().subscribe((data: Location[]) => {
+    //   const locations: Array<string> = [];
+    //   data.forEach(el => locations.push(el.name));
+    //   this.locations = locations;
+    // });
     this.loadForm();
     this.homeLocation = new Location('Diemen');
     this.homeLocation.setCoord(await this.httpService.getCoordinates(this.homeLocation.name) as number[]);
