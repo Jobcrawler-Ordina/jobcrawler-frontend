@@ -100,25 +100,27 @@ export class FilterComponent implements OnInit, OnDestroy {
    */
   public async searchVacancies(pageEvent?: PageEvent): Promise<void> {
 
-    this.homeLocation = new Location(this.searchForm.get("location").value);
-    this.homeLocation.setCoord(await this.httpService.getCoordinates(this.homeLocation.name) as number[]);
-
-    if (pageEvent !== undefined) {
+      if (this.searchForm.get("location").value !== '') {
+          console.log('fetch new lovation');
+          this.homeLocation = new Location(this.searchForm.get("location").value);
+          this.homeLocation.setCoord(await this.httpService.getCoordinates(this.homeLocation.name) as number[]);
+      }
+      if (pageEvent !== undefined) {
         this.pageEvent = pageEvent;
-    }
+      }
 
-    let filterQuery: FilterQuery;
+      let filterQuery: FilterQuery;
 
-    if (this.searchForm !== undefined) {
+      if (this.searchForm !== undefined) {
       filterQuery = this.searchForm.value as FilterQuery;
 
       if (this.skillMultiCtrl.value !== null) {
-        filterQuery.skills = [];
-        this.skillMultiCtrl.value.forEach((skill: Skill) => {
-          filterQuery.skills.push(skill.name);
-        });
+          filterQuery.skills = [];
+          this.skillMultiCtrl.value.forEach((skill: Skill) => {
+              filterQuery.skills.push(skill.name);
+          });
       } else {
-        filterQuery.skills = [];
+          filterQuery.skills = [];
       }
 
       if (!filterQuery.fromDate) {
