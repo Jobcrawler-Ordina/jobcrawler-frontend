@@ -43,13 +43,12 @@
                           </mat-option>
                         </mat-autocomplete>
                     </mat-form-field>
-                    <button *ngIf="homeLocation && homeLocation.name!==''" mat-raised-button style="padding-left: 8px" type="button" (click)="searchForm.controls.location.setValue(this.homeLocation.name)">
+                    <button *ngIf="homeLocation && homeLocation.name!==''" mat-raised-button style="padding-left: 8px;margin-bottom: 10px" type="button" (click)="searchForm.controls.location.setValue(this.homeLocation.name)">
                         <mat-icon>home</mat-icon>&nbsp;Use: {{homeLocation.name}}
                     </button>
                     <mat-form-field class="search">
-                        <mat-label>Maximum distance</mat-label>
-                        <input matInput type="search" formControlName="distance"
-                               placeholder="Maximum distance (km)">
+                        <mat-label>Maximum distance (km)</mat-label>
+                        <input matInput type="search" formControlName="distance">
                     </mat-form-field>
                     <h2>By skills:</h2>
                     <mat-form-field [style.width.%]="100">

@@ -120,11 +120,12 @@ export class FilterComponent implements OnInit, OnDestroy {
     }
 
     let filterQuery: FilterQuery;
+    let refLocation: Location = new Location('', undefined, undefined);
 
     if (this.searchForm !== undefined) {
         if (this.searchForm.get('location').value !== '') {
-            this.homeLocation = new Location(this.searchForm.get('location').value);
-            await this.homeLocation.setCoord(await this.httpService.getCoordinates(this.homeLocation.name) as number[]);
+            refLocation = new Location(this.searchForm.get('location').value);
+            await refLocation.setCoord(await this.httpService.getCoordinates(refLocation.name) as number[]);
         }
         this.distance = this.searchForm.get('distance').value;
         filterQuery = this.searchForm.value as FilterQuery;
@@ -168,8 +169,8 @@ export class FilterComponent implements OnInit, OnDestroy {
         if (page !== null) {
         const tempVacancies: IVacancies[] = [];
         for (const vacancy of page.vacancies) {
-            if (vacancy.location && this.homeLocation.name !== '') {
-                await this.httpService.getDistance(this.homeLocation.getCoord(), [vacancy.location.lon, vacancy.location.lat])
+            if (vacancy.location && refLocation.name !== '') {
+                await this.httpService.getDistance(refLocation.getCoord(), [vacancy.location.lon, vacancy.location.lat])
                     .then((result: number) => {
                         vacancy.location.distance = result;
                     });
