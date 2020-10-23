@@ -69,7 +69,7 @@ export class FilterComponent implements OnInit, OnDestroy {
   async ngOnInit(): Promise<void> {
       this.locations = this.httpService.getLocations();
       await this.loadForm(); // Need to load form fully before continuing with anything else that might causes errors
-      await this.getGeoLocation().then(result => {this.homeLocation = result; });
+      this.getGeoLocation().then(result => this.homeLocation = result);
       this.searchVacancies(this.pageEvent);
   }
 
@@ -98,10 +98,11 @@ export class FilterComponent implements OnInit, OnDestroy {
                     this.httpService.getLocationByCoordinates(position.coords.latitude, position.coords.longitude)
                         .subscribe(
                             (data: any) => {
-                                resolve(new Location(data.location, position.coords.longitude, position.coords.latitude));
-                                },
-                            () => {resolve(new Location('', undefined, undefined));
-                                },
+                              resolve(new Location(data.location, position.coords.longitude, position.coords.latitude));
+                            },
+                            () => {
+                              resolve(new Location('', undefined, undefined));
+                            },
                 () => {
                     resolve(new Location('', undefined, undefined));
                 });
@@ -249,7 +250,8 @@ export class FilterComponent implements OnInit, OnDestroy {
   /**
    * Loads form asynchronous
    */
-  private loadForm(): void {
+  private loadForm(): Promise<any> {
+    return new Promise((resolve) => {
       this.getSkills().then((data: any) => {
               const skillData: Skill[] = [];
               data._embedded.skills.forEach((skill: any) => {
@@ -263,12 +265,15 @@ export class FilterComponent implements OnInit, OnDestroy {
               this.constructSearchForm().then(() => {
                   this.showForm = true;
                   this.isShow = false;
+                  resolve();
               });
           },
           err => {
               console.log('Failed loading form');
               console.log(err.message);
+              resolve();
           });
+        });
   }
 
 
