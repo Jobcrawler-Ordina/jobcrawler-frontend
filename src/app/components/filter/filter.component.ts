@@ -15,7 +15,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
 import { Router } from '@angular/router';
 import { Location } from 'src/app/models/location';
-import {LocationDialogComponent} from '../location-dialog/location-dialog.component';
+import {LocationDialogComponent} from '../../location-dialog/location-dialog.component';
+import {log} from "util";
 
 @Component({
   selector: 'app-filter',
@@ -32,9 +33,8 @@ export class FilterComponent implements OnInit, OnDestroy {
   locations: string[];
   filteredLocations: Observable<string[]>;
   homeLocation: Location;
-  currentLocation: string;
 
-  showForm = false;
+  showForm: boolean = false;
   totalVacancies: number;
   pageSize = 15;
   currentPage: number;
@@ -48,6 +48,7 @@ export class FilterComponent implements OnInit, OnDestroy {
   public skillMultiFilterCtrl: FormControl = new FormControl();
   public filteredSkillsMulti: ReplaySubject<Skill[]> = new ReplaySubject<Skill[]>(1);
   public onDestroy = new Subject<void>();
+  @ViewChild('multiSelect', {static: false}) multiSelect: MatSelect;
 
   /**
    * Creates an instance of filter component.
@@ -55,9 +56,9 @@ export class FilterComponent implements OnInit, OnDestroy {
    * @param filterService Used for http requests (post/get)
    */
   constructor(private form: FormBuilder,
-              private httpService: HttpService,
-              private dialog: MatDialog,
-              private router: Router
+    private httpService: HttpService,
+    private dialog: MatDialog,
+    private router: Router
   ) {  }
 
   /**
@@ -68,28 +69,28 @@ export class FilterComponent implements OnInit, OnDestroy {
    */
   async ngOnInit(): Promise<void> {
     this.locations = this.httpService.getLocations();
-    await this.loadForm(); // Need to load form fully before continuing with anything else that might causes errors
+      await this.loadForm(); // Need to load form fully before continuing with anything else that might causes errors
 
 
-    const locationDialogRef = this.dialog.open(LocationDialogComponent);
+      const locationDialogRef = this.dialog.open(LocationDialogComponent);
 
-    locationDialogRef.afterClosed().subscribe(result => {
-        console.log('next');
-        console.log(result);
-        if(result !== undefined) {
-            this.homeLocation = result;
-            this.searchForm.controls.location.setValue(this.homeLocation.name);
-            if (this.homeLocation.name !== '') {
-                this.searchForm.controls.distance.setValue(999);
-            }
-        } else {
-            this.homeLocation = new Location('', undefined, undefined);
-        }
-        this.searchVacancies(this.pageEvent);
+      locationDialogRef.afterClosed().subscribe(result => {
+          console.log('next');
+          console.log(result);
+          if(result !== undefined) {
+              this.homeLocation = result;
+              this.searchForm.controls.location.setValue(this.homeLocation.name);
+              if (this.homeLocation.name !== '') {
+                  this.searchForm.controls.distance.setValue(999);
+              }
+          } else {
+              this.homeLocation = new Location('', undefined, undefined);
+          }
+          this.searchVacancies(this.pageEvent);
       }, () => {
-        console.log('error');
+          console.log('error');
       }, () => {
-        console.log('complete');
+          console.log('complete');
       });
   }
 
@@ -117,20 +118,17 @@ export class FilterComponent implements OnInit, OnDestroy {
    * Converts form to json format. Currently logged to console and calls the getAllVacancies() function.
    */
   public async searchVacancies(pageEvent?: PageEvent): Promise<void> {
-    console.log('Test start searchVacancies');
 
     if (pageEvent !== undefined) {
         this.pageEvent = pageEvent;
     }
 
-    console.log(this.homeLocation);
     if (this.searchForm.get('location').value !== '') {
         console.log('Test');
         this.homeLocation = new Location(this.searchForm.get('location').value);
         await this.homeLocation.setCoord(await this.httpService.getCoordinates(this.homeLocation.name) as number[]);
         console.log(this.homeLocation.getCoord());
     }
-
 
     let filterQuery: FilterQuery;
 
@@ -158,7 +156,6 @@ export class FilterComponent implements OnInit, OnDestroy {
       filterQuery = new FilterQuery();
       filterQuery.location = '';
       filterQuery.distance = 0;
-      filterQuery.includeEmptyLocs = true;
       filterQuery.fromDate = '';
       filterQuery.toDate = '';
       filterQuery.keyword = '';
@@ -169,6 +166,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     if (pageEvent) {
       this.pageSize = pageEvent.pageSize;
     }
+
     this.vacancies = [];
     this.httpService.getByQuery(filterQuery, pageNum, this.pageSize, this.sort)
     .pipe(takeUntil(this.onDestroy))
@@ -260,30 +258,26 @@ export class FilterComponent implements OnInit, OnDestroy {
   /**
    * Loads form asynchronous
    */
-  private loadForm(): Promise<any> {
-    return new Promise((resolve) => {
+  private loadForm(): void {
       this.getSkills().then((data: any) => {
-        const skillData: Skill[] = [];
-        data._embedded.skills.forEach((skill: any) => {
-          skillData.push({
-            href: skill._links.self.href,
-            name: skill.name
+              const skillData: Skill[] = [];
+              data._embedded.skills.forEach((skill: any) => {
+                  skillData.push({
+                      href: skill._links.self.href,
+                      name: skill.name
+                  });
+              });
+              this.skills = skillData;
+              this.filteredSkillsMulti.next(this.skills.slice());
+              this.constructSearchForm().then(() => {
+                  this.showForm = true;
+                  this.isShow = false;
+              });
+          },
+          err => {
+              console.log('Failed loading form');
+              console.log(err.message);
           });
-        });
-        this.skills = skillData;
-        this.filteredSkillsMulti.next(this.skills.slice());
-        this.constructSearchForm().then(() => {
-          this.showForm = true;
-          this.isShow = false;
-          resolve();
-        });
-      },
-      err => {
-        console.log('Failed loading form');
-        console.log(err.message);
-        resolve();
-      });
-    });
   }
 
 
@@ -305,7 +299,6 @@ export class FilterComponent implements OnInit, OnDestroy {
     return this.locations.filter(value => value.toLowerCase().indexOf(search.toLowerCase()) === 0);
   }
 
-
   /**
    * Constructs search form
    * @returns empty search form
@@ -317,10 +310,9 @@ export class FilterComponent implements OnInit, OnDestroy {
         location: '',
         skills: '',
         distance: '',
-        includeEmptyLocs: true,
         fromDate: '',
         toDate: ''
-      });
+      }, { validator: this.dateLessThan('fromDate', 'toDate') });
 
       this.filteredLocations = this.searchForm.get('location')!.valueChanges
         .pipe(
@@ -337,4 +329,14 @@ export class FilterComponent implements OnInit, OnDestroy {
       resolve();
     });
   }
+    dateLessThan(from: string, to: string) {
+        return (group: FormGroup): { [key: string]: any } => {
+            const f = group.controls[from];
+            const t = group.controls[to];
+            if (t.value && (f.value > t.value)) {
+                t.setErrors({ fromLess: true });
+            }
+            return {};
+        };
+    }
 }

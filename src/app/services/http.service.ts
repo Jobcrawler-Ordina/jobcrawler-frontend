@@ -7,11 +7,11 @@ import { PageResult } from '../models/pageresult.model';
 import { Skill } from '../models/skill';
 import { Sort } from '@angular/material/sort';
 import { Location } from '../models/location';
+import { formatDate } from '@angular/common';
 
 @Injectable()
 export class HttpService {
-    private p: Observable<PageResult>;
-        /**
+    /**
      * Creates an instance of filter service.
      * @param httpClient needed for http requests
      */
@@ -27,8 +27,8 @@ export class HttpService {
      * @returns requested vacancies
      */
     public getByQuery(filterQuery: FilterQuery, pageNum: number, pageSize: number, sort?: Sort): Observable<PageResult> {
+        const dateFormat = 'yyyy-MM-dd HH:mm:ss';
         let params = new HttpParams();
-        let p: Observable<PageResult>;
         params = params.append('size', String(pageSize));
         params = params.append('page', String(pageNum));
         if (filterQuery.skills.length > 0) {
@@ -43,17 +43,21 @@ export class HttpService {
         if (filterQuery.distance !== null) {
             params = params.append('distance', String(filterQuery.distance));
         }
-        if (filterQuery.includeEmptyLocs !== null) {
-            params = params.append('emptylocs', String(filterQuery.includeEmptyLocs));
+        if (filterQuery.fromDate !== '') {
+            formatDate(filterQuery.fromDate, dateFormat, 'nl-NL');
+            params = params.append('fromDate', formatDate(filterQuery.fromDate, dateFormat, 'nl-NL'));
         }
+        if (filterQuery.toDate !== '') {
+            params = params.append('toDate', formatDate(filterQuery.toDate, dateFormat, 'nl-NL'));
+        }
+
         if (sort !== undefined && sort.active !== '') {
             params = params.append('sort', sort.active);
         }
         if (sort !== undefined && sort.direction !== '') {
             params = params.append('dir', sort.direction);
         }
-        p = this.httpClient.get<PageResult>(environment.api + '/vacancies', {params});
-        return p;
+        return this.httpClient.get<PageResult>(environment.api + '/vacancies', {params});
     }
 
     /**
@@ -67,7 +71,7 @@ export class HttpService {
 
     /**
      * Gets skills for vacancy
-     * @param id vacancy id
+     * @param id
      * @returns skills for vacancy
      */
     public getSkillsForVacancy(id: string): Observable<any> {
