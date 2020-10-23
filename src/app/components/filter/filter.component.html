@@ -47,11 +47,6 @@
                         <input matInput type="search" formControlName="distance"
                                placeholder="Maximum distance (km)">
                     </mat-form-field>
-                    <div class="checkbox">
-                        <label>
-                            <input type="checkbox" formControlName="includeEmptyLocs"> Include vacancies without location
-                        </label>
-                    </div>
                     <h2>By skill:</h2>
                     <mat-form-field [style.width.%]="100">
                         <mat-select [formControl]="skillMultiCtrl" placeholder="Skills" [multiple]="true" #multiSelect>

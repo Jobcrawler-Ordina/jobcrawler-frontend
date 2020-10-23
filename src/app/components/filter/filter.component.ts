@@ -74,13 +74,22 @@ export class FilterComponent implements OnInit, OnDestroy {
     const locationDialogRef = this.dialog.open(LocationDialogComponent);
 
     locationDialogRef.afterClosed().subscribe(result => {
-        this.homeLocation = result;
+        console.log('next');
+        console.log(result);
+        if(result !== undefined) {
+            this.homeLocation = result;
+            this.searchForm.controls.location.setValue(this.homeLocation.name);
+            if (this.homeLocation.name !== '') {
+                this.searchForm.controls.distance.setValue(999);
+            }
+        } else {
+            this.homeLocation = new Location('', undefined, undefined);
+        }
         this.searchVacancies(this.pageEvent);
-        // this.searchForm.controls.location.setValue(this.homeLocation.name);
       }, () => {
+        console.log('error');
       }, () => {
-        this.homeLocation = new Location('', undefined, undefined);
-        this.searchVacancies(this.pageEvent);
+        console.log('complete');
       });
   }
 
@@ -115,11 +124,13 @@ export class FilterComponent implements OnInit, OnDestroy {
     }
 
     console.log(this.homeLocation);
-    if (this.homeLocation.name === '' && this.searchForm.get('location').value !== '') {
+    if (this.searchForm.get('location').value !== '') {
         console.log('Test');
         this.homeLocation = new Location(this.searchForm.get('location').value);
-        this.homeLocation.setCoord(await this.httpService.getCoordinates(this.homeLocation.name) as number[]);
+        await this.homeLocation.setCoord(await this.httpService.getCoordinates(this.homeLocation.name) as number[]);
+        console.log(this.homeLocation.getCoord());
     }
+
 
     let filterQuery: FilterQuery;
 
@@ -154,8 +165,6 @@ export class FilterComponent implements OnInit, OnDestroy {
       filterQuery.skills = [];
     }
 
-        console.log('Test2');
-
     const pageNum = pageEvent ? pageEvent.pageIndex : 0;
     if (pageEvent) {
       this.pageSize = pageEvent.pageSize;
@@ -166,9 +175,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     .subscribe(async (page: PageResult) => {
         if (page !== null) {
         const tempVacancies: IVacancies[] = [];
-            console.log('Test3');
         for (const vacancy of page.vacancies) {
-            console.log('Test4');
             if (vacancy.location && this.homeLocation.name !== '') {
                 await this.httpService.getDistance(this.homeLocation.getCoord(), [vacancy.location.lon, vacancy.location.lat])
                     .then((result: number) => {
