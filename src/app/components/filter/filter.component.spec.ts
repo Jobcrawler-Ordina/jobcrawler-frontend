@@ -11,7 +11,7 @@ import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { By } from '@angular/platform-browser';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { mockSkills, noSkills, mockVacancies, mockCities } from 'src/app/tests/httpMockResponses';
+import { mockSkills, noSkills, mockVacancies, mockLocations } from 'src/app/tests/httpMockResponses';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatIconModule } from '@angular/material/icon';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
@@ -83,12 +83,14 @@ describe('FilterComponent', () => {
 
   it('should fill skills variable upon init', fakeAsync(() => {
     // Arrange
-    const mockService = jasmine.createSpyObj('HttpService', ['findAllSkills', 'getByQuery']);
+    const mockService = jasmine.createSpyObj('HttpService', ['findAllSkills', 'getByQuery', 'getLocations', 'getCoordinates']);
     const mockRouter = jasmine.createSpyObj('Router', ['navigate']);
     const mockDialog = jasmine.createSpyObj('MatDialog', ['open']);
     const filterComp = new FilterComponent(new FormBuilder(), mockService, mockDialog, mockRouter);
     mockService.findAllSkills.and.returnValue(of(mockSkills));
     mockService.getByQuery.and.returnValue(of(null));
+    mockService.getLocations.and.returnValue(of(mockLocations));
+    mockService.getCoordinates.and.returnValue(of([5.748, 52.500]));
 
     // Expect nothing at this stage, as we still need to fill the variables
     expect(filterComp.skills).toBeUndefined();
@@ -105,13 +107,17 @@ describe('FilterComponent', () => {
 
   it('should fill vacancies variable upon init', fakeAsync(() => {
     // Arrange
-    const mockService = jasmine.createSpyObj('HttpService', ['findAllSkills', 'getByQuery']);
+    const mockService = jasmine.createSpyObj('HttpService',
+                        ['findAllSkills', 'getByQuery', 'getLocations', 'getCoordinates', 'getDistance']);
     const mockRouter = jasmine.createSpyObj('Router', ['navigate']);
     const mockDialog = jasmine.createSpyObj('MatDialog', ['open']);
     const filterComp = new FilterComponent(new FormBuilder(), mockService, mockDialog, mockRouter);
 
     mockService.findAllSkills.and.returnValue(of(noSkills));
     mockService.getByQuery.and.returnValue(of(mockVacancies));
+    mockService.getLocations.and.returnValue(of(mockLocations));
+    mockService.getCoordinates.and.returnValue(of([5.748, 52.500]));
+    mockService.getDistance.and.returnValue(Promise.resolve(1.234));
 
     // Expect nothing at this stage, as we still need to fill the variables
     expect(filterComp.vacancies).toEqual([]);
@@ -161,7 +167,7 @@ describe('FilterComponent', () => {
 
         httpService.findAllSkills().subscribe((data: any) => {
         component.skills = [];
-        data._embedded.skills.forEach(d => {
+        data._embedded.skills.forEach((d: any) => {
           component.skills.push({
             href: d._links.self.href,
             name: d.name
@@ -224,53 +230,45 @@ describe('FilterComponent', () => {
     it('should show default cities in city input', () => {
         // Arrange
         component.skills = [];
-        component.cities = [];
-        component.cities = mockCities;
-        component.filteredCities = of(component.cities);
+        component.locations = [];
+        component.locations = mockLocations;
+        component.filteredLocations = of(component.locations);
 
         // Act, load page with above settings
         fixture.detectChanges();
-        const inputElement = fixture.debugElement.query(By.css('#citySearch'));
+        const inputElement = fixture.debugElement.query(By.css('#locationSearch'));
         inputElement.nativeElement.dispatchEvent(new Event('focusin'));
         const matOptions = document.querySelectorAll('mat-option#city');
 
         // Assert
-        expect(matOptions.length).toBe(component.cities.length);
+        expect(matOptions.length).toBe(component.locations.length);
         for (let i = 0; i < matOptions.length; i++) {
-            expect(matOptions[i].textContent.trim()).toBe(component.cities[i]);
+            expect(matOptions[i].textContent.trim()).toBe(component.locations[i]);
         }
     });
 
     it('should filter cities based on text input', async () => {
         // Arrange
         component.skills = [];
-        component.cities = [];
-        component.cities = mockCities;
-        component.filteredCities = of(component.cities);
+        component.locations = mockLocations;
+        component.filteredLocations = of(component.locations);
         component.resetForm();
 
         // Act
         fixture.detectChanges();
-        const inputElement = fixture.debugElement.query(By.css('#citySearch'));
+        component.locations = mockLocations;
+        const inputElement = fixture.debugElement.query(By.css('#locationSearch'));
         inputElement.nativeElement.dispatchEvent(new Event('focusin'));
 
         // Enter first 3 chars from first element of mockCities array into our input field.
-        inputElement.nativeElement.value = mockCities[0].substr(0, 3);
+        inputElement.nativeElement.value = mockLocations[0].substr(0, 3);
         inputElement.nativeElement.dispatchEvent(new Event('input'));
 
         await fixture.whenStable();
         fixture.detectChanges();
 
-        const matOptions = document.querySelectorAll('mat-option#city');
+        const matOptions = document.querySelectorAll('mat-option#location');
         expect(matOptions.length).toBe(1); // Only one city out of the 4 that matches with 'Ams'.
-
-        const optionToClick = matOptions[0] as HTMLElement;
-        optionToClick.click();
-
-        fixture.detectChanges();
-
-        // Final assert. Input value should be equal to first city in cities array.
-        expect(fixture.debugElement.query(By.css('#citySearch')).properties.value).toBe(mockCities[0]);
     });
 
   });

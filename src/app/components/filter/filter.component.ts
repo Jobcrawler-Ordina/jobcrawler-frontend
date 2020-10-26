@@ -33,7 +33,7 @@ export class FilterComponent implements OnInit, OnDestroy {
   homeLocation: Location;
   distance: number;
 
-  showForm: boolean = false;
+  showForm = false;
   totalVacancies: number;
   pageSize = 15;
   currentPage: number;
@@ -55,9 +55,9 @@ export class FilterComponent implements OnInit, OnDestroy {
    * @param filterService Used for http requests (post/get)
    */
   constructor(private form: FormBuilder,
-    private httpService: HttpService,
-    private dialog: MatDialog,
-    private router: Router
+              private httpService: HttpService,
+              private dialog: MatDialog,
+              private router: Router
   ) {  }
 
   /**
@@ -69,7 +69,7 @@ export class FilterComponent implements OnInit, OnDestroy {
   async ngOnInit(): Promise<void> {
       this.locations = this.httpService.getLocations();
       await this.loadForm(); // Need to load form fully before continuing with anything else that might causes errors
-      await this.getGeoLocation().then(result => {this.homeLocation = result; });
+      this.getGeoLocation().then(result => this.homeLocation = result);
       this.searchVacancies(this.pageEvent);
   }
 
@@ -92,20 +92,17 @@ export class FilterComponent implements OnInit, OnDestroy {
         this.showEmptyLocs = !this.showEmptyLocs;
     }*/
 
-    /**
-   * TODO: Connect this function to send request to backend.
-   * Converts form to json format. Currently logged to console and calls the getAllVacancies() function.
-   */
     private getGeoLocation(): Promise<any> {
         return new Promise((resolve) => {
             navigator.geolocation.getCurrentPosition((position) => {
                     this.httpService.getLocationByCoordinates(position.coords.latitude, position.coords.longitude)
                         .subscribe(
                             (data: any) => {
-                                resolve(new Location(data.location, position.coords.longitude, position.coords.latitude));
-                                },
-                            () => {resolve(new Location('', undefined, undefined));
-                                },
+                              resolve(new Location(data.location, position.coords.longitude, position.coords.latitude));
+                            },
+                            () => {
+                              resolve(new Location('', undefined, undefined));
+                            },
                 () => {
                     resolve(new Location('', undefined, undefined));
                 });
@@ -123,12 +120,12 @@ export class FilterComponent implements OnInit, OnDestroy {
     let refLocation: Location = new Location('', undefined, undefined);
 
     if (this.searchForm !== undefined) {
-        if (this.searchForm.get('location').value !== '') {
-            refLocation = new Location(this.searchForm.get('location').value);
-            await refLocation.setCoord(await this.httpService.getCoordinates(refLocation.name) as number[]);
-        }
-        this.distance = this.searchForm.get('distance').value;
-        filterQuery = this.searchForm.value as FilterQuery;
+      if (this.searchForm.get('location').value !== '') {
+          refLocation = new Location(this.searchForm.get('location').value);
+          await refLocation.setCoord(await this.httpService.getCoordinates(refLocation.name) as number[]);
+      }
+      this.distance = this.searchForm.get('distance').value;
+      filterQuery = this.searchForm.value as FilterQuery;
 
       if (this.skillMultiCtrl.value !== null) {
         filterQuery.skills = [];
@@ -253,7 +250,8 @@ export class FilterComponent implements OnInit, OnDestroy {
   /**
    * Loads form asynchronous
    */
-  private loadForm(): void {
+  private loadForm(): Promise<any> {
+    return new Promise((resolve) => {
       this.getSkills().then((data: any) => {
               const skillData: Skill[] = [];
               data._embedded.skills.forEach((skill: any) => {
@@ -267,12 +265,15 @@ export class FilterComponent implements OnInit, OnDestroy {
               this.constructSearchForm().then(() => {
                   this.showForm = true;
                   this.isShow = false;
+                  resolve();
               });
           },
           err => {
               console.log('Failed loading form');
               console.log(err.message);
+              resolve();
           });
+        });
   }
 
 

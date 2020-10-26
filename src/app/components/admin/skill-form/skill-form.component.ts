@@ -16,14 +16,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 @Component({
     selector: 'app-skill-form',
     templateUrl: './skill-form.component.html',
-    styleUrls: ['./skill-form.component.scss'],
-    providers: [HttpService]
+    styleUrls: ['./skill-form.component.scss']
 })
 export class SkillFormComponent implements OnInit {
 
     skill: Skill;
-    skillAcceptedBackend = true;
-
     errorMessage: string;
     skillForm: FormGroup;
 
@@ -34,33 +31,24 @@ export class SkillFormComponent implements OnInit {
         ]
     };
 
-    constructor(
-        private router: Router,
-        private httpService: HttpService,
-        private fb: FormBuilder) {
-        this.skill = new Skill();
-    }
+    constructor(private router: Router,
+                private httpService: HttpService,
+                private fb: FormBuilder) {}
 
     ngOnInit(): void {
+        this.skill = new Skill();
         this.skillForm = this.fb.group({
             skill: ['', [Validators.required, Validators.minLength(3)]]
         });
     }
 
     public onSubmit(): void {
-        console.log(this.skillForm.value.skill);
         this.skill.name = this.skillForm.value.skill;
-        this.skillAcceptedBackend = true;
         this.httpService.saveSkill(this.skill).subscribe(() => {
-                console.log('successfully saved new skill:' + this.skill.name);
                 this.gotoSkillListAfterAddition();
             },
             err => {
-                if (err instanceof HttpErrorResponse) {
-                    console.log('Error adding skill in backend:' + this.skill.name );
-                    this.errorMessage = 'Error adding skill in backend:' + err.message;
-                    this.skillAcceptedBackend = false;
-                }
+                this.errorMessage = 'Error adding skill in backend: ' + err.message;
             }
         );
     }

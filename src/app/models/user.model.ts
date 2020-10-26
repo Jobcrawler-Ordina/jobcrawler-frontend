@@ -4,7 +4,7 @@ export class User {
     username: string;
     token: string;
     expiresIn: number;
-    expiresAt: moment.Moment;
+    expiresAt?: moment.Moment;
     tokenType: string;
     roles: string[];
 }

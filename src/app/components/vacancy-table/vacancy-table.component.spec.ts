@@ -9,6 +9,7 @@ import { MaterialModule } from 'src/app/material/material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { By } from '@angular/platform-browser';
+import { Sort } from '@angular/material/sort';
 
 describe('VacancyTableComponent', () => {
   let component: VacancyTableComponent;
@@ -113,6 +114,19 @@ describe('VacancyTableComponent', () => {
     it('should open', () => {
       component.openDialog('0');
       expect(dialog.open.calls.count()).toBe(1);
+    });
+
+    it('should emit when sorting is changed', () => {
+      spyOn(component.changeSorting, 'emit');
+
+      const tableHeader = nativeComponent.querySelector('th');
+      tableHeader.dispatchEvent(new Event('click'));
+
+      const sortEmit: Sort = {
+        direction: 'asc',
+        active: 'title'
+      };
+      expect(component.changeSorting.emit).toHaveBeenCalledWith(sortEmit);
     });
   });
 
