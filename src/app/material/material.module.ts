@@ -14,15 +14,18 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatCheckboxModule} from '@angular/material/checkbox';
-import {MatDatepickerModule} from "@angular/material/datepicker";
-import {MatMomentDateModule} from "@angular/material-moment-adapter";
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatMomentDateModule} from '@angular/material-moment-adapter';
 import {MAT_DATE_LOCALE} from '@angular/material/core';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatSelectModule} from '@angular/material/select';
 import {MatPaginatorModule} from '@angular/material/paginator';
+import {MatTabsModule} from '@angular/material/tabs';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
+import { MatSortModule } from '@angular/material/sort';
 
 @NgModule({
     imports: [
@@ -46,6 +49,9 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
         MatTooltipModule,
         MatSelectModule,
         MatPaginatorModule,
+        MatSortModule,
+        MatTabsModule,
+        MatSlideToggleModule,
         NgxMatSelectSearchModule
     ],
     exports: [
@@ -69,6 +75,9 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
         MatTooltipModule,
         MatSelectModule,
         MatPaginatorModule,
+        MatSortModule,
+        MatTabsModule,
+        MatSlideToggleModule,
         NgxMatSelectSearchModule
     ],
     providers: [

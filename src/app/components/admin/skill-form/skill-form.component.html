@@ -1,0 +1,25 @@
+<!--
+    form to enter a new skill by name only
+    minimum length is checked in front end
+    uniqueness is checked at submit time in back end
+-->
+
+      <div class="card-body">
+        <form [formGroup]="skillForm" (ngSubmit)="onSubmit()">
+          <div class="center">
+            <mat-form-field>
+              <input type="text" matInput placeholder="Skill" formControlName="skill">
+            </mat-form-field>
+            <div class="error-messages">
+              <ng-container *ngFor="let error of errorMessages.skill">
+                  <div class="error-message" *ngIf="skillForm.get('skill').hasError(error.type) && (skillForm.get('skill').dirty || skillForm.get('skill').touched)">
+                      {{ error.message }}
+                  </div>
+              </ng-container>
+            </div>
+          </div>
+          <div class="centernoborder">
+            <button mat-raised-button type="button" [disabled]="!skillForm.valid" (click)="onSubmit()">Submit</button>
+          </div>
+        </form>
+      </div>

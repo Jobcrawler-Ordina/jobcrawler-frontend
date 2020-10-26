@@ -9,6 +9,7 @@ import { MaterialModule } from 'src/app/material/material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { By } from '@angular/platform-browser';
+import { Sort } from '@angular/material/sort';
 
 describe('VacancyTableComponent', () => {
   let component: VacancyTableComponent;
@@ -18,12 +19,12 @@ describe('VacancyTableComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [ 
+      imports: [
         BrowserAnimationsModule,
         HttpClientTestingModule,
         MaterialModule
       ],
-      declarations: [ 
+      declarations: [
         VacancyTableComponent,
         ConvertStringToDotsPipe
       ],
@@ -55,7 +56,7 @@ describe('VacancyTableComponent', () => {
 
   it('should show a message that no vacancies are found', () => {
     fixture.detectChanges();
-    let element = fixture.debugElement.query(By.css('#noVacanciesMessage')).nativeElement;
+    const element = fixture.debugElement.query(By.css('#noVacanciesMessage')).nativeElement;
     expect(element.textContent).toBe('No vacancies that match your filter criteria.');
   });
 
@@ -79,10 +80,10 @@ describe('VacancyTableComponent', () => {
       // Expect stored vacancies to now match the mock data
       expect(component.vacancies.length).toEqual(3);
       expect(component.vacancies[0].title).toEqual(fixture.componentInstance.vacancies[0].title);
-  
+
       // Expect vacancies to be shown only after component has detected changes
       const vacanciesTable = nativeComponent.querySelector('table');
-  
+
       const vacancyTitles = vacanciesTable.children[1].children;
       expect(vacanciesTable).toBeTruthy();
       expect(vacancyTitles.length).toEqual(fixture.componentInstance.vacancies.length);
@@ -91,7 +92,7 @@ describe('VacancyTableComponent', () => {
 
     it('should open matDialog upon clicking vacancy title', () => {
       spyOn(component, 'openDialog');
-      let firstVacancyTitleElement = fixture.debugElement.nativeElement.querySelector('a.pointer');
+      const firstVacancyTitleElement = fixture.debugElement.nativeElement.querySelector('a.pointer');
       firstVacancyTitleElement.click();
       expect(component.openDialog).toHaveBeenCalledWith(component.vacancies[0].id);
     });
@@ -100,19 +101,32 @@ describe('VacancyTableComponent', () => {
       component.isShow = false;
       component.ngOnChanges();
       fixture.detectChanges();
-      let elementFalse = fixture.debugElement.query(By.css('#tableDiv')).nativeElement;
+      const elementFalse = fixture.debugElement.query(By.css('#tableDiv')).nativeElement;
       expect(elementFalse.classList).toContain('table-container-no-filter');
 
       component.isShow = true;
       component.ngOnChanges();
       fixture.detectChanges();
-      let elementTrue = fixture.debugElement.query(By.css('#tableDiv')).nativeElement;
+      const elementTrue = fixture.debugElement.query(By.css('#tableDiv')).nativeElement;
       expect(elementTrue.classList).toContain('table-container');
     });
 
     it('should open', () => {
       component.openDialog('0');
       expect(dialog.open.calls.count()).toBe(1);
+    });
+
+    it('should emit when sorting is changed', () => {
+      spyOn(component.changeSorting, 'emit');
+
+      const tableHeader = nativeComponent.querySelector('th');
+      tableHeader.dispatchEvent(new Event('click'));
+
+      const sortEmit: Sort = {
+        direction: 'asc',
+        active: 'title'
+      };
+      expect(component.changeSorting.emit).toHaveBeenCalledWith(sortEmit);
     });
   });
 

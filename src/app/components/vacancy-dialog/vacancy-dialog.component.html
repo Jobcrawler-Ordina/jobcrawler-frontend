@@ -20,10 +20,13 @@
             <label><b>Hours</b></label> {{vacancy.hours}}
         </div>
         <div>
-            <label><b>About</b></label> {{vacancy.about}}
+            <label><b>About</b></label> <div [innerHTML]="vacancy.about"></div>
         </div>
+<!--        <div>
+            <label><b>Location</b></label> {{vacancy.location==null?"":vacancy.location.name + ", " + ((vacancy.location.distance) | number:'1.0-0') + "km away"}}
+        </div>-->
         <div>
-            <label><b>Location</b></label> {{vacancy.location}}
+            <label><b>Location</b></label> {{vacancy.location?.name}}
         </div>
         <div>
             <label><b>Posting Date</b></label> {{vacancy.postingDate}}
