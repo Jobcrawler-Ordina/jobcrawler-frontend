@@ -97,10 +97,6 @@ export class FilterComponent implements OnInit, OnDestroy {
         this.showEmptyLocs = !this.showEmptyLocs;
     }*/
 
-    /**
-   * TODO: Connect this function to send request to backend.
-   * Converts form to json format. Currently logged to console and calls the getAllVacancies() function.
-   */
     private getGeoLocation(): Promise<any> {
         return new Promise((resolve) => {
             navigator.geolocation.getCurrentPosition((position) => {
@@ -121,12 +117,10 @@ export class FilterComponent implements OnInit, OnDestroy {
     public async submitSearchVacancies(): Promise<void> {
         if (this.searchForm !== undefined) {
 
-            if (this.searchForm.get('location').value !== '') {
-                this.homeLocation = new Location(this.searchForm.get('location').value);
-                this.homeLocation.setCoord(await this.httpService.getCoordinates(this.homeLocation.name) as number[]);
-            }
-
             this.filterQuery = this.searchForm.value as FilterQuery;
+            // this.distance is used in the vacancy-table.component
+            this.distance = this.searchForm.get('distance').value;
+            this.filterQuery.distance = this.distance;
 
             if (this.skillMultiCtrl.value !== null) {
                 this.filterQuery.skills = [];
@@ -169,13 +163,20 @@ export class FilterComponent implements OnInit, OnDestroy {
 
       let refLocation: Location = new Location('', undefined, undefined);
 
+      if (this.searchForm !== undefined) {
+          if (this.searchForm.get('location').value !== '') {
+              refLocation = new Location(this.searchForm.get('location').value);
+              refLocation.setCoord(await this.httpService.getCoordinates(this.homeLocation.name) as number[]);
+          }
+      }
+
       let pageNum = 0;
       if (this.pageEvent !== undefined) {
           pageNum = this.pageEvent.pageIndex;
       }
 
-    this.vacancies = [];
-    this.httpService.getByQuery(this.filterQuery, pageNum, this.pageSize, this.sort)
+      this.vacancies = [];
+      this.httpService.getByQuery(this.filterQuery, pageNum, this.pageSize, this.sort)
     .pipe(takeUntil(this.onDestroy))
     .subscribe(async (page: PageResult) => {
         if (page !== null) {
@@ -261,7 +262,6 @@ export class FilterComponent implements OnInit, OnDestroy {
     this.searchVacancies(this.pageEvent);
   }
 
-
   /**
    * Loads form asynchronous
    */
@@ -303,7 +303,8 @@ export class FilterComponent implements OnInit, OnDestroy {
    * @returns matching locations to entered string
    */
   private _filterLocation(search: string): string[] {
-    return this.locations.filter(value => value.toLowerCase().indexOf(search.toLowerCase()) === 0);
+      this.setDistanceDisabled();
+      return this.locations.filter(value => value.toLowerCase().indexOf(search.toLowerCase()) === 0);
   }
 
   /**
@@ -316,11 +317,17 @@ export class FilterComponent implements OnInit, OnDestroy {
         keyword: '',
         location: '',
         skills: '',
-        distance: ['', Validators.min(1)],
+        distance: [ { value: '', disabled: true}, Validators.min(1)],
         fromDate: '',
         toDate: ''
       }, { validator: this.dateLessThan('fromDate', 'toDate') });
 
+        // tslint:disable-next-line:no-non-null-assertion
+        // this.reactiveForm.get("firstname").valueChanges.subscribe(x => {
+        //    console.log('firstname value changed')
+        //    console.log(x)
+        // })
+        // setDistanceDisabled
       this.filteredLocations = this.searchForm.get('location')!.valueChanges
         .pipe(
           startWith(''),
@@ -345,5 +352,16 @@ export class FilterComponent implements OnInit, OnDestroy {
             }
             return {};
         };
+    }
+
+    setDistanceDisabled() {
+        if (this.searchForm !== undefined) {
+            if (this.searchForm.get('location').value !== '') {
+                this.searchForm.get('distance').enable();
+            } else {
+                this.searchForm.get('distance').disable();
+            }
+
+        }
     }
 }
