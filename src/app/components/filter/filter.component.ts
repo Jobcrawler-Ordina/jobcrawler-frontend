@@ -1,14 +1,13 @@
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
+import {FormBuilder, FormGroup, FormControl, Validators} from '@angular/forms';
 import { FilterQuery } from 'src/app/models/filterQuery.model';
 import { IVacancies } from 'src/app/models/ivacancies';
 import { HttpService } from 'src/app/services/http.service';
 import { Observable, Subject, ReplaySubject } from 'rxjs';
 import { map, startWith, takeUntil } from 'rxjs/operators';
 import { MatSelect } from '@angular/material/select';
-import { PageEvent } from '@angular/material/paginator';
+import { MatPaginator, PageEvent} from '@angular/material/paginator';
 import { PageResult } from 'src/app/models/pageresult.model';
-import { Vacancy } from 'src/app/models/vacancy';
 import { Skill } from 'src/app/models/skill';
 import { Sort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
@@ -43,16 +42,22 @@ export class FilterComponent implements OnInit, OnDestroy {
   sortBy = 'postingDate';
   sortOrder = 'desc';
 
+  filterQuery: FilterQuery;
+
   public skillMultiCtrl: FormControl = new FormControl();
   public skillMultiFilterCtrl: FormControl = new FormControl();
   public filteredSkillsMulti: ReplaySubject<Skill[]> = new ReplaySubject<Skill[]>(1);
   public onDestroy = new Subject<void>();
+
   @ViewChild('multiSelect', {static: false}) multiSelect: MatSelect;
+  @ViewChild('paginator') paginator: MatPaginator;
 
   /**
    * Creates an instance of filter component.
    * @param form Constructs form
-   * @param filterService Used for http requests (post/get)
+   * @param httpService
+   * @param dialog
+   * @param router
    */
   constructor(private form: FormBuilder,
               private httpService: HttpService,
@@ -70,7 +75,7 @@ export class FilterComponent implements OnInit, OnDestroy {
       this.locations = this.httpService.getLocations();
       await this.loadForm(); // Need to load form fully before continuing with anything else that might causes errors
       this.getGeoLocation().then(result => this.homeLocation = result);
-      this.searchVacancies(this.pageEvent);
+      this.submitSearchVacancies();
   }
 
   /**
@@ -110,57 +115,69 @@ export class FilterComponent implements OnInit, OnDestroy {
     });
     }
 
+    public async submitSearchVacancies(): Promise<void> {
+        if (this.searchForm !== undefined) {
+
+            this.filterQuery = this.searchForm.value as FilterQuery;
+            // this.distance is used in the vacancy-table.component
+            this.distance = this.searchForm.get('distance').value;
+            this.filterQuery.distance = this.distance;
+
+            if (this.skillMultiCtrl.value !== null) {
+                this.filterQuery.skills = [];
+                this.skillMultiCtrl.value.forEach((skill: Skill) => {
+                    this.filterQuery.skills.push(skill.name);
+                });
+            } else {
+                this.filterQuery.skills = [];
+            }
+
+            if (!this.filterQuery.fromDate) {
+                this.filterQuery.fromDate = '';
+            }
+
+            if (!this.filterQuery.toDate) {
+                this.filterQuery.toDate = '';
+            }
+        } else {
+            this.isShow = true;
+            this.filterQuery = new FilterQuery();
+            this.filterQuery.location = '';
+            this.filterQuery.distance = 0;
+            this.filterQuery.fromDate = '';
+            this.filterQuery.toDate = '';
+            this.filterQuery.keyword = '';
+            this.filterQuery.skills = [];
+        }
+
+        this.paginator.firstPage();
+
+        return this.searchVacancies();
+    }
+
   public async searchVacancies(pageEvent?: PageEvent): Promise<void> {
 
-    if (pageEvent !== undefined) {
-        this.pageEvent = pageEvent;
-    }
-
-    let filterQuery: FilterQuery;
-    let refLocation: Location = new Location('', undefined, undefined);
-
-    if (this.searchForm !== undefined) {
-      if (this.searchForm.get('location').value !== '') {
-          refLocation = new Location(this.searchForm.get('location').value);
-          await refLocation.setCoord(await this.httpService.getCoordinates(refLocation.name) as number[]);
-      }
-      this.distance = this.searchForm.get('distance').value;
-      filterQuery = this.searchForm.value as FilterQuery;
-
-      if (this.skillMultiCtrl.value !== null) {
-        filterQuery.skills = [];
-        this.skillMultiCtrl.value.forEach((skill: Skill) => {
-          filterQuery.skills.push(skill.name);
-        });
-      } else {
-        filterQuery.skills = [];
+      if (pageEvent !== undefined) {
+          this.pageEvent = pageEvent;
+          this.pageSize = pageEvent.pageSize;
       }
 
-      if (!filterQuery.fromDate) {
-        filterQuery.fromDate = '';
+      let refLocation: Location = new Location('', undefined, undefined);
+
+      if (this.searchForm !== undefined) {
+          if (this.searchForm.get('location').value !== '') {
+              refLocation = new Location(this.searchForm.get('location').value);
+              refLocation.setCoord(await this.httpService.getCoordinates(this.homeLocation.name) as number[]);
+          }
       }
 
-      if (!filterQuery.toDate) {
-        filterQuery.toDate = '';
+      let pageNum = 0;
+      if (this.pageEvent !== undefined) {
+          pageNum = this.pageEvent.pageIndex;
       }
-    } else {
-      this.isShow = true;
-      filterQuery = new FilterQuery();
-      filterQuery.location = '';
-      filterQuery.distance = 0;
-      filterQuery.fromDate = '';
-      filterQuery.toDate = '';
-      filterQuery.keyword = '';
-      filterQuery.skills = [];
-    }
 
-    const pageNum = pageEvent ? pageEvent.pageIndex : 0;
-    if (pageEvent) {
-      this.pageSize = pageEvent.pageSize;
-    }
-
-    this.vacancies = [];
-    this.httpService.getByQuery(filterQuery, pageNum, this.pageSize, this.sort)
+      this.vacancies = [];
+      this.httpService.getByQuery(this.filterQuery, pageNum, this.pageSize, this.sort)
     .pipe(takeUntil(this.onDestroy))
     .subscribe(async (page: PageResult) => {
         if (page !== null) {
@@ -246,7 +263,6 @@ export class FilterComponent implements OnInit, OnDestroy {
     this.searchVacancies(this.pageEvent);
   }
 
-
   /**
    * Loads form asynchronous
    */
@@ -305,7 +321,7 @@ export class FilterComponent implements OnInit, OnDestroy {
         keyword: '',
         location: '',
         skills: '',
-        distance: '',
+        distance: [ { value: '', disabled: true}, Validators.min(1)],
         fromDate: '',
         toDate: ''
       }, { validator: this.dateLessThan('fromDate', 'toDate') });
@@ -313,7 +329,10 @@ export class FilterComponent implements OnInit, OnDestroy {
       this.filteredLocations = this.searchForm.get('location')!.valueChanges
         .pipe(
           startWith(''),
-          map(value => this._filterLocation(value || ''))
+          map(value => {
+              this.setDistanceDisabled();
+              return this._filterLocation(value || '');
+          })
         );
 
       this.skillMultiFilterCtrl.valueChanges
@@ -334,5 +353,16 @@ export class FilterComponent implements OnInit, OnDestroy {
             }
             return {};
         };
+    }
+
+    setDistanceDisabled() {
+        if (this.searchForm !== undefined) {
+            if (this.searchForm.get('location').value !== '') {
+                this.searchForm.get('distance').enable();
+            } else {
+                this.searchForm.get('distance').disable();
+            }
+
+        }
     }
 }

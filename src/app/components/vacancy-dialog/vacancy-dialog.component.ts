@@ -1,8 +1,8 @@
-import { Component, Inject, AfterContentInit } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { HttpService } from 'src/app/services/http.service';
-import { Vacancy } from 'src/app/models/vacancy';
-import { forkJoin } from 'rxjs';
+import {AfterContentInit, Component, Inject} from '@angular/core';
+import {MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {HttpService} from 'src/app/services/http.service';
+import {Vacancy} from 'src/app/models/vacancy';
+import {forkJoin} from 'rxjs';
 
 @Component({
   selector: 'app-vacancy-dialog',
@@ -40,21 +40,21 @@ export class VacancyDialogComponent implements AfterContentInit {
    * @param vacancyID id from which details are requested
    */
   getVacancyDetails(vacancyID: string): void {
-  const vacancyDetails = this.httpService.getByID(vacancyID);
-  const vacancySkills = this.httpService.getSkillsForVacancy(vacancyID);
+      const vacancyDetails = this.httpService.getByID(vacancyID);
+      const vacancySkills = this.httpService.getSkillsForVacancy(vacancyID);
 
-  forkJoin([vacancyDetails, vacancySkills]).subscribe((res: any) => {
-    this.vacancy = res[0];
-    this.vacancy.skills = [];
-    if (res[1]._embedded) {
-      res[1]._embedded.skills.forEach(el => {
-        this.vacancy.skills.push(el);
+      forkJoin([vacancyDetails, vacancySkills]).subscribe((res: any) => {
+        this.vacancy = res[0];
+        this.vacancy.skills = [];
+        if (res[1]._embedded) {
+          res[1]._embedded.skills.forEach(el => {
+            this.vacancy.skills.push(el);
+          });
+        }
+      },
+      err => {
+        this.errorMSG = err.error.message;
       });
-    }
-  },
-  err => {
-    this.errorMSG = err.error.message;
-  });
   }
 
 }
