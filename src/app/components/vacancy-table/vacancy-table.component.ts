@@ -1,18 +1,16 @@
-import { Component, Output, Input, OnChanges } from '@angular/core';
+import { Component, Output, Input, OnChanges, OnInit } from '@angular/core';
 import { EventEmitter } from '@angular/core';
 import { IVacancies } from 'src/app/models/ivacancies';
 import { MatDialog } from '@angular/material/dialog';
 import { VacancyDialogComponent } from '../vacancy-dialog/vacancy-dialog.component';
-import { CommonModule} from '@angular/common';
 import { Sort } from '@angular/material/sort';
-import { Location } from '../../models/location';
 
 @Component({
   selector: 'app-vacancy-table',
   templateUrl: './vacancy-table.component.html',
   styleUrls: ['./vacancy-table.component.scss']
 })
-export class VacancyTableComponent implements OnChanges {
+export class VacancyTableComponent implements OnChanges, OnInit {
 
   @Input() isShow: boolean;
   @Input() vacancies: IVacancies[];
@@ -33,6 +31,10 @@ export class VacancyTableComponent implements OnChanges {
    * @param dialog matdialog
    */
   constructor(private dialog: MatDialog) {
+  }
+
+  ngOnInit(): void {
+    this.displayedColumns = this.displayedColumnsWithoutDistance;
   }
 
   /**

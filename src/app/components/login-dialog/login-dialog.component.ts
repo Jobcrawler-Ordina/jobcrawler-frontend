@@ -3,6 +3,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { Router } from '@angular/router';
 import { first } from 'rxjs/operators';
+import { User } from 'src/app/models/user.model';
 
 @Component({
   selector : 'app-login',
@@ -22,6 +23,7 @@ export class LoginDialogComponent implements OnInit, AfterViewInit {
   successMSGsignup: string;
   errMSGlogin: string;
   allowRegistration = false;
+  currentUser: User;
 
   errorMessages = {
     usernameSignup : [
@@ -52,17 +54,22 @@ export class LoginDialogComponent implements OnInit, AfterViewInit {
   constructor(private fb: FormBuilder,
               private router: Router,
               private authenticationService: AuthenticationService) {
-                if (this.authenticationService.currentUserValue) {
-                  this.router.navigate(['/admin']);
-                }
+                this.currentUser = this.authenticationService.currentUserValue;
               }
 
   ngOnInit(): void {
+    this.redirect();
     this.constructForms();
   }
 
   ngAfterViewInit(): void {
     setTimeout(() => this.loadAllowSignup());
+  }
+
+  redirect(): void {
+    if (this.currentUser) {
+      this.router.navigate(['/admin']);
+    }
   }
 
   login(): void {
@@ -92,7 +99,6 @@ export class LoginDialogComponent implements OnInit, AfterViewInit {
       }
     },
     err => {
-      console.log(err);
       this.errMSGsignup = err;
     });
   }

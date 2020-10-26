@@ -29,7 +29,7 @@ export class AuthenticationService {
         })
         .pipe(map((userLogin: User) => {
             userLogin.expiresAt = moment().add(userLogin.expiresIn, 'second');
-            localStorage.setItem('currentUser', JSON.stringify(user));
+            localStorage.setItem('currentUser', JSON.stringify(userLogin));
             this.currentUserSubject.next(userLogin);
             return user;
         }));

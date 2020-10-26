@@ -16,7 +16,6 @@ import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
 import { Router } from '@angular/router';
 import { Location } from 'src/app/models/location';
 
-
 @Component({
   selector: 'app-filter',
   templateUrl: './filter.component.html',
@@ -76,7 +75,7 @@ export class FilterComponent implements OnInit, OnDestroy {
   async ngOnInit(): Promise<void> {
       this.locations = this.httpService.getLocations();
       await this.loadForm(); // Need to load form fully before continuing with anything else that might causes errors
-      await this.getGeoLocation().then(result => {this.homeLocation = result; });
+      this.getGeoLocation().then(result => this.homeLocation = result);
       this.submitSearchVacancies();
   }
 
@@ -102,18 +101,19 @@ export class FilterComponent implements OnInit, OnDestroy {
     private getGeoLocation(): Promise<any> {
         return new Promise((resolve) => {
             navigator.geolocation.getCurrentPosition((position) => {
-                this.httpService.getLocationByCoordinates(position.coords.latitude, position.coords.longitude)
-                    .subscribe(
-                        (data: any) => {
-                            resolve(new Location(data.location, position.coords.longitude, position.coords.latitude));
-                        },
-                        () => {resolve(new Location('', undefined, undefined));
-                        },
-                        () => {
-                            resolve(new Location('', undefined, undefined));
-                        });
-            });
+                    this.httpService.getLocationByCoordinates(position.coords.latitude, position.coords.longitude)
+                        .subscribe(
+                            (data: any) => {
+                              resolve(new Location(data.location, position.coords.longitude, position.coords.latitude));
+                            },
+                            () => {
+                              resolve(new Location('', undefined, undefined));
+                            },
+                () => {
+                    resolve(new Location('', undefined, undefined));
+                });
         });
+    });
     }
 
     public async submitSearchVacancies(): Promise<void> {
@@ -184,7 +184,7 @@ export class FilterComponent implements OnInit, OnDestroy {
         if (page !== null) {
         const tempVacancies: IVacancies[] = [];
         for (const vacancy of page.vacancies) {
-            if (vacancy.location  && refLocation.name !== '') {
+            if (vacancy.location && refLocation.name !== '') {
                 await this.httpService.getDistance(refLocation.getCoord(), [vacancy.location.lon, vacancy.location.lat])
                     .then((result: number) => {
                         vacancy.location.distance = result;
@@ -267,26 +267,30 @@ export class FilterComponent implements OnInit, OnDestroy {
   /**
    * Loads form asynchronous
    */
-  private loadForm(): void {
-    this.getSkills().then((data: any) => {
-      const skillData: Skill[] = [];
-      data._embedded.skills.forEach((skill: any) => {
-        skillData.push({
-          href: skill._links.self.href,
-          name: skill.name
+  private loadForm(): Promise<any> {
+    return new Promise((resolve) => {
+      this.getSkills().then((data: any) => {
+              const skillData: Skill[] = [];
+              data._embedded.skills.forEach((skill: any) => {
+                  skillData.push({
+                      href: skill._links.self.href,
+                      name: skill.name
+                  });
+              });
+              this.skills = skillData;
+              this.filteredSkillsMulti.next(this.skills.slice());
+              this.constructSearchForm().then(() => {
+                  this.showForm = true;
+                  this.isShow = false;
+                  resolve();
+              });
+          },
+          err => {
+              console.log('Failed loading form');
+              console.log(err.message);
+              resolve();
+          });
         });
-      });
-      this.skills = skillData;
-      this.filteredSkillsMulti.next(this.skills.slice());
-      this.constructSearchForm().then(() => {
-        this.showForm = true;
-        this.isShow = false;
-      });
-    },
-    err => {
-      console.log('Failed loading form');
-      console.log(err.message);
-    });
   }
 
 
@@ -305,7 +309,7 @@ export class FilterComponent implements OnInit, OnDestroy {
    * @returns matching locations to entered string
    */
   private _filterLocation(search: string): string[] {
-      return this.locations.filter(value => value.toLowerCase().indexOf(search.toLowerCase()) === 0);
+    return this.locations.filter(value => value.toLowerCase().indexOf(search.toLowerCase()) === 0);
   }
 
   /**

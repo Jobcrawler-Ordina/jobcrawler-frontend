@@ -18,14 +18,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Skill } from 'src/app/models/skill';
 import { Router } from '@angular/router';
-import {HttpErrorResponse} from '@angular/common/http';
 import { HttpService } from 'src/app/services/http.service';
 
 @Component({
   selector: 'app-skill-list',
   templateUrl: './skill-list.component.html',
-  styleUrls: ['./skill-list.component.scss'],
-  providers: [HttpService]
+  styleUrls: ['./skill-list.component.scss']
 })
 export class SkillListComponent implements OnInit {
 
@@ -34,10 +32,8 @@ export class SkillListComponent implements OnInit {
   errorMessage: string;
 
 
-  constructor(
-    private router: Router,
-    private httpService: HttpService) {
-  }
+  constructor(private router: Router,
+              private httpService: HttpService) {}
 
   ngOnInit() {
       this.getSkills();
@@ -58,34 +54,24 @@ export class SkillListComponent implements OnInit {
 
     // delete the row from the skill table
   public deleteRow(skill: Skill): void {
-    console.log('delete this row:' + skill.name);
     this.httpService.deleteSkill(skill.href).subscribe(() => {
         this.backEndProcessed = true;
         const index: number = this.skills.indexOf(skill);
         this.skills.splice(index, 1);
     },
     err => {
-      console.log('An error occured');
-      console.log(err);
-      if (err instanceof HttpErrorResponse) {
-        console.log( 'Failed to delete skill:' +  err.message );
         this.errorMessage =  err.message;
         this.backEndProcessed = false;
-      }
     });
   }
 
   // rematch the links after table skills has been edited (creates new links records)
   public relinkSkills(): void {
-    console.log('relink skills');
     this.httpService.relinkSkills().subscribe(() => {
         },
         err => {
-            if (err instanceof HttpErrorResponse) {
-                console.log( 'Failed to relink skills:' +  err.message );
-                this.errorMessage =  err.message;
-                this.backEndProcessed = false;
-            }
+          this.errorMessage =  err.message;
+          this.backEndProcessed = false;
         });
   }
 

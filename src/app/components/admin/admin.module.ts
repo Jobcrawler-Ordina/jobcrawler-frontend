@@ -9,6 +9,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SkillFormComponent } from './skill-form/skill-form.component';
 import { UsersComponent } from './users/users.component';
 import { DeleteConfirmationDialogComponent } from './delete-confirmation-dialog/delete-confirmation-dialog.component';
+import { HttpService } from 'src/app/services/http.service';
 
 
 @NgModule({
@@ -26,6 +27,7 @@ import { DeleteConfirmationDialogComponent } from './delete-confirmation-dialog/
     AdminRoutingModule,
     MaterialModule
   ],
+  providers: [HttpService],
   bootstrap: [AdminComponent]
 })
 export class AdminModule { }
