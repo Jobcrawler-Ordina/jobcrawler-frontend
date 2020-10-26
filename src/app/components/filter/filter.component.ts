@@ -25,8 +25,6 @@ import { Location } from 'src/app/models/location';
 })
 export class FilterComponent implements OnInit, OnDestroy {
 
-    @ViewChild('paginator') paginator: MatPaginator;
-
   isShow = false;
   searchForm: FormGroup;
   skills: Skill[];
@@ -52,12 +50,16 @@ export class FilterComponent implements OnInit, OnDestroy {
   public skillMultiFilterCtrl: FormControl = new FormControl();
   public filteredSkillsMulti: ReplaySubject<Skill[]> = new ReplaySubject<Skill[]>(1);
   public onDestroy = new Subject<void>();
+
   @ViewChild('multiSelect', {static: false}) multiSelect: MatSelect;
+  @ViewChild('paginator') paginator: MatPaginator;
 
   /**
    * Creates an instance of filter component.
    * @param form Constructs form
-   * @param filterService Used for http requests (post/get)
+   * @param httpService
+   * @param dialog
+   * @param router
    */
   constructor(private form: FormBuilder,
               private httpService: HttpService,
@@ -303,7 +305,6 @@ export class FilterComponent implements OnInit, OnDestroy {
    * @returns matching locations to entered string
    */
   private _filterLocation(search: string): string[] {
-      this.setDistanceDisabled();
       return this.locations.filter(value => value.toLowerCase().indexOf(search.toLowerCase()) === 0);
   }
 
@@ -322,16 +323,13 @@ export class FilterComponent implements OnInit, OnDestroy {
         toDate: ''
       }, { validator: this.dateLessThan('fromDate', 'toDate') });
 
-        // tslint:disable-next-line:no-non-null-assertion
-        // this.reactiveForm.get("firstname").valueChanges.subscribe(x => {
-        //    console.log('firstname value changed')
-        //    console.log(x)
-        // })
-        // setDistanceDisabled
       this.filteredLocations = this.searchForm.get('location')!.valueChanges
         .pipe(
           startWith(''),
-          map(value => this._filterLocation(value || ''))
+          map(value => {
+              this.setDistanceDisabled();
+              return this._filterLocation(value || '');
+          })
         );
 
       this.skillMultiFilterCtrl.valueChanges
