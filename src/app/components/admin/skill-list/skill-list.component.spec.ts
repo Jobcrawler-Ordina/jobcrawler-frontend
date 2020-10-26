@@ -3,21 +3,26 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { SkillListComponent } from './skill-list.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HttpService } from 'src/app/services/http.service';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { of } from 'rxjs';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { of, throwError } from 'rxjs';
 import { mockSkills } from 'src/app/tests/httpMockResponses';
-import { environment } from 'src/environments/environment';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
+import { Router } from '@angular/router';
 
 describe('SkillListComponentTest', () => {
   let component: SkillListComponent;
   let fixture: ComponentFixture<SkillListComponent>;
   let httpService: HttpService;
-  let httpMock: HttpTestingController;
   let nativeComponent: HTMLElement;
+  let httpSpy;
+  let routerSpy;
 
   beforeEach(async(() => {
+    httpSpy = jasmine.createSpyObj('HttpService', ['findAllSkills', 'deleteSkill', 'relinkSkills']);
+    routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+    httpSpy.findAllSkills.and.returnValue(of(mockSkills));
+
     TestBed.configureTestingModule({
       imports: [
         RouterTestingModule,
@@ -26,7 +31,10 @@ describe('SkillListComponentTest', () => {
         MatDividerModule
       ],
       declarations: [ SkillListComponent ],
-      providers: [ HttpService ]
+      providers: [
+        { provide: HttpService, useValue: httpSpy },
+        { provide: Router, useValue: routerSpy }
+      ]
     })
     .compileComponents();
   }));
@@ -34,7 +42,6 @@ describe('SkillListComponentTest', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(SkillListComponent);
     component = fixture.componentInstance;
-    httpMock = TestBed.inject(HttpTestingController);
     httpService = TestBed.inject(HttpService);
     nativeComponent = fixture.debugElement.nativeElement;
     fixture.detectChanges();
@@ -67,35 +74,62 @@ describe('SkillListComponentTest', () => {
 
   describe('HTTP Request', () => {
 
-    it('should remove skill from skills array when calling the deleteSkill function', () => {
-      // Arrange
-      component.skills = [];
-      mockSkills._embedded.skills.forEach(d => {
-        component.skills.push({
-          href: d._links.self.href,
-          name: d.name
-        });
-      });
+    it('should get all skills when the getSkills() method is called', () => {
+      // component.getSkills() is automatically called when page is loaded due to ngOnInit
 
-      // Act
-      fixture.detectChanges();
+      expect(component.skills.length).toBe(2);
+      expect(httpSpy.findAllSkills).toHaveBeenCalledTimes(1);
+    });
 
-      httpService.deleteSkill(component.skills[0].href).subscribe(() => {
-        const index: number = component.skills.indexOf(component.skills[0]);
-        component.skills.splice(index, 1);
-        expect(component.skills.length).toBe(1);
-      });
+    it('should delete a skill and remove it from the array', () => {
+      httpSpy.deleteSkill.and.returnValue(of({}));
+      const skillHref = component.skills[1].href;
+      component.deleteRow(component.skills[1]);
 
-      // Expect
-      const request = httpMock.expectOne(component.skills[0].href);
-      expect(request.request.method).toBe('DELETE');
-      request.flush(of({}));
-      httpMock.expectOne(environment.api + '/skills');
+      expect(httpSpy.deleteSkill).toHaveBeenCalledWith(skillHref);
+      expect(component.skills.length).toBe(1);
+    });
+
+    it('should give an error when trying to remove a skill', () => {
+      httpSpy.deleteSkill.and.returnValue(throwError({ message: 'error' }));
+      const skillHref = component.skills[1].href;
+      component.deleteRow(component.skills[1]);
+
+      expect(httpSpy.deleteSkill).toHaveBeenCalledWith(skillHref);
+      expect(component.skills.length).toBe(2);
+      expect(component.errorMessage).toEqual('error');
+    });
+
+    it('should succesfully send a relink skill', () => {
+      httpSpy.relinkSkills.and.returnValue(of({}));
+      component.relinkSkills();
+
+      expect(httpSpy.relinkSkills).toHaveBeenCalledTimes(1);
+    });
+
+    it('should fail sending a relink request to the backend', () => {
+      httpSpy.relinkSkills.and.returnValue(throwError({ message: 'error' }));
+      component.relinkSkills();
+
+      expect(httpSpy.relinkSkills).toHaveBeenCalledTimes(1);
+      expect(component.errorMessage).toEqual('error');
+      expect(component.backEndProcessed).toBeFalse();
+    });
+
+    it('should redirect you back to vacancies when navigateVacancies() is called', () => {
+      component.navigateVacancies();
+
+      expect(routerSpy.navigate).toHaveBeenCalledWith(['']);
+    });
+
+    it('should redirect you to the add skill page when addSkill() is called', () => {
+      component.addSkill();
+
+      expect(routerSpy.navigate).toHaveBeenCalledWith(['admin/addskill']);
     });
 
     afterEach(() => {
       fixture.destroy();
-      httpMock.verify();
     });
   });
 });
