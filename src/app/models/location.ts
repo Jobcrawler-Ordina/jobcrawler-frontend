@@ -18,7 +18,4 @@ export class Location {
     getCoord() {
         return [this.lon, this.lat];
     }
-    getName() {
-        return this.name;
-    }
 }
