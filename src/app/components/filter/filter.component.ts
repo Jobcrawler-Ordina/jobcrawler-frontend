@@ -167,7 +167,7 @@ export class FilterComponent implements OnInit, OnDestroy {
       if (this.searchForm !== undefined) {
           if (this.searchForm.get('location').value !== '') {
               refLocation = new Location(this.searchForm.get('location').value);
-              refLocation.setCoord(await this.httpService.getCoordinates(this.homeLocation.name) as number[]);
+              refLocation.setCoord(await this.httpService.getCoordinates(refLocation.name) as number[]);
           }
       }
 
@@ -361,6 +361,7 @@ export class FilterComponent implements OnInit, OnDestroy {
                 this.searchForm.get('distance').enable();
             } else {
                 this.searchForm.get('distance').disable();
+                this.searchForm.get('distance').setValue('');
             }
 
         }
