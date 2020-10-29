@@ -210,6 +210,10 @@ export class FilterComponent implements OnInit, OnDestroy {
         this.currentPage = 0;
       }
     });
+
+      if (this.filterQuery.location) {
+          this.locations = this.httpService.getLocations();
+      }
   }
 
   /**
