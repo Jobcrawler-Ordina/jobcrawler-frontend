@@ -132,6 +132,6 @@ export class HttpService {
     }
 
     public getLocationByCoordinates(lat: number, lon: number): Observable<any> {
-        return this.httpClient.get<any>(environment.api + '/locations?lat=' + lat + '&lon=' + lon);
+        return this.httpClient.get<any>(environment.api + '/locations/coordinates?lat=' + lat + '&lon=' + lon);
     }
 }
