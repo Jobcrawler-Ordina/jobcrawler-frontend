@@ -99,7 +99,7 @@ describe('HttpService', () => {
             expect(data).toBe(1.234);
         });
 
-        const req = httpMock.expectOne(environment.api + '/distance?from=' + coord1[0] +
+        const req = httpMock.expectOne(environment.api + '/locations/distance?from=' + coord1[0] +
                                         ',' + coord1[1] + '&to=' + coord2[0] + ',' + coord2[1]);
         expect(req.request.method).toBe('GET');
 

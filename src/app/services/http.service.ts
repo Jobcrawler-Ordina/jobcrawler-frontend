@@ -121,17 +121,17 @@ export class HttpService {
     }
 
     async getDistance(coord1: number[], coord2: number[]) {
-        return await this.httpClient.get(environment.api + '/distance?from=' + coord1[0] +
+        return await this.httpClient.get(environment.api + '/locations/distance?from=' + coord1[0] +
             ',' + coord1[1] + '&to=' + coord2[0] + ',' + coord2[1])
             .toPromise();
     }
 
     async getCoordinates(loc: string) {
-        return await this.httpClient.get(environment.api + '/coordinates?location=' + loc)
+        return await this.httpClient.get(environment.api + '/locations/coordinates/' + loc)
             .toPromise();
     }
 
     public getLocationByCoordinates(lat: number, lon: number): Observable<any> {
-        return this.httpClient.get<any>(environment.api + '/locations/coordinates?lat=' + lat + '&lon=' + lon);
+        return this.httpClient.get<any>(environment.api + '/locations?lat=' + lat + '&lon=' + lon);
     }
 }
