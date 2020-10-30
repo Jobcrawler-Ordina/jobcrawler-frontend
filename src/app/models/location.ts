@@ -1,21 +1,21 @@
 export class Location {
     id: string;
     name: string;
-    lon: number;
     lat: number;
+    lon: number;
     distance: number;
 
-    constructor(name?: string, lon?: number, lat?: number) {
+    constructor(name?: string, lat?: number, lon?: number) {
         this.name = name;
-        this.lon = lon;
         this.lat = lat;
+        this.lon = lon;
     }
 
     setCoord(coord: number[]) {
-        this.lon = coord[0];
-        this.lat = coord[1];
+        this.lat = coord[0];
+        this.lon = coord[1];
     }
     getCoord() {
-        return [this.lon, this.lat];
+        return [this.lat, this.lon];
     }
 }

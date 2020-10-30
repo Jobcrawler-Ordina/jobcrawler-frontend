@@ -184,7 +184,7 @@ export class FilterComponent implements OnInit, OnDestroy {
         const tempVacancies: IVacancies[] = [];
         for (const vacancy of page.vacancies) {
             if (vacancy.location && refLocation.name !== '') {
-                await this.httpService.getDistance(refLocation.getCoord(), [vacancy.location.lon, vacancy.location.lat])
+                await this.httpService.getDistance(refLocation.getCoord(), [vacancy.location.lat, vacancy.location.lon])
                     .then((result: number) => {
                         vacancy.location.distance = result;
                     });
