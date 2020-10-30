@@ -19,7 +19,7 @@ describe('SkillListComponentTest', () => {
   let routerSpy;
 
   beforeEach(async(() => {
-    httpSpy = jasmine.createSpyObj('HttpService', ['findAllSkills', 'deleteSkill', 'relinkSkills']);
+    httpSpy = jasmine.createSpyObj('HttpService', ['findAllSkills', 'deleteSkill']);
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
     httpSpy.findAllSkills.and.returnValue(of(mockSkills));
 
@@ -98,22 +98,6 @@ describe('SkillListComponentTest', () => {
       expect(httpSpy.deleteSkill).toHaveBeenCalledWith(skillHref);
       expect(component.skills.length).toBe(2);
       expect(component.errorMessage).toEqual('error');
-    });
-
-    it('should succesfully send a relink skill', () => {
-      httpSpy.relinkSkills.and.returnValue(of({}));
-      component.relinkSkills();
-
-      expect(httpSpy.relinkSkills).toHaveBeenCalledTimes(1);
-    });
-
-    it('should fail sending a relink request to the backend', () => {
-      httpSpy.relinkSkills.and.returnValue(throwError({ message: 'error' }));
-      component.relinkSkills();
-
-      expect(httpSpy.relinkSkills).toHaveBeenCalledTimes(1);
-      expect(component.errorMessage).toEqual('error');
-      expect(component.backEndProcessed).toBeFalse();
     });
 
     it('should redirect you back to vacancies when navigateVacancies() is called', () => {

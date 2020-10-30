@@ -53,7 +53,7 @@ export class HttpService {
         }
 
         if (sort !== undefined && sort.active !== '') {
-            params = params.append('sort', sort.active);
+            params = params.append('sort', sort.active === 'location' ? 'location.name' : sort.active);
         }
         if (sort !== undefined && sort.direction !== '') {
             params = params.append('dir', sort.direction);
@@ -94,14 +94,6 @@ export class HttpService {
      */
     public deleteSkill(url: string): Observable<any> {
         return this.httpClient.delete<any>(url);
-    }
-
-    /**
-     * Relinks skills to vacancies in backend
-     * @returns result
-     */
-    public relinkSkills(): Observable<any> {
-        return this.httpClient.put(environment.api + '/skillmatcher', {});
     }
 
     /**

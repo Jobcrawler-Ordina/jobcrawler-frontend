@@ -9,11 +9,7 @@
     (i.e. converted to uppercase and matched with the uppercase of the vacancy text)
     It is therefore not necessary to worry about the case (uppercase or lowercase)
 
-    After addition of skills, it is necessary to relink the skills by pressing the
-    relink buttons. The back-end will then create new matching links between the
-    skills table and the vacancies table.
 */
-
 
 import { Component, OnInit } from '@angular/core';
 import { Skill } from 'src/app/models/skill';
@@ -63,16 +59,6 @@ export class SkillListComponent implements OnInit {
         this.errorMessage =  err.message;
         this.backEndProcessed = false;
     });
-  }
-
-  // rematch the links after table skills has been edited (creates new links records)
-  public relinkSkills(): void {
-    this.httpService.relinkSkills().subscribe(() => {
-        },
-        err => {
-          this.errorMessage =  err.message;
-          this.backEndProcessed = false;
-        });
   }
 
   // navigate to vacancy list
