@@ -31,17 +31,6 @@ describe('HttpService', () => {
         expect(service).toBeTruthy();
     });
 
-    it('should relink skills when doing a put request to /skillmatcher', () => {
-        service.relinkSkills().subscribe((data: any) => {
-            expect(data).toBeNull();
-        });
-
-        const req = httpMock.expectOne(environment.api + '/skillmatcher');
-        expect(req.request.method).toBe('PUT');
-
-        req.flush(null);
-    });
-
     it('should delete a skill when endpoint is called', () => {
         const url = environment.api + '/skills/1';
         service.deleteSkill(url).subscribe((data: any) => {
