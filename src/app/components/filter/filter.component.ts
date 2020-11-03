@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
-import {FormBuilder, FormGroup, FormControl, Validators} from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { FilterQuery } from 'src/app/models/filterQuery.model';
 import { IVacancies } from 'src/app/models/ivacancies';
 import { HttpService } from 'src/app/services/http.service';
@@ -14,12 +14,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
 import { Router } from '@angular/router';
 import { Location } from 'src/app/models/location';
+import { NavigatorService } from 'src/app/services/navigator.service';
 
 @Component({
   selector: 'app-filter',
   templateUrl: './filter.component.html',
-  styleUrls: ['./filter.component.scss'],
-  providers: [HttpService]
+  styleUrls: ['./filter.component.scss']
 })
 export class FilterComponent implements OnInit, OnDestroy {
 
@@ -55,15 +55,16 @@ export class FilterComponent implements OnInit, OnDestroy {
   /**
    * Creates an instance of filter component.
    * @param form Constructs form
-   * @param httpService
-   * @param dialog
-   * @param router
+   * @param httpService injects httpservice
+   * @param dialog injects matdialog
+   * @param router injects router
+   * @param navigatorService injects navigatorservice
    */
   constructor(private form: FormBuilder,
               private httpService: HttpService,
               private dialog: MatDialog,
-              private router: Router
-  ) {  }
+              private router: Router,
+              private navigatorService: NavigatorService) {  }
 
   /**
    * Function gets executed upon initialization.
@@ -99,8 +100,8 @@ export class FilterComponent implements OnInit, OnDestroy {
 
     private getGeoLocation(): Promise<any> {
         return new Promise((resolve) => {
-            navigator.geolocation.getCurrentPosition((position) => {
-                    this.httpService.getLocationByCoordinates(position.coords.latitude, position.coords.longitude)
+          this.navigatorService.getLocation().then((position: Position) => {
+            this.httpService.getLocationByCoordinates(position.coords.latitude, position.coords.longitude)
                         .subscribe(
                             (data: any) => {
                               resolve(new Location(data.location, position.coords.longitude, position.coords.latitude));
@@ -111,7 +112,7 @@ export class FilterComponent implements OnInit, OnDestroy {
                 () => {
                     resolve(new Location('', undefined, undefined));
                 });
-        });
+          });
     });
     }
 

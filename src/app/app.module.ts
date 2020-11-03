@@ -20,6 +20,8 @@ import { ErrorInterceptor } from './interceptors/error.interceptor';
 import { LoaderComponent } from './components/loader/loader.component';
 import { registerLocaleData } from '@angular/common';
 import localeNl from '@angular/common/locales/nl';
+import { HttpService } from './services/http.service';
+import { NavigatorService } from './services/navigator.service';
 registerLocaleData(localeNl, 'nl');
 
 
@@ -44,6 +46,8 @@ registerLocaleData(localeNl, 'nl');
     ],
     providers: [
         LoaderService,
+        HttpService,
+        NavigatorService,
         { provide: HTTP_INTERCEPTORS, useClass: LoaderInterceptor, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }

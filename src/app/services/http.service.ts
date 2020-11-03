@@ -8,7 +8,6 @@ import { Skill } from '../models/skill';
 import { Sort } from '@angular/material/sort';
 import { Location } from '../models/location';
 import { formatDate } from '@angular/common';
-import { mergeMap } from 'rxjs/operators';
 
 @Injectable()
 export class HttpService {
