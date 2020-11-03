@@ -52,6 +52,7 @@ import { MatSortModule } from '@angular/material/sort';
         MatSortModule,
         MatTabsModule,
         MatSlideToggleModule,
+        MatPaginatorModule,
         NgxMatSelectSearchModule
     ],
     exports: [
@@ -78,6 +79,7 @@ import { MatSortModule } from '@angular/material/sort';
         MatSortModule,
         MatTabsModule,
         MatSlideToggleModule,
+        MatPaginatorModule,
         NgxMatSelectSearchModule
     ],
     providers: [
