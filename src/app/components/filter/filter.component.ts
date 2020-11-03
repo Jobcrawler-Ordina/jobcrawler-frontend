@@ -4,7 +4,7 @@ import { FilterQuery } from 'src/app/models/filterQuery.model';
 import { IVacancies } from 'src/app/models/ivacancies';
 import { HttpService } from 'src/app/services/http.service';
 import { Observable, Subject, ReplaySubject } from 'rxjs';
-import { map, startWith, takeUntil } from 'rxjs/operators';
+import {map, startWith, take, takeUntil} from 'rxjs/operators';
 import { MatSelect } from '@angular/material/select';
 import { MatPaginator, PageEvent} from '@angular/material/paginator';
 import { PageResult } from 'src/app/models/pageresult.model';
@@ -155,6 +155,14 @@ export class FilterComponent implements OnInit, OnDestroy {
         return this.searchVacancies();
     }
 
+    get locationField() {
+        return this.searchForm.get('location');
+    }
+
+    delay(ms: number) {
+        return new Promise( resolve => setTimeout(resolve, ms) );
+    }
+
   public async searchVacancies(pageEvent?: PageEvent): Promise<void> {
 
       if (pageEvent !== undefined) {
@@ -167,7 +175,13 @@ export class FilterComponent implements OnInit, OnDestroy {
       if (this.searchForm !== undefined) {
           if (this.searchForm.get('location').value !== '') {
               refLocation = new Location(this.searchForm.get('location').value);
-              refLocation.setCoord(await this.httpService.getCoordinates(refLocation.name) as number[]);
+              this.httpService.getCoordinates(refLocation.name)
+                  .then(response => {
+                      refLocation.setCoord(response as number[]);
+                  }, error => {
+                      this.locationField.setErrors({locNonexistant: true});
+                      console.log('Error: ' + JSON.stringify(error));
+                  });
           }
       }
 
