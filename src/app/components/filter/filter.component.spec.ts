@@ -11,7 +11,7 @@ import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { By } from '@angular/platform-browser';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { mockSkills, mockLocations } from 'src/app/tests/httpMockResponses';
+import { mockSkills, mockLocations, mockVacancies } from 'src/app/tests/httpMockResponses';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatIconModule } from '@angular/material/icon';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
@@ -30,6 +30,7 @@ import { environment } from 'src/environments/environment';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { NavigatorService } from 'src/app/services/navigator.service';
 import { Location } from 'src/app/models/location';
+import { Vacancy } from 'src/app/models/vacancy';
 
 describe('FilterComponent', () => {
   let component: FilterComponent;
@@ -99,13 +100,13 @@ describe('FilterComponent', () => {
       httpService = TestBed.inject(HttpService);
       findAllSkillsSpy = spyOn(httpService, 'findAllSkills').and.returnValue(of(mockSkills));
       getByQuerySpy = spyOn(httpService, 'getByQuery').and.returnValue(of({ totalItems: 20, totalPages: 10,
-        currentPage: 0, vacancies: [] }));
+        currentPage: 0, vacancies: mockVacancies.vacancies }));
       getLocationsSpy = spyOn(httpService, 'getLocations').and.returnValue(mockLocations);
       getCoordinatesSpy = spyOn(httpService, 'getCoordinates').and.returnValue(Promise.resolve([5.748, 52.500]));
       getLocationByCoordinatesSpy = spyOn(httpService, 'getLocationByCoordinates').and.returnValue(of({ location: 'Amsterdam' }));
     });
 
-    it('should have 2 skills after initalization', () => {
+    it('should have 2 skills after initalization', async(() => {
       expect(component.skills).toBeUndefined();
       fixture.detectChanges();
       fixture.whenStable().then(() => {
@@ -115,9 +116,9 @@ describe('FilterComponent', () => {
         expect(getByQuerySpy).toHaveBeenCalledTimes(1);
         expect(component.skills.length).toBe(2);
       });
-    });
+    }));
 
-    it('should fill vacancies variable', () => {
+    it('should fill vacancies variable', async(() => {
       expect(component.vacancies).toEqual([]);
       fixture.detectChanges();
       fixture.whenStable().then(() => {
@@ -128,17 +129,17 @@ describe('FilterComponent', () => {
           expect(component.vacancies[i].title).toBe('title ' + (i + 1));
         }
       });
-    });
+    }));
 
-    it('should set the home location', () => {
+    it('should set the home location', async(() => {
       expect(component.homeLocation).toBeUndefined();
       fixture.detectChanges();
       fixture.whenStable().then(() => {
-        const location = new Location('Amsterdam', 5.478, 52.500);
+        const location = new Location('Amsterdam', 52.500, 5.748);
         expect(component.homeLocation).toEqual(location);
-        expect(getLocationByCoordinatesSpy).toHaveBeenCalledWith([5.478, 52.500]);
+        expect(getLocationByCoordinatesSpy).toHaveBeenCalledWith(5.748, 52.500);
       });
-    });
+    }));
 
   });
 
