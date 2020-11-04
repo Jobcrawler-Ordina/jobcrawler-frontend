@@ -4,7 +4,7 @@ import { FilterQuery } from 'src/app/models/filterQuery.model';
 import { IVacancies } from 'src/app/models/ivacancies';
 import { HttpService } from 'src/app/services/http.service';
 import { Observable, Subject, ReplaySubject } from 'rxjs';
-import {map, startWith, take, takeUntil} from 'rxjs/operators';
+import { map, startWith, takeUntil } from 'rxjs/operators';
 import { MatSelect } from '@angular/material/select';
 import { MatPaginator, PageEvent} from '@angular/material/paginator';
 import { PageResult } from 'src/app/models/pageresult.model';
@@ -219,7 +219,9 @@ export class FilterComponent implements OnInit, OnDestroy {
         this.currentPage = 0;
       }
     });
-      this.locations = this.httpService.getLocations(); // get the list of locations again because a new one could have been added.
+      if (this.filterQuery.location) {
+          this.locations = this.httpService.getLocations();
+      }
   }
 
   /**
