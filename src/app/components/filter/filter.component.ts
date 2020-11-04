@@ -159,10 +159,6 @@ export class FilterComponent implements OnInit, OnDestroy {
         return this.searchForm.get('location');
     }
 
-    delay(ms: number) {
-        return new Promise( resolve => setTimeout(resolve, ms) );
-    }
-
   public async searchVacancies(pageEvent?: PageEvent): Promise<void> {
 
       if (pageEvent !== undefined) {
@@ -175,13 +171,14 @@ export class FilterComponent implements OnInit, OnDestroy {
       if (this.searchForm !== undefined) {
           if (this.searchForm.get('location').value !== '') {
               refLocation = new Location(this.searchForm.get('location').value);
-              this.httpService.getCoordinates(refLocation.name)
-                  .then(response => {
-                      refLocation.setCoord(response as number[]);
-                  }, error => {
-                      this.locationField.setErrors({locNonexistant: true});
-                      console.log('Error: ' + JSON.stringify(error));
-                  });
+              try {
+                  console.log('before');
+                  refLocation.setCoord(await this.httpService.getCoordinates(refLocation.name) as number[]);
+                  console.log('after');
+              } catch (error) {
+                  this.locationField.setErrors({locNonexistant: true});
+                  console.log('Error: ' + JSON.stringify(error));
+              }
           }
       }
 
