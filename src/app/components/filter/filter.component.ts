@@ -172,9 +172,7 @@ export class FilterComponent implements OnInit, OnDestroy {
           if (this.searchForm.get('location').value !== '') {
               refLocation = new Location(this.searchForm.get('location').value);
               try {
-                  console.log('before');
                   refLocation.setCoord(await this.httpService.getCoordinates(refLocation.name) as number[]);
-                  console.log('after');
               } catch (error) {
                   this.locationField.setErrors({locNonexistant: true});
                   console.log('Error: ' + JSON.stringify(error));
@@ -221,6 +219,7 @@ export class FilterComponent implements OnInit, OnDestroy {
         this.currentPage = 0;
       }
     });
+      this.locations = this.httpService.getLocations(); // get the list of locations again because a new one could have been added.
   }
 
   /**
