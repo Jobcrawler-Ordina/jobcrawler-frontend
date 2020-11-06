@@ -155,6 +155,10 @@ export class FilterComponent implements OnInit, OnDestroy {
         return this.searchVacancies();
     }
 
+    get locationField() {
+        return this.searchForm.get('location');
+    }
+
   public async searchVacancies(pageEvent?: PageEvent): Promise<void> {
 
       if (pageEvent !== undefined) {
@@ -167,7 +171,12 @@ export class FilterComponent implements OnInit, OnDestroy {
       if (this.searchForm !== undefined) {
           if (this.searchForm.get('location').value !== '') {
               refLocation = new Location(this.searchForm.get('location').value);
-              refLocation.setCoord(await this.httpService.getCoordinates(refLocation.name) as number[]);
+              try {
+                  refLocation.setCoord(await this.httpService.getCoordinates(refLocation.name) as number[]);
+              } catch (error) {
+                  this.locationField.setErrors({locNonexistant: true});
+                  console.log('Error: ' + JSON.stringify(error));
+              }
           }
       }
 
@@ -210,7 +219,6 @@ export class FilterComponent implements OnInit, OnDestroy {
         this.currentPage = 0;
       }
     });
-
       if (this.filterQuery.location) {
           this.locations = this.httpService.getLocations();
       }

@@ -43,6 +43,7 @@
                           </mat-option>
                         </mat-autocomplete>
                     </mat-form-field>
+                    <mat-error style="margin-bottom: 10px" *ngIf="locationField.errors?.locNonexistant" class="error-text">Location unknown</mat-error>
                     <button *ngIf="homeLocation && homeLocation.name!==''" mat-raised-button style="padding-left: 8px;margin-bottom: 10px" type="button" (click)="searchForm.controls.location.setValue(this.homeLocation.name)">
                         <mat-icon>home</mat-icon>&nbsp;Use: {{homeLocation.name}}
                     </button>
