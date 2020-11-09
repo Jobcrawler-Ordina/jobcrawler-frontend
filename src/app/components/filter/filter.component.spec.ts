@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed, tick, fakeAsync } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { FilterComponent } from './filter.component';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
@@ -11,7 +11,7 @@ import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { By } from '@angular/platform-browser';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { mockSkills, noSkills, mockVacancies, mockLocations } from 'src/app/tests/httpMockResponses';
+import { mockSkills, mockLocations, mockVacancies } from 'src/app/tests/httpMockResponses';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatIconModule } from '@angular/material/icon';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
@@ -27,6 +27,10 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { MatSelect, MatSelectModule } from '@angular/material/select';
 import { delay, take, takeUntil } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { NavigatorService } from 'src/app/services/navigator.service';
+import { Location } from 'src/app/models/location';
+import { Vacancy } from 'src/app/models/vacancy';
 
 describe('FilterComponent', () => {
   let component: FilterComponent;
@@ -34,6 +38,12 @@ describe('FilterComponent', () => {
   let httpService: HttpService;
   let httpMock: HttpTestingController;
   const formBuilder: FormBuilder = new FormBuilder();
+  const navigatorSpy = jasmine.createSpyObj('NavigatorService', ['getLocation']);
+  let findAllSkillsSpy;
+  let getByQuerySpy;
+  let getLocationsSpy;
+  let getCoordinatesSpy;
+  let getLocationByCoordinatesSpy;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -53,11 +63,13 @@ describe('FilterComponent', () => {
           NgxMatSelectSearchModule,
           MatSelectModule,
           MatInputModule,
+          MatPaginatorModule
         ],
         providers: [
           { provide: FormBuilder, useValue: formBuilder },
           LoaderService,
           HttpService,
+          { provide: NavigatorService, useValue: navigatorSpy },
           { provide: MatDialog, useValue: {}},
           { provide: MAT_DIALOG_DATA, useValue: []},
           MatFormFieldControl,
@@ -75,67 +87,61 @@ describe('FilterComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(FilterComponent);
     component = fixture.componentInstance;
+    navigatorSpy.getLocation.and.returnValue(Promise.resolve({ coords: { latitude: 5.748, longitude: 52.500, altitude: null,
+      accuracy: 1866, altitudeAccuracy: null, heading: null, speed: null }, timestamp: 0 }));
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  // TODO fix me
-  xit('should fill skills variable upon init', fakeAsync(() => {
-    // Arrange
-    const mockService = jasmine.createSpyObj('HttpService', ['findAllSkills', 'getByQuery', 'getLocations', 'getCoordinates']);
-    const mockRouter = jasmine.createSpyObj('Router', ['navigate']);
-    const mockDialog = jasmine.createSpyObj('MatDialog', ['open']);
-    const filterComp = new FilterComponent(new FormBuilder(), mockService, mockDialog, mockRouter);
-    mockService.findAllSkills.and.returnValue(of(mockSkills));
-    mockService.getByQuery.and.returnValue(of(null));
-    mockService.getLocations.and.returnValue(of(mockLocations));
-    mockService.getCoordinates.and.returnValue(of([5.748, 52.500]));
+  describe('should fill upon init', () => {
+    beforeEach(() => {
+      httpService = TestBed.inject(HttpService);
+      findAllSkillsSpy = spyOn(httpService, 'findAllSkills').and.returnValue(of(mockSkills));
+      getByQuerySpy = spyOn(httpService, 'getByQuery').and.returnValue(of({ totalItems: 20, totalPages: 10,
+        currentPage: 0, vacancies: mockVacancies.vacancies }));
+      getLocationsSpy = spyOn(httpService, 'getLocations').and.returnValue(mockLocations);
+      getCoordinatesSpy = spyOn(httpService, 'getCoordinates').and.returnValue(Promise.resolve([5.748, 52.500]));
+      getLocationByCoordinatesSpy = spyOn(httpService, 'getLocationByCoordinates').and.returnValue(of({ location: 'Amsterdam' }));
+    });
 
-    // Expect nothing at this stage, as we still need to fill the variables
-    expect(filterComp.skills).toBeUndefined();
+    it('should have 2 skills after initalization', async(() => {
+      expect(component.skills).toBeUndefined();
+      fixture.detectChanges();
+      fixture.whenStable().then(() => {
+        expect(findAllSkillsSpy).toHaveBeenCalledTimes(1);
+        expect(getLocationsSpy).toHaveBeenCalledTimes(1);
+        expect(getLocationByCoordinatesSpy).toHaveBeenCalledTimes(1);
+        expect(getByQuerySpy).toHaveBeenCalledTimes(1);
+        expect(component.skills.length).toBe(2);
+      });
+    }));
 
-    // Act
-    filterComp.ngOnInit();
-    tick();
+    it('should fill vacancies variable', async(() => {
+      expect(component.vacancies).toEqual([]);
+      fixture.detectChanges();
+      fixture.whenStable().then(() => {
+        expect(findAllSkillsSpy).toHaveBeenCalledTimes(1);
+        expect(getByQuerySpy).toHaveBeenCalledTimes(1);
+        expect(component.vacancies.length).toBe(3);
+        for (let i = 0; i < component.vacancies.length; i++) {
+          expect(component.vacancies[i].title).toBe('title ' + (i + 1));
+        }
+      });
+    }));
 
-    // Assert
-    expect(mockService.findAllSkills).toHaveBeenCalledTimes(1);
-    expect(mockService.getByQuery).toHaveBeenCalledTimes(1);
-    expect(filterComp.skills.length).toBe(2);
-  }));
+    it('should set the home location', async(() => {
+      expect(component.homeLocation).toBeUndefined();
+      fixture.detectChanges();
+      fixture.whenStable().then(() => {
+        const location = new Location('Amsterdam', 52.500, 5.748);
+        expect(component.homeLocation).toEqual(location);
+        expect(getLocationByCoordinatesSpy).toHaveBeenCalledWith(5.748, 52.500);
+      });
+    }));
 
-    // TODO fix me
-  xit('should fill vacancies variable upon init', fakeAsync(() => {
-    // Arrange
-    const mockService = jasmine.createSpyObj('HttpService',
-                        ['findAllSkills', 'getByQuery', 'getLocations', 'getCoordinates', 'getDistance']);
-    const mockRouter = jasmine.createSpyObj('Router', ['navigate']);
-    const mockDialog = jasmine.createSpyObj('MatDialog', ['open']);
-    const filterComp = new FilterComponent(new FormBuilder(), mockService, mockDialog, mockRouter);
-
-    mockService.findAllSkills.and.returnValue(of(noSkills));
-    mockService.getByQuery.and.returnValue(of(mockVacancies));
-    mockService.getLocations.and.returnValue(of(mockLocations));
-    mockService.getCoordinates.and.returnValue(of([5.748, 52.500]));
-    mockService.getDistance.and.returnValue(Promise.resolve(1.234));
-
-    // Expect nothing at this stage, as we still need to fill the variables
-    expect(filterComp.vacancies).toEqual([]);
-
-    // Act
-    filterComp.ngOnInit();
-    tick();
-
-    // Assert
-    expect(mockService.findAllSkills).toHaveBeenCalledTimes(1);
-    expect(mockService.getByQuery).toHaveBeenCalledTimes(1);
-    expect(filterComp.vacancies.length).toBe(3);
-    for (let i = 0; i < filterComp.vacancies.length; i++) {
-      expect(filterComp.vacancies[i].title).toBe('title ' + (i + 1));
-    }
-  }));
+  });
 
   it('should toggle isShow upon calling the function', () => {
     const currentStatus: boolean = component.isShow;
