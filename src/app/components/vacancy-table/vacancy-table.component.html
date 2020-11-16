@@ -1,30 +1,23 @@
 <div class="page-header">
-        <h1>
-            <a *ngIf="isShow" class="desktopView" href="#" (click)="resizeFilterClick()">
-                <span href="#" class="material-icons" matTooltip="Show filter column">chevron_right</span>
-            </a>
-            <span class="material-icons">insert_drive_file</span> Vacancies
-        </h1>
+    <h1>
+        <a *ngIf="isShow" class="desktopView" href="#" (click)="resizeFilterClick()">
+            <span href="#" class="material-icons" matTooltip="Show filter column">chevron_right</span>
+        </a>
+        <span class="material-icons">insert_drive_file</span> Vacancies
+    </h1>
 </div>
 <mat-divider class="divider"></mat-divider>
 <div id="tableDiv" class="{{showClass}}">
     <div id="noVacanciesMessage" *ngIf="vacancies.length == 0">No vacancies that match your filter criteria.</div>
-    <table *ngIf="vacancies.length > 0"
-        [dataSource]="vacancies"
-        mat-table
-        matSort
-        (matSortChange)="sortData($event)"
-        matSortActive="{{sortBy}}"
-        matSortDirection="{{sortOrder}}"
-        matSortDisableClear
-        [style.width.%]="100">
+    <table *ngIf="vacancies.length > 0" [dataSource]="vacancies" mat-table matSort (matSortChange)="sortData($event)"
+        matSortActive="{{sortBy}}" matSortDirection="{{sortOrder}}" matSortDisableClear [style.width.%]="100">
 
         <!-- Title Column -->
         <ng-container matColumnDef="title">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Title</th>
-            <td mat-cell *matCellDef="let element"><a
-                (click)="openDialog(element.id)" class="pointer"
-                matTooltip="{{element.title}}" id="vacancyTitle"> {{element.title | convertStringToDots: 25}} </a></td>
+            <td mat-cell *matCellDef="let element"><a (click)="openDialog(element.id)" class="pointer"
+                    matTooltip="{{element.title}}" id="vacancyTitle"> {{element.title | convertStringToDots: 25}} </a>
+            </td>
         </ng-container>
 
         <!-- Broker Column -->
@@ -41,8 +34,9 @@
 
         <!-- Distance column -->
         <ng-container matColumnDef="distance">
-            <th mat-header-cell *matHeaderCellDef>Distance (km)</th>
-            <td mat-cell *matCellDef="let element" style="text-align:right;padding-right: 15px;" > {{element.location?(element.location.distance | number:'1.1-1'):""}} </td>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Distance (km)</th>
+            <td mat-cell *matCellDef="let element" style="text-align:right;padding-right: 15px;">
+                {{element.location?(element.location.distance | number:'1.1-1'):""}} </td>
         </ng-container>
 
         <!-- postingDate Column -->
