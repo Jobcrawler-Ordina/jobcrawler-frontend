@@ -12,4 +12,5 @@ export class Vacancy {
     postingDate: string;
     about: string;
     skills: any[];
+    distance?: number;
 }
