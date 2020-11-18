@@ -121,7 +121,11 @@ export class FilterComponent implements OnInit, OnDestroy {
 
       this.filterQuery = this.searchForm.value as FilterQuery;
       // this.distance is used in the vacancy-table.component
-      this.distance = this.searchForm.get('distance').value;
+      let stringDistance = this.searchForm.get('distance').value;
+      if (stringDistance !== '') {
+        stringDistance = Number(stringDistance.replace(',', '.'));
+      }
+      this.distance = stringDistance;
       this.filterQuery.distance = this.distance;
 
       if (this.skillMultiCtrl.value !== null) {
