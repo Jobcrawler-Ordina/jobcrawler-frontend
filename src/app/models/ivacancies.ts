@@ -7,4 +7,5 @@ export interface IVacancies {
     postingDate: string;
     id: string;
     vacancyUrl: string;
+    distance?: number;
 }

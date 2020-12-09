@@ -1,16 +1,15 @@
+import { registerLocaleData } from '@angular/common';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import localeNl from '@angular/common/locales/nl';
 import { TestBed } from '@angular/core/testing';
 import { Sort } from '@angular/material/sort';
+import { of } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { FilterQuery } from '../models/filterQuery.model';
+import { Location } from '../models/location';
 import { Skill } from '../models/skill';
 import { mockLocations, mockVacancies, newSkillMock } from '../tests/httpMockResponses';
 import { HttpService } from './http.service';
-import localeNl from '@angular/common/locales/nl';
-import { registerLocaleData } from '@angular/common';
-import { deleteUserMock } from '../tests/adminServiceMockResponses';
-import { Location } from '../models/location';
-import { of } from 'rxjs';
 registerLocaleData(localeNl, 'nl');
 
 
@@ -79,20 +78,6 @@ describe('HttpService', () => {
         expect(req.request.method).toBe('GET');
 
         req.flush(mockVacancies);
-    });
-
-    it('should await to getDistance', () => {
-        const coord1 = [1.0, 1.1];
-        const coord2 = [1.1, 1.2];
-        service.getDistance(coord1, coord2).then((data: any) => {
-            expect(data).toBe(1.234);
-        });
-
-        const req = httpMock.expectOne(environment.api + '/locations/distance?from=' + coord1[0] +
-                                        ',' + coord1[1] + '&to=' + coord2[0] + ',' + coord2[1]);
-        expect(req.request.method).toBe('GET');
-
-        req.flush(1.234);
     });
 
     it('should return a string array of locations when the getLocations() method is called', () => {

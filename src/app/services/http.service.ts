@@ -1,13 +1,13 @@
-import { Injectable } from '@angular/core';
+import { formatDate } from '@angular/common';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { FilterQuery } from '../models/filterQuery.model';
-import { environment } from 'src/environments/environment';
+import { Injectable } from '@angular/core';
+import { Sort } from '@angular/material/sort';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
+import { FilterQuery } from '../models/filterQuery.model';
+import { Location } from '../models/location';
 import { PageResult } from '../models/pageresult.model';
 import { Skill } from '../models/skill';
-import { Sort } from '@angular/material/sort';
-import { Location } from '../models/location';
-import { formatDate } from '@angular/common';
 
 @Injectable()
 export class HttpService {
@@ -57,7 +57,7 @@ export class HttpService {
         if (sort !== undefined && sort.direction !== '') {
             params = params.append('dir', sort.direction);
         }
-        return this.httpClient.get<PageResult>(environment.api + '/vacancies', {params});
+        return this.httpClient.get<PageResult>(environment.api + '/vacancies', { params });
     }
 
     /**
@@ -101,20 +101,14 @@ export class HttpService {
      * @returns result
      */
     public saveSkill(skill: Skill): Observable<any> {
-        return this.httpClient.post<any>(environment.api + '/skills', {name: skill.name});
+        return this.httpClient.post<any>(environment.api + '/skills', { name: skill.name });
     }
 
     public getLocations(): string[] {
         const locations: Array<string> = [];
         this.httpClient.get<Location[]>(environment.api + '/locations').subscribe(data =>
-                data.forEach(loc => locations.push(loc.name)));
+            data.forEach(loc => locations.push(loc.name)));
         return locations;
-    }
-
-    async getDistance(coord1: number[], coord2: number[]) {
-        return await this.httpClient.get(environment.api + '/locations/distance?from=' + coord1[0] +
-            ',' + coord1[1] + '&to=' + coord2[0] + ',' + coord2[1])
-            .toPromise();
     }
 
     async getCoordinates(loc: string) {
